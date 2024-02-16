@@ -4,28 +4,33 @@ import ch.softappeal.kopi.lib.Active
 import ch.softappeal.kopi.lib.Bias
 import ch.softappeal.kopi.lib.Chip
 import ch.softappeal.kopi.lib.use
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlin.test.assertFails
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
-private const val BUTTON = 27
-private const val LED = 17
+private const val OPEN_IN = 27 // not connected
+private const val IN = 22 // NOTE: connected to OUT
+private const val OUT = 17
 
-private class MyChip : Chip() {
-    val led = output(LED, false)
-    val button = input(BUTTON, Bias.PullUp)
-}
+private fun errors() {
+    class MyChip : Chip() {
+        val out = output(OUT, false)
+        val `in` = input(IN, Bias.Disable)
+    }
 
-public suspend fun chipTest() {
     val myChip = MyChip()
-    println("myChip.button: ${myChip.button()}")
+    assertFalse(myChip.`in`.get())
     myChip.close()
     println(assertFails {
-        myChip.led(false)
+        myChip.out.set(false)
     })
     println(assertFails {
-        myChip.button()
+        myChip.`in`.get()
     })
 
     val chip1 = Chip()
@@ -33,50 +38,94 @@ public suspend fun chipTest() {
     chip2.close()
     chip1.close()
 
-    Chip().use {
-        input(BUTTON, Bias.PullUp)
+    Chip().use { chip ->
+        assertTrue(chip.input(OPEN_IN, Bias.PullUp).get())
         println(assertFails {
-            input(BUTTON, Bias.PullUp)
+            chip.input(OPEN_IN, Bias.PullUp)
         })
         println(assertFails {
-            listen(BUTTON, Bias.PullUp) { _, _ -> true }
+            chip.listen(OPEN_IN, Bias.PullUp) { _, _ -> true }
         })
         println(assertFails {
-            output(BUTTON, false)
+            chip.output(OPEN_IN, false)
         })
     }
+}
 
-    Chip().use { output(LED, true) }
-    delay(1.seconds)
-    Chip().use { output(LED, false) }
-    delay(1.seconds)
-    Chip().use { output(LED, false, Active.Low) }
-    delay(1.seconds)
-    Chip().use { output(LED, true, Active.Low) }
-    delay(1.seconds)
-
-    Chip().use { println("Disable  High: ${input(BUTTON, Bias.Disable)()}") }
-    Chip().use { println("PullUp   High: ${input(BUTTON, Bias.PullUp)()}") }
-    Chip().use { println("PullDown High: ${input(BUTTON, Bias.PullDown)()}") }
-    Chip().use { println("Disable  Low : ${input(BUTTON, Bias.Disable, Active.Low)()}") }
-    Chip().use { println("PullUp   Low : ${input(BUTTON, Bias.PullUp, Active.Low)()}") }
-    Chip().use { println("PullDown Low : ${input(BUTTON, Bias.PullDown, Active.Low)()}") }
-
-    Chip().use {
-        val led = output(LED, false)
-        val button = input(BUTTON, Bias.PullUp)
-        led(true)
-        while (button()) delay(100.milliseconds)
-        led(false)
+private fun active() {
+    Chip().use { chip ->
+        chip.output(OUT, false).use { out ->
+            chip.input(IN, Bias.Disable).use { `in` ->
+                assertFalse(`in`.get())
+                out.set(true)
+                assertTrue(`in`.get())
+            }
+        }
+        chip.output(OUT, false)
+        assertFalse(chip.input(IN, Bias.Disable).get())
     }
+    Chip().use { chip ->
+        val out = chip.output(OUT, false, Active.Low)
+        val `in` = chip.input(IN, Bias.Disable)
+        assertTrue(`in`.get())
+        out.set(true)
+        assertFalse(`in`.get())
+    }
+    Chip().use { chip ->
+        val out = chip.output(OUT, false)
+        val `in` = chip.input(IN, Bias.Disable, Active.Low)
+        assertTrue(`in`.get())
+        out.set(true)
+        assertFalse(`in`.get())
+    }
+    Chip().use { chip ->
+        val out = chip.output(OUT, false, Active.Low)
+        val `in` = chip.input(IN, Bias.Disable, Active.Low)
+        assertFalse(`in`.get())
+        out.set(true)
+        assertTrue(`in`.get())
+    }
+}
 
-    Chip().use {
-        repeat(2) {
-            var counter = 0
-            listen(BUTTON, Bias.PullUp) { edge, nanoSeconds ->
-                println("notification: $edge $nanoSeconds")
-                ++counter < 5
+private fun bias() {
+    Chip().use { assertTrue(it.input(OPEN_IN, Bias.PullUp).get()) }
+    Chip().use { assertFalse(it.input(OPEN_IN, Bias.PullDown).get()) }
+    Chip().use { assertFalse(it.input(OPEN_IN, Bias.PullUp, Active.Low).get()) }
+    Chip().use { assertTrue(it.input(OPEN_IN, Bias.PullDown, Active.Low).get()) }
+}
+
+private fun listen() {
+    Chip().use { chip ->
+        val out = chip.output(OUT, false)
+        chip.input(IN, Bias.PullUp).use { assertFalse(it.get()) }
+        runBlocking {
+            launch(Dispatchers.Default) {
+                repeat(2) {
+                    var counter = 0
+                    println("listen start")
+                    chip.listen(IN, Bias.Disable) { edge, nanoSeconds ->
+                        println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
+                        ++counter < 5
+                    }
+                    println("listen end")
+                }
+            }
+            repeat(5) {
+                delay(100.milliseconds)
+                println(true)
+                out.set(true)
+                delay(100.milliseconds)
+                println(false)
+                out.set(false)
             }
         }
     }
+}
+
+public fun chipTest() {
+    println("chipTest")
+    errors()
+    active()
+    bias()
+    listen()
 }

@@ -21,8 +21,8 @@ public interface Closeable {
     public fun close()
 }
 
-public inline fun <C : Closeable, R> C.use(block: C.() -> R): R = tryFinally({
-    block()
+public inline fun <C : Closeable, R> C.use(block: (closeable: C) -> R): R = tryFinally({
+    block(this)
 }) {
     close()
 }

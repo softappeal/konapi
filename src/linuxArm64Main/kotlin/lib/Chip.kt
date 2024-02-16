@@ -51,9 +51,18 @@ public enum class Active(internal val value: Int) {
 
 public enum class Edge { Rising, Falling }
 
-public typealias Input = () -> Boolean
-public typealias Output = (value: Boolean) -> Unit
+public interface Output : Closeable {
+    public fun set(value: Boolean)
+}
+
+public interface Input : Closeable {
+    public fun get(): Boolean
+}
+
 public typealias Notification = (edge: Edge, nanoSeconds: Long) -> Boolean
+
+private inline fun Boolean.ordinal() = toByte().toInt()
+private inline fun flags(active: Active, bias: Bias = Bias.Disable) = active.value + bias.value
 
 public open class Chip(label: String = RASPBERRY_PI_5, private val consumer: String = "<none>") : Closeable {
     init {
@@ -67,32 +76,38 @@ public open class Chip(label: String = RASPBERRY_PI_5, private val consumer: Str
 
     public fun output(line: Int, initValue: Boolean, active: Active = Active.High): Output {
         val linePtr = getLine(line)
-        check(gpiod_line_request_output_flags(linePtr, consumer, active.value, initValue.toByte().toInt()) == 0) {
+        check(gpiod_line_request_output_flags(linePtr, consumer, flags(active), initValue.ordinal()) == 0) {
             "can't request output for line $line"
         }
-        return { value ->
-            check(gpiod_line_set_value(linePtr, value.toByte().toInt()) == 0) { "can't set value for line $line" }
+        return object : Output {
+            override fun set(value: Boolean) {
+                check(gpiod_line_set_value(linePtr, value.ordinal()) == 0) { "can't set value for line $line" }
+            }
+
+            override fun close() = gpiod_line_release(linePtr)
         }
     }
 
     public fun input(line: Int, bias: Bias, active: Active = Active.High): Input {
         val linePtr = getLine(line)
-        check(gpiod_line_request_input_flags(linePtr, consumer, active.value + bias.value) == 0) {
+        check(gpiod_line_request_input_flags(linePtr, consumer, flags(active, bias)) == 0) {
             "can't request input for line $line"
         }
-        return {
-            when (gpiod_line_get_value(linePtr)) {
+        return object : Input {
+            override fun get() = when (gpiod_line_get_value(linePtr)) {
                 0 -> false
                 1 -> true
                 else -> error("can't get value for line $line")
             }
+
+            override fun close() = gpiod_line_release(linePtr)
         }
     }
 
     /** Returns if [Notification] returns false. */
-    public fun listen(line: Int, bias: Bias, active: Active = Active.High, notification: Notification) {
+    public fun listen(line: Int, bias: Bias, active: Active = Active.High, notification: Notification) { // TODO
         val linePtr = getLine(line)
-        check(gpiod_line_request_both_edges_events_flags(linePtr, consumer, active.value + bias.value) == 0) {
+        check(gpiod_line_request_both_edges_events_flags(linePtr, consumer, flags(active, bias)) == 0) {
             "can't request events for line $line"
         }
         tryFinally({
@@ -116,6 +131,7 @@ public open class Chip(label: String = RASPBERRY_PI_5, private val consumer: Str
 
     private fun getLine(line: Int) = gpiod_chip_get_line(chip, line.toUInt()) ?: error("can't get line $line")
 
+    /** NOTE: Also closes all open inputs/outputs. */
     override fun close() {
         gpiod_chip_close(chip)
     }

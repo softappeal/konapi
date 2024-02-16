@@ -1,6 +1,7 @@
 package ch.softappeal.kopi.test
 
 import ch.softappeal.kopi.lib.tryFinally
+import kotlinx.coroutines.runBlocking
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertSame
@@ -82,7 +83,7 @@ private fun withTryExceptionWithFinallyException() {
     assertEquals(listOf(finallyException), tryException.suppressedExceptions)
 }
 
-private suspend fun withSuspend() {
+private fun withSuspend() {
     var tryCalled = false
     var finallyCalled = false
 
@@ -98,19 +99,22 @@ private suspend fun withSuspend() {
         return 321
     }
 
-    assertEquals(
-        123,
-        tryFinally({
-            tryBlock()
-        }) {
-            finallyBlock()
-        }
-    )
+    runBlocking {
+        assertEquals(
+            123,
+            tryFinally({
+                tryBlock()
+            }) {
+                finallyBlock()
+            }
+        )
+    }
     assertTrue(tryCalled)
     assertTrue(finallyCalled)
 }
 
-public suspend fun cleanupTest() {
+public fun cleanupTest() {
+    println("cleanupTest")
     noTryExceptionNoFinallyException()
     withTryExceptionNoFinallyException()
     noTryExceptionWithFinallyException()
