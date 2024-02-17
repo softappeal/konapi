@@ -12,6 +12,7 @@ import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 private const val OPEN_IN = 27 // not connected
 private const val IN = 22 // NOTE: connected to OUT
@@ -44,7 +45,7 @@ private fun errors() {
             chip.input(OPEN_IN, Bias.PullUp)
         })
         println(assertFails {
-            chip.listen(OPEN_IN, Bias.PullUp) { _, _ -> true }
+            chip.listen(OPEN_IN, Bias.PullUp, 1.seconds) { _, _ -> true }
         })
         println(assertFails {
             chip.output(OPEN_IN, false)
@@ -95,28 +96,29 @@ private fun bias() {
 }
 
 private fun listen() {
-    Chip().use { chip ->
-        val out = chip.output(OUT, false)
-        chip.input(IN, Bias.PullUp).use { assertFalse(it.get()) }
-        runBlocking {
-            launch(Dispatchers.Default) {
-                repeat(2) {
+    repeat(2) { iteration ->
+        println("iteration: $iteration")
+        Chip().use { chip ->
+            runBlocking {
+                val out = chip.output(OUT, false)
+                delay(100.milliseconds)
+                launch(Dispatchers.Default) {
                     var counter = 0
-                    println("listen start")
-                    chip.listen(IN, Bias.Disable) { edge, nanoSeconds ->
+                    // NOTE: there is an unexpected Falling notification at start of first iteration; why?
+                    val notTimeout = chip.listen(IN, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
                         println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
-                        ++counter < 5
+                        ++counter < 6
                     }
-                    println("listen end")
+                    println("notTimeout: $notTimeout")
                 }
-            }
-            repeat(5) {
-                delay(100.milliseconds)
-                println(true)
-                out.set(true)
-                delay(100.milliseconds)
-                println(false)
-                out.set(false)
+                repeat(2 + iteration) {
+                    delay(100.milliseconds)
+                    println("out: true")
+                    out.set(true)
+                    delay(100.milliseconds)
+                    println("out: false")
+                    out.set(false)
+                }
             }
         }
     }

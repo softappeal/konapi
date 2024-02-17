@@ -11,6 +11,7 @@ import ch.softappeal.kopi.gpiod.gpiod_chip_get_line
 import ch.softappeal.kopi.gpiod.gpiod_chip_open_by_label
 import ch.softappeal.kopi.gpiod.gpiod_line_event
 import ch.softappeal.kopi.gpiod.gpiod_line_event_read
+import ch.softappeal.kopi.gpiod.gpiod_line_event_wait
 import ch.softappeal.kopi.gpiod.gpiod_line_get_value
 import ch.softappeal.kopi.gpiod.gpiod_line_release
 import ch.softappeal.kopi.gpiod.gpiod_line_request_both_edges_events_flags
@@ -23,6 +24,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toByte
 import kotlinx.cinterop.toKString
+import kotlin.time.Duration
 
 // https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio-and-the-40-pin-header
 
@@ -104,8 +106,11 @@ public open class Chip(label: String = RASPBERRY_PI_5, private val consumer: Str
         }
     }
 
-    /** Returns if [Notification] returns false. */
-    public fun listen(line: Int, bias: Bias, active: Active = Active.High, notification: Notification) { // TODO
+    /**
+     * Returns if [Notification] returns false or if [timeout] reached.
+     * @return false if [timeout] reached else true
+     * */
+    public fun listen(line: Int, bias: Bias, timeout: Duration, active: Active = Active.High, notification: Notification): Boolean {
         val linePtr = getLine(line)
         check(gpiod_line_request_both_edges_events_flags(linePtr, consumer, flags(active, bias)) == 0) {
             "can't request events for line $line"
@@ -113,20 +118,32 @@ public open class Chip(label: String = RASPBERRY_PI_5, private val consumer: Str
         tryFinally({
             memScoped {
                 val event = alloc<gpiod_line_event>()
+                val ts = event.ts
+                val inWholeNanoseconds = timeout.inWholeNanoseconds
+                val timeoutSeconds = inWholeNanoseconds / 1_000_000_000
+                val timeoutNanoseconds = inWholeNanoseconds % 1_000_000_000
                 while (true) {
-                    check(gpiod_line_event_read(linePtr, event.ptr) == 0) { error("can't read event for line $line") }
-                    val edge = when (event.event_type.toUInt()) {
-                        GPIOD_LINE_EVENT_RISING_EDGE -> Edge.Rising
-                        GPIOD_LINE_EVENT_FALLING_EDGE -> Edge.Falling
-                        else -> error("unexpected event on line $line")
+                    ts.tv_sec = timeoutSeconds
+                    ts.tv_nsec = timeoutNanoseconds
+                    when (gpiod_line_event_wait(linePtr, ts.ptr)) {
+                        0 -> return@listen false // timeout
+                        1 -> { // there is an event
+                            check(gpiod_line_event_read(linePtr, event.ptr) == 0) { error("can't read event for line $line") }
+                            val edge = when (event.event_type.toUInt()) {
+                                GPIOD_LINE_EVENT_RISING_EDGE -> Edge.Rising
+                                GPIOD_LINE_EVENT_FALLING_EDGE -> Edge.Falling
+                                else -> error("unexpected event on line $line")
+                            }
+                            if (!notification(edge, ts.tv_sec * 1_000_000_000 + ts.tv_nsec)) break
+                        }
+                        else -> error("can't wait for event on line $line")
                     }
-                    val ts = event.ts
-                    if (!notification(edge, ts.tv_sec * 1_000_000_000 + ts.tv_nsec)) break
                 }
             }
         }) {
             gpiod_line_release(linePtr)
         }
+        return true
     }
 
     private fun getLine(line: Int) = gpiod_chip_get_line(chip, line.toUInt()) ?: error("can't get line $line")
