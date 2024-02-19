@@ -16,7 +16,7 @@ kotlin {
                 .add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
         }
         binaries {
-            executable(listOf(DEBUG)) {
+            executable(listOf(RELEASE)) {
                 entryPoint = "ch.softappeal.kopi.test.main"
             }
         }

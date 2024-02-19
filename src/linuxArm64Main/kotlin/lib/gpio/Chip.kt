@@ -1,24 +1,26 @@
-package ch.softappeal.kopi.lib
+package ch.softappeal.kopi.lib.gpio
 
-import ch.softappeal.kopi.gpiod.GPIOD_LINE_EVENT_FALLING_EDGE
-import ch.softappeal.kopi.gpiod.GPIOD_LINE_EVENT_RISING_EDGE
-import ch.softappeal.kopi.gpiod.GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW
-import ch.softappeal.kopi.gpiod.GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
-import ch.softappeal.kopi.gpiod.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
-import ch.softappeal.kopi.gpiod.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
-import ch.softappeal.kopi.gpiod.gpiod_chip_close
-import ch.softappeal.kopi.gpiod.gpiod_chip_get_line
-import ch.softappeal.kopi.gpiod.gpiod_chip_open_by_label
-import ch.softappeal.kopi.gpiod.gpiod_line_event
-import ch.softappeal.kopi.gpiod.gpiod_line_event_read
-import ch.softappeal.kopi.gpiod.gpiod_line_event_wait
-import ch.softappeal.kopi.gpiod.gpiod_line_get_value
-import ch.softappeal.kopi.gpiod.gpiod_line_release
-import ch.softappeal.kopi.gpiod.gpiod_line_request_both_edges_events_flags
-import ch.softappeal.kopi.gpiod.gpiod_line_request_input_flags
-import ch.softappeal.kopi.gpiod.gpiod_line_request_output_flags
-import ch.softappeal.kopi.gpiod.gpiod_line_set_value
-import ch.softappeal.kopi.gpiod.gpiod_version_string
+import ch.softappeal.kopi.lib.Closeable
+import ch.softappeal.kopi.lib.gpio.native.GPIOD_LINE_EVENT_FALLING_EDGE
+import ch.softappeal.kopi.lib.gpio.native.GPIOD_LINE_EVENT_RISING_EDGE
+import ch.softappeal.kopi.lib.gpio.native.GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW
+import ch.softappeal.kopi.lib.gpio.native.GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
+import ch.softappeal.kopi.lib.gpio.native.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
+import ch.softappeal.kopi.lib.gpio.native.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
+import ch.softappeal.kopi.lib.gpio.native.gpiod_chip_close
+import ch.softappeal.kopi.lib.gpio.native.gpiod_chip_get_line
+import ch.softappeal.kopi.lib.gpio.native.gpiod_chip_open_by_label
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_event
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_event_read
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_event_wait
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_get_value
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_release
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_request_both_edges_events_flags
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_request_input_flags
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_request_output_flags
+import ch.softappeal.kopi.lib.gpio.native.gpiod_line_set_value
+import ch.softappeal.kopi.lib.gpio.native.gpiod_version_string
+import ch.softappeal.kopi.lib.tryFinally
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
@@ -38,7 +40,7 @@ import kotlin.time.Duration
  */
 private const val EXPECTED_LIB_VERSION = "1.6.3"
 
-private const val RASPBERRY_PI_5 = "pinctrl-rp1"
+public const val RASPBERRY_PI_5: String = "pinctrl-rp1"
 
 public enum class Bias(internal val value: Int) {
     Disable(GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE.toInt()),
@@ -66,7 +68,7 @@ public typealias Notification = (edge: Edge, nanoSeconds: Long) -> Boolean
 private inline fun Boolean.ordinal() = toByte().toInt()
 private inline fun flags(active: Active, bias: Bias = Bias.Disable) = active.value + bias.value
 
-public open class Chip(label: String = RASPBERRY_PI_5, private val consumer: String = "<none>") : Closeable {
+public open class Chip(label: String, private val consumer: String = "kopi") : Closeable {
     init {
         val actualLibVersion = gpiod_version_string()!!.toKString()
         check(EXPECTED_LIB_VERSION == actualLibVersion) {

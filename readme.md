@@ -15,5 +15,5 @@ ssh guru@raspberrypi
 ```
 
 ```shell
-scp ./build/bin/linuxArm64/debugExecutable/kopi.kexe guru@raspberrypi:kopi
+scp ./build/bin/linuxArm64/releaseExecutable/kopi.kexe guru@raspberrypi:kopi
 ```

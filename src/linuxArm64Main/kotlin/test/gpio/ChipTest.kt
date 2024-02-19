@@ -1,8 +1,8 @@
-package ch.softappeal.kopi.test
+package ch.softappeal.kopi.test.gpio
 
-import ch.softappeal.kopi.lib.Active
-import ch.softappeal.kopi.lib.Bias
-import ch.softappeal.kopi.lib.Chip
+import ch.softappeal.kopi.lib.gpio.Active
+import ch.softappeal.kopi.lib.gpio.Bias
+import ch.softappeal.kopi.lib.gpio.Chip
 import ch.softappeal.kopi.lib.use
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -18,8 +18,8 @@ private const val OPEN_IN = 27 // not connected
 private const val IN = 22 // NOTE: connected to OUT
 private const val OUT = 17
 
-private fun errors() {
-    class MyChip : Chip() {
+private fun errors(label: String) {
+    class MyChip : Chip(label) {
         val out = output(OUT, false)
         val `in` = input(IN, Bias.Disable)
     }
@@ -34,12 +34,12 @@ private fun errors() {
         myChip.`in`.get()
     })
 
-    val chip1 = Chip()
-    val chip2 = Chip() // opening the same chip twice seems to be legal
+    val chip1 = Chip(label)
+    val chip2 = Chip(label) // opening the same chip twice seems to be legal
     chip2.close()
     chip1.close()
 
-    Chip().use { chip ->
+    Chip(label).use { chip ->
         assertTrue(chip.input(OPEN_IN, Bias.PullUp).get())
         println(assertFails {
             chip.input(OPEN_IN, Bias.PullUp)
@@ -53,8 +53,8 @@ private fun errors() {
     }
 }
 
-private fun active() {
-    Chip().use { chip ->
+private fun active(label: String) {
+    Chip(label).use { chip ->
         chip.output(OUT, false).use { out ->
             chip.input(IN, Bias.Disable).use { `in` ->
                 assertFalse(`in`.get())
@@ -65,21 +65,21 @@ private fun active() {
         chip.output(OUT, false)
         assertFalse(chip.input(IN, Bias.Disable).get())
     }
-    Chip().use { chip ->
+    Chip(label).use { chip ->
         val out = chip.output(OUT, false, Active.Low)
         val `in` = chip.input(IN, Bias.Disable)
         assertTrue(`in`.get())
         out.set(true)
         assertFalse(`in`.get())
     }
-    Chip().use { chip ->
+    Chip(label).use { chip ->
         val out = chip.output(OUT, false)
         val `in` = chip.input(IN, Bias.Disable, Active.Low)
         assertTrue(`in`.get())
         out.set(true)
         assertFalse(`in`.get())
     }
-    Chip().use { chip ->
+    Chip(label).use { chip ->
         val out = chip.output(OUT, false, Active.Low)
         val `in` = chip.input(IN, Bias.Disable, Active.Low)
         assertFalse(`in`.get())
@@ -88,17 +88,17 @@ private fun active() {
     }
 }
 
-private fun bias() {
-    Chip().use { assertTrue(it.input(OPEN_IN, Bias.PullUp).get()) }
-    Chip().use { assertFalse(it.input(OPEN_IN, Bias.PullDown).get()) }
-    Chip().use { assertFalse(it.input(OPEN_IN, Bias.PullUp, Active.Low).get()) }
-    Chip().use { assertTrue(it.input(OPEN_IN, Bias.PullDown, Active.Low).get()) }
+private fun bias(label: String) {
+    Chip(label).use { assertTrue(it.input(OPEN_IN, Bias.PullUp).get()) }
+    Chip(label).use { assertFalse(it.input(OPEN_IN, Bias.PullDown).get()) }
+    Chip(label).use { assertFalse(it.input(OPEN_IN, Bias.PullUp, Active.Low).get()) }
+    Chip(label).use { assertTrue(it.input(OPEN_IN, Bias.PullDown, Active.Low).get()) }
 }
 
-private fun listen() {
+private fun listen(label: String) {
     repeat(2) { iteration ->
         println("iteration: $iteration")
-        Chip().use { chip ->
+        Chip(label).use { chip ->
             runBlocking {
                 val out = chip.output(OUT, false)
                 delay(100.milliseconds)
@@ -124,10 +124,10 @@ private fun listen() {
     }
 }
 
-public fun chipTest() {
+public fun chipTest(label: String) {
     println("chipTest")
-    errors()
-    active()
-    bias()
-    listen()
+    errors(label)
+    active(label)
+    bias(label)
+    listen(label)
 }
