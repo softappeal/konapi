@@ -39,37 +39,39 @@ import kotlin.time.Duration
  *   libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2 (0x00007fff8a300000)
  * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cinterop/libgpiod.so
  */
+@Suppress("SpellCheckingInspection")
 private const val EXPECTED_LIB_VERSION = "1.6.3"
 
-public const val RASPBERRY_PI_5: String = "pinctrl-rp1"
+@Suppress("SpellCheckingInspection")
+public const val GPIO_RASPBERRY_PI_5: String = "pinctrl-rp1"
 
-public enum class Bias(internal val value: Int) {
-    Disable(GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE.toInt()),
-    PullDown(GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN.toInt()),
-    PullUp(GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP.toInt()),
-}
-
-public enum class Active(internal val value: Int) {
-    Low(GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW.toInt()),
-    High(0),
-}
-
-public enum class Edge { Rising, Falling }
-
-public interface Output : Closeable {
-    public fun set(value: Boolean)
-}
-
-public interface Input : Closeable {
-    public fun get(): Boolean
-}
-
-public typealias Notification = (edge: Edge, nanoSeconds: Long) -> Boolean
+public typealias GpioNotification = (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
 
 private inline fun Boolean.ordinal() = toByte().toInt()
-private inline fun flags(active: Active, bias: Bias = Bias.Disable) = active.value + bias.value
+private inline fun flags(active: Gpio.Active, bias: Gpio.Bias = Gpio.Bias.Disable) = active.value + bias.value
 
-public open class Chip(label: String, private val consumer: String = "kopi") : Closeable {
+public open class Gpio(label: String, @Suppress("SpellCheckingInspection") private val consumer: String = "kopi") : Closeable {
+    public enum class Bias(internal val value: Int) {
+        Disable(GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE.toInt()),
+        PullDown(GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN.toInt()),
+        PullUp(GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP.toInt()),
+    }
+
+    public enum class Active(internal val value: Int) {
+        Low(GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW.toInt()),
+        High(0),
+    }
+
+    public enum class Edge { Rising, Falling }
+
+    public interface Output : Closeable {
+        public fun set(value: Boolean)
+    }
+
+    public interface Input : Closeable {
+        public fun get(): Boolean
+    }
+
     init {
         val actualLibVersion = gpiod_version_string()!!.toKString()
         check(EXPECTED_LIB_VERSION == actualLibVersion) {
@@ -110,10 +112,12 @@ public open class Chip(label: String, private val consumer: String = "kopi") : C
     }
 
     /**
-     * Returns if [Notification] returns false or if [timeout] reached.
+     * Returns if [GpioNotification] returns false or if [timeout] reached.
      * @return false if [timeout] reached else true
      * */
-    public fun listen(line: Int, bias: Bias, timeout: Duration, active: Active = Active.High, notification: Notification): Boolean {
+    public fun listen(
+        line: Int, bias: Bias, timeout: Duration, active: Active = Active.High, notification: GpioNotification,
+    ): Boolean {
         val linePtr = getLine(line)
         check(gpiod_line_request_both_edges_events_flags(linePtr, consumer, flags(active, bias)) == 0) {
             "can't request events for line $line"

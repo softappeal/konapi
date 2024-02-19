@@ -3,10 +3,14 @@ plugins {
 }
 
 kotlin {
+    @Suppress("SpellCheckingInspection")
     linuxArm64 {
         compilations["main"].apply {
             cinterops {
                 create("gpiod") {
+                    includeDirs("src/nativeInterop/cinterop/headers/include/")
+                }
+                create("i2c") {
                     includeDirs("src/nativeInterop/cinterop/headers/include/")
                 }
             }

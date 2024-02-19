@@ -1,8 +1,8 @@
 package ch.softappeal.kopi.test.gpio
 
-import ch.softappeal.kopi.lib.gpio.Active
-import ch.softappeal.kopi.lib.gpio.Bias
-import ch.softappeal.kopi.lib.gpio.Chip
+import ch.softappeal.kopi.lib.gpio.Gpio
+import ch.softappeal.kopi.lib.gpio.Gpio.Active
+import ch.softappeal.kopi.lib.gpio.Gpio.Bias
 import ch.softappeal.kopi.lib.use
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -19,12 +19,12 @@ private const val IN = 22 // NOTE: connected to OUT
 private const val OUT = 17
 
 private fun errors(label: String) {
-    class MyChip : Chip(label) {
+    class MyGpio : Gpio(label) {
         val out = output(OUT, false)
         val `in` = input(IN, Bias.Disable)
     }
 
-    val myChip = MyChip()
+    val myChip = MyGpio()
     assertFalse(myChip.`in`.get())
     myChip.close()
     println(assertFails {
@@ -34,12 +34,12 @@ private fun errors(label: String) {
         myChip.`in`.get()
     })
 
-    val chip1 = Chip(label)
-    val chip2 = Chip(label) // opening the same chip twice seems to be legal
+    val chip1 = Gpio(label)
+    val chip2 = Gpio(label) // opening the same chip twice seems to be legal
     chip2.close()
     chip1.close()
 
-    Chip(label).use { chip ->
+    Gpio(label).use { chip ->
         assertTrue(chip.input(OPEN_IN, Bias.PullUp).get())
         println(assertFails {
             chip.input(OPEN_IN, Bias.PullUp)
@@ -54,7 +54,8 @@ private fun errors(label: String) {
 }
 
 private fun active(label: String) {
-    Chip(label).use { chip ->
+    Gpio(label).use { chip ->
+        println("active - out: high, in: high")
         chip.output(OUT, false).use { out ->
             chip.input(IN, Bias.Disable).use { `in` ->
                 assertFalse(`in`.get())
@@ -65,21 +66,24 @@ private fun active(label: String) {
         chip.output(OUT, false)
         assertFalse(chip.input(IN, Bias.Disable).get())
     }
-    Chip(label).use { chip ->
+    Gpio(label).use { chip ->
+        println("active - out: low, in: high")
         val out = chip.output(OUT, false, Active.Low)
         val `in` = chip.input(IN, Bias.Disable)
         assertTrue(`in`.get())
         out.set(true)
         assertFalse(`in`.get())
     }
-    Chip(label).use { chip ->
+    Gpio(label).use { chip ->
+        println("active - out: high, in: low")
         val out = chip.output(OUT, false)
         val `in` = chip.input(IN, Bias.Disable, Active.Low)
         assertTrue(`in`.get())
         out.set(true)
         assertFalse(`in`.get())
     }
-    Chip(label).use { chip ->
+    Gpio(label).use { chip ->
+        println("active - out: low, in: low")
         val out = chip.output(OUT, false, Active.Low)
         val `in` = chip.input(IN, Bias.Disable, Active.Low)
         assertFalse(`in`.get())
@@ -88,17 +92,37 @@ private fun active(label: String) {
     }
 }
 
-private fun bias(label: String) {
-    Chip(label).use { assertTrue(it.input(OPEN_IN, Bias.PullUp).get()) }
-    Chip(label).use { assertFalse(it.input(OPEN_IN, Bias.PullDown).get()) }
-    Chip(label).use { assertFalse(it.input(OPEN_IN, Bias.PullUp, Active.Low).get()) }
-    Chip(label).use { assertTrue(it.input(OPEN_IN, Bias.PullDown, Active.Low).get()) }
+private suspend fun bias(label: String) {
+    Gpio(label).use { gpio ->
+        println("bias - PullUp, high")
+        val input = gpio.input(OPEN_IN, Bias.PullUp)
+        delay(10.milliseconds)
+        assertTrue(input.get())
+    }
+    Gpio(label).use { gpio ->
+        println("bias - PullDown, high")
+        val input = gpio.input(OPEN_IN, Bias.PullDown)
+        delay(10.milliseconds)
+        assertFalse(input.get())
+    }
+    Gpio(label).use { gpio ->
+        println("bias - PullUp, Low")
+        val input = gpio.input(OPEN_IN, Bias.PullUp, Active.Low)
+        delay(10.milliseconds)
+        assertFalse(input.get())
+    }
+    Gpio(label).use { gpio ->
+        println("bias - PullDown, Low")
+        val input = gpio.input(OPEN_IN, Bias.PullDown, Active.Low)
+        delay(10.milliseconds)
+        assertTrue(input.get())
+    }
 }
 
 private suspend fun listen(label: String) {
     repeat(2) { iteration ->
         println("iteration: $iteration")
-        Chip(label).use { chip ->
+        Gpio(label).use { chip ->
             coroutineScope {
                 val out = chip.output(OUT, false)
                 delay(100.milliseconds)
@@ -124,7 +148,7 @@ private suspend fun listen(label: String) {
     }
 }
 
-public suspend fun chipTest(label: String) {
+public suspend fun gpioTest(label: String) {
     println("chipTest")
     errors(label)
     active(label)
