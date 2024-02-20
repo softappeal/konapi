@@ -104,7 +104,7 @@ private fun listen(label: String) {
                 delay(100.milliseconds)
                 launch(Dispatchers.Default) {
                     var counter = 0
-                    // NOTE: there is an unexpected Falling notification at start of first iteration; why?
+                    // TODO: there is an unexpected Falling notification at start of first iteration; why?
                     val notTimeout = chip.listen(IN, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
                         println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
                         ++counter < 6

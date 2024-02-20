@@ -31,12 +31,13 @@ import kotlin.time.Duration
 // https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio-and-the-40-pin-header
 
 /**
+ * gpiodetect -v
+ *   gpiodetect (libgpiod) v1.6.3
+ * curl -o src/nativeInterop/cinterop/headers/include/gpiod.h https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h\?h=v1.6.3
+ *
  * ldd /usr/bin/gpiodetect
  *   libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2 (0x00007fff8a300000)
- *
  * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cinterop/libgpiod.so
- *
- * curl -o src/nativeInterop/cinterop/headers/include/gpiod.h https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h\?h=v1.6.3
  */
 private const val EXPECTED_LIB_VERSION = "1.6.3"
 
