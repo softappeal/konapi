@@ -5,9 +5,9 @@ import ch.softappeal.kopi.lib.gpio.Bias
 import ch.softappeal.kopi.lib.gpio.Chip
 import ch.softappeal.kopi.lib.use
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -95,11 +95,11 @@ private fun bias(label: String) {
     Chip(label).use { assertTrue(it.input(OPEN_IN, Bias.PullDown, Active.Low).get()) }
 }
 
-private fun listen(label: String) {
+private suspend fun listen(label: String) {
     repeat(2) { iteration ->
         println("iteration: $iteration")
         Chip(label).use { chip ->
-            runBlocking {
+            coroutineScope {
                 val out = chip.output(OUT, false)
                 delay(100.milliseconds)
                 launch(Dispatchers.Default) {
@@ -124,7 +124,7 @@ private fun listen(label: String) {
     }
 }
 
-public fun chipTest(label: String) {
+public suspend fun chipTest(label: String) {
     println("chipTest")
     errors(label)
     active(label)
