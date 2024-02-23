@@ -45,6 +45,9 @@ private const val EXPECTED_LIB_VERSION = "1.6.3"
 @Suppress("SpellCheckingInspection")
 public const val GPIO_RASPBERRY_PI_5: String = "pinctrl-rp1"
 
+@Suppress("SpellCheckingInspection")
+public const val GPIO_RASPBERRY_PI_ZERO_2: String = "pinctrl-bcm2835"
+
 public typealias GpioNotification = (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
 
 private inline fun Boolean.ordinal() = toByte().toInt()
@@ -114,7 +117,7 @@ public open class Gpio(label: String, @Suppress("SpellCheckingInspection") priva
     /**
      * Returns if [GpioNotification] returns false or if [timeout] reached.
      * @return false if [timeout] reached else true
-     * */
+     */
     public fun listen(
         line: Int, bias: Bias, timeout: Duration, active: Active = Active.High, notification: GpioNotification,
     ): Boolean {
