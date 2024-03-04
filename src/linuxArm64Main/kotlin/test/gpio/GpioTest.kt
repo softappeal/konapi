@@ -18,7 +18,7 @@ private const val OPEN_IN = 27 // not connected
 private const val IN = 22 // NOTE: connected to OUT
 private const val OUT = 17
 
-private fun errors(label: String) {
+private suspend fun errors(label: String) {
     class MyGpio : Gpio(label) {
         val out = output(OUT, false)
         val `in` = input(IN, Bias.Disable)

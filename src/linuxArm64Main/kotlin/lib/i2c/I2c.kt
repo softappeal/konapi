@@ -5,8 +5,10 @@ package ch.softappeal.kopi.lib.i2c
 import ch.softappeal.kopi.lib.Closeable
 import ch.softappeal.kopi.lib.i2c.native.I2C_SLAVE
 import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_read_byte
+import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_read_byte_data
 import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_read_i2c_block_data
 import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_write_byte
+import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_write_byte_data
 import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_write_i2c_block_data
 import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.addressOf
@@ -59,28 +61,44 @@ public class I2c(bus: Int) : Closeable {
     public fun device(address: Int): I2cDevice = I2cDevice(this, address)
 }
 
-public class I2cDevice internal constructor(private val i2c: I2c, private val address: Int) {
+public class I2cDevice internal constructor(private val i2c: I2c, private val address: Int) { // TODO: review
     private suspend fun <R> selectDevice(action: (file: Int) -> R) = i2c.selectDevice(address, action)
 
     // S Addr Wr [A] value [A] P
     public suspend fun write(value: UByte) {
         selectDevice { file ->
-            check(i2c_smbus_write_byte(file, value) == 0) { "byte write with I2C device $address failed" }
+            check(i2c_smbus_write_byte(file, value) == 0) { "i2c_smbus_write_byte with I2C device $address failed" }
         }
     }
 
     // S Addr Rd [A] [Data] NA P
     public suspend fun read(): UByte = selectDevice { file ->
         val value = i2c_smbus_read_byte(file)
-        check(value >= 0) { "byte read with I2C device $address failed" }
+        check(value >= 0) { "i2c_smbus_read_byte with I2C device $address failed" }
         value.toUByte()
+    }
+
+    // S Addr Wr [A] Comm [A] S Addr Rd [A] [Data] NA P
+    public suspend fun read(command: UByte): UByte = selectDevice { file ->
+        val value = i2c_smbus_read_byte_data(file, command)
+        check(value >= 0) { "i2c_smbus_read_byte_data with I2C device $address failed" }
+        value.toUByte()
+    }
+
+    // S Addr Wr [A] Comm [A] Data [A] P
+    public suspend fun write(command: UByte, value: UByte) {
+        selectDevice { file ->
+            check(i2c_smbus_write_byte_data(file, command, value) == 0) {
+                "i2c_smbus_write_byte_data with I2C device $address failed"
+            }
+        }
     }
 
     public suspend fun write(command: UByte, values: UByteArray) {
         selectDevice { file ->
             values.usePinned { pinned ->
                 check(i2c_smbus_write_i2c_block_data(file, command, values.size.toUByte(), pinned.addressOf(0)) == 0) {
-                    "block write with I2C device $address failed"
+                    "i2c_smbus_write_i2c_block_data with I2C device $address failed"
                 }
             }
         }
