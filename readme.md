@@ -11,7 +11,7 @@ sudo reboot
 ```
 
 ```shell
-ssh guru@raspberrypi
+ssh guru@raspberrypi-1
 ```
 
 ```shell
@@ -22,5 +22,15 @@ scp ./build/bin/linuxArm64/releaseExecutable/kopi.kexe guru@raspberrypi:kopi
 cat /sys/firmware/devicetree/base/model
 ```
 
-Raspberry Pi Zero 2 W Rev 1.0
-Raspberry Pi 5 Model B Rev 1.0
+- Raspberry Pi Zero 2 W Rev 1.0
+- Raspberry Pi 5 Model B Rev 1.0
+
+autostart
+
+```
+sudo nano /etc/rc.local
+
+#!/bin/sh -e
+sudo /home/guru/kopi/kopi.kexe &
+exit 0
+```
