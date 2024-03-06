@@ -7,6 +7,8 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 /*
+    Dot Matrix Liquid Crystal Display Controller/Driver
+
     The https://www.sparkfun.com/datasheets/LCD/HD44780.pdf is connected
     to an 8-bit I/O expander for I2C-bus (like https://www.nxp.com/docs/en/data-sheet/PCF8574_PCF8574A.pdf).
     Only the bus lines DB4 to DB7 are connected, DB0 to DB3 are unconnected.
@@ -51,8 +53,6 @@ private const val LINES_2: UByte = 0x08U
 private const val LINES_1: UByte = 0x00U
 private const val FONT_5x10: UByte = 0x04U
 private const val FONT_5x8: UByte = 0x00U
-
-public suspend fun hd44780(device: I2cDevice, config: Hd44780.Config): Hd44780 = Hd44780(device, config).apply { init() }
 
 public class Hd44780 internal constructor(private val device: I2cDevice, public val config: Config) : SuspendCloseable {
     public enum class Font { Dots5x8, Dots5x10 }
@@ -195,5 +195,7 @@ public class Hd44780 internal constructor(private val device: I2cDevice, public 
         setDisplayControl()
     }
 }
+
+public suspend fun hd44780(device: I2cDevice, config: Hd44780.Config): Hd44780 = Hd44780(device, config).apply { init() }
 
 public suspend fun lcd1602(i2cDevice: I2cDevice): Hd44780 = hd44780(i2cDevice, Hd44780.Config(2, 16, Hd44780.Font.Dots5x8))

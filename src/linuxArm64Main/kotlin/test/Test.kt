@@ -4,6 +4,7 @@ import ch.softappeal.kopi.lib.gpio.GPIO_RASPBERRY_PI_5
 import ch.softappeal.kopi.lib.gpio.GPIO_RASPBERRY_PI_ZERO_2
 import ch.softappeal.kopi.lib.gpio.Gpio
 import ch.softappeal.kopi.test.gpio.gpioTest
+import ch.softappeal.kopi.test.i2c.bme280Test
 import ch.softappeal.kopi.test.i2c.lcd1602Test
 import ch.softappeal.kopi.test.i2c.paj7620U2Test
 import kotlinx.coroutines.runBlocking
@@ -22,6 +23,7 @@ public fun main() {
     runBlocking {
         cleanupTest()
         gpioTest(gpioLabel)
+        bme280Test()
         lcd1602Test()
         paj7620U2Test(gpioLabel)
     }

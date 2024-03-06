@@ -112,21 +112,20 @@ public enum class Gesture(internal val value: Int) {
     Wave(0x100),
 }
 
-public suspend fun paj7620U2(device: I2cDevice): Paj7620U2 = Paj7620U2(device).apply { init() }
-
 public class Paj7620U2 internal constructor(private val device: I2cDevice) {
-    internal suspend fun init() {
-        suspend fun checkPartId() = check(device.read(0x00U).toInt() == 32)
-        try {
-            checkPartId()
-        } catch (ignored: Exception) {
-            checkPartId() // TODO: seems to fail often on first try
-        }
-        InitCommands.forEach { device.write(it) }
-    }
-
     public suspend fun gesture(): Gesture? {
         val gesture = (device.read(0x44U).toInt() shl 8) + device.read(0x43U).toInt()
         return Gesture.entries.firstOrNull { it.value == gesture }
     }
+}
+
+public suspend fun paj7620U2(device: I2cDevice): Paj7620U2 {
+    suspend fun checkPartId() = check(device.read(0x00U).toInt() == 32)
+    try {
+        checkPartId()
+    } catch (ignored: Exception) {
+        checkPartId() // TODO: seems to fail often on first try
+    }
+    InitCommands.forEach { device.write(it) }
+    return Paj7620U2(device)
 }
