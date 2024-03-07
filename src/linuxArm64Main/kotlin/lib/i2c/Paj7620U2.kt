@@ -9,7 +9,7 @@ import ch.softappeal.kopi.lib.i2c.I2cDevice.Command
     https://www.waveshare.com/wiki/PAJ7620U2_Gesture_Sensor
     https://www.waveshare.com/wiki/File:PAJ7620U2-Gesture-Sensor-Demo-Code.7z
     https://www.waveshare.com/wiki/File:PAJ7620U2_GDS-R1.0_29032016_41002AEN.pdf
-*/
+ */
 
 private val InitCommands = listOf(
     // ------------------------------------- select register bank 0
