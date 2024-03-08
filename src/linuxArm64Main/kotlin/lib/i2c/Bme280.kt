@@ -61,10 +61,10 @@ private fun PressureInPascalCalib.compensate(p: Double, tFine: Double): Double {
 
 private fun HumidityInPercentCalib.compensate(h: Double, tFine: Double): Double {
     // API: compensate_humidity
-    val c1 = tFine - 76800.0
-    val c2 = 1.0 + h3 / 67108864.0 * c1
-    val c3 = (1.0 + h6 / 67108864.0 * c1 * c2) * (h - (h4 * 64.0 + h5 / 16384.0 * c1)) * h2 / 65536.0 * c2
-    return (c3 * (1.0 - h1 * c3 / 524288.0)).coerceIn(0.0, 100.0)
+    val c1 = tFine - 76_800.0
+    val c2 = 1.0 + h3 / 67_108_864.0 * c1
+    val c3 = (1.0 + h6 / 67_108_864.0 * c1 * c2) * (h - (h4 * 64.0 + h5 / 16_384.0 * c1)) * h2 / 65_536.0 * c2
+    return (c3 * (1.0 - h1 * c3 / 524_288.0)).coerceIn(0.0, 100.0)
 }
 
 public class Bme280 internal constructor(
