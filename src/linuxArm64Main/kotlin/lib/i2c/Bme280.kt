@@ -67,6 +67,28 @@ private fun HumidityInPercentCalib.compensate(h: Double, tFine: Double): Double 
     return (c3 * (1.0 - h1 * c3 / 524_288.0)).coerceIn(0.0, 100.0)
 }
 
+private suspend fun setupMode(device: I2cDevice) {
+    device.write(listOf(
+        /*
+            Datasheet:
+                Table 7: Settings and performance for weather monitoring
+                5.4.3 Register 0xF2 “ctrl_hum”
+                    Changes to this register only become effective after a write operation to “ctrl_meas”.
+                5.4.5 Register 0xF4 “ctrl_meas”
+         */
+        Command(
+            0xF2U, // ctrl_hum
+            0x01U // Humidity oversampling x1
+        ),
+        Command(
+            0xF4U, // ctrl_meas
+            0x01U.toUByte() or // Forced mode
+                0x04U or // Pressure oversampling x1
+                0x20U // Temperature oversampling x1
+        ),
+    ))
+}
+
 public class Bme280 internal constructor(
     private val device: I2cDevice,
     private val temperaturInCelsiusCalib: TemperaturInCelsiusCalib,
@@ -80,6 +102,7 @@ public class Bme280 internal constructor(
     )
 
     public suspend fun measurements(): Measurements {
+        setupMode(device)
         /*
             Datasheet:
                 4. Data readout
@@ -106,25 +129,7 @@ public suspend fun bme280(device: I2cDevice): Bme280 {
     device.write(0xE0U, 0xB6U) // reset
     delay(300.milliseconds) // power-on delay
     check(device.read(0xD0U) == 0x60U.toUByte()) { "chipId isn't BME280" }
-    device.write(listOf(
-        /*
-            Datasheet:
-                Table 7: Settings and performance for weather monitoring
-                5.4.3 Register 0xF2 “ctrl_hum”
-                    Changes to this register only become effective after a write operation to “ctrl_meas”.
-                5.4.5 Register 0xF4 “ctrl_meas”
-         */
-        Command(
-            0xF2U, // ctrl_hum
-            0x01U // Humidity oversampling x1
-        ),
-        Command(
-            0xF4U, // ctrl_meas
-            0x01U.toUByte() or // Forced mode
-                0x04U or // Pressure oversampling x1
-                0x20U // Temperature oversampling x1
-        ),
-    ))
+    setupMode(device)
     /*
         Datasheet:
             4.2.2 Trimming parameter readout:
