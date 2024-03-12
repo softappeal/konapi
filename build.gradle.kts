@@ -39,6 +39,7 @@ kotlin {
         val linuxArm64Main by getting {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.bundles.ktor.server)
                 implementation(kotlin("test"))
             }
         }

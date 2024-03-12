@@ -72,9 +72,9 @@ private suspend fun setupMode(device: I2cDevice) {
         /*
             Datasheet:
                 Table 7: Settings and performance for weather monitoring
-                5.4.3 Register 0xF2 “ctrl_hum”
-                    Changes to this register only become effective after a write operation to “ctrl_meas”.
-                5.4.5 Register 0xF4 “ctrl_meas”
+                5.4.3 Register 0xF2 "ctrl_hum"
+                    Changes to this register only become effective after a write operation to "ctrl_meas".
+                5.4.5 Register 0xF4 "ctrl_meas"
          */
         Command(
             0xF2U, // ctrl_hum
@@ -106,9 +106,9 @@ public class Bme280 internal constructor(
         /*
             Datasheet:
                 4. Data readout
-                Table 29: Register 0xF7 … 0xF9 “press”
-                Table 30: Register 0xFA … 0xFC “temp”
-                Table 31: Register 0xFD … 0xFE “hum”
+                Table 29: Register 0xF7 ... 0xF9 "press"
+                Table 30: Register 0xFA ... 0xFC "temp"
+                Table 31: Register 0xFD ... 0xFE "hum"
                 Table 18: Memory map
             API: parse_sensor_data
          */
@@ -133,7 +133,7 @@ public suspend fun bme280(device: I2cDevice): Bme280 {
     /*
         Datasheet:
             4.2.2 Trimming parameter readout:
-                The trimming parameters are programmed into the devices’ non-volatile memory (NVM) during
+                The trimming parameters are programmed into the devices non-volatile memory (NVM) during
                 production and cannot be altered by the customer.
             Table 16: Compensation parameter storage, naming and data type
             Table 18: Memory map
