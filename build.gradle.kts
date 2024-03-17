@@ -8,10 +8,10 @@ kotlin {
         compilations["main"].apply {
             cinterops {
                 create("gpiod") {
-                    includeDirs("src/nativeInterop/cinterop/headers/include/")
+                    includeDirs("src/nativeInterop/cinterop/headers/")
                 }
                 create("i2c") {
-                    includeDirs("src/nativeInterop/cinterop/headers/include/")
+                    includeDirs("src/nativeInterop/cinterop/headers/")
                 }
             }
             compilerOptions
@@ -22,6 +22,7 @@ kotlin {
         binaries {
             executable(listOf(RELEASE)) {
                 entryPoint = "ch.softappeal.kopi.test.main"
+                linkerOpts.add("-Llibs")
             }
         }
     }

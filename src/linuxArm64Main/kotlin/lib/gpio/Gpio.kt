@@ -33,11 +33,11 @@ import kotlin.time.Duration
 /**
  * gpiodetect -v
  *   gpiodetect (libgpiod) v1.6.3
- * curl -o src/nativeInterop/cinterop/headers/include/gpiod.h https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h\?h=v1.6.3
+ * curl -o src/nativeInterop/cinterop/headers/gpiod.h https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h\?h=v1.6.3
  *
  * ldd /usr/bin/gpiodetect
  *   libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2 (0x00007fff8a300000)
- * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cinterop/libgpiod.so
+ * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 libs/libgpiod.so
  */
 @Suppress("SpellCheckingInspection")
 private const val EXPECTED_LIB_VERSION = "1.6.3"

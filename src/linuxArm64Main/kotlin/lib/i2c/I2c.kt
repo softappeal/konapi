@@ -29,12 +29,12 @@ import platform.posix.open
 
     i2cdetect -V
         i2cdetect version 4.3
-    curl -o src/nativeInterop/cinterop/headers/include/i2c/smbus.h https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/include/i2c/smbus.h\?h=v4.3
-    scp guru@raspberrypi:/usr/include/linux/i2c-dev.h src/nativeInterop/cinterop/headers/include/linux/i2c-dev.h
+    curl -o src/nativeInterop/cinterop/headers/i2c/smbus.h https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/include/i2c/smbus.h\?h=v4.3
+    scp guru@raspberrypi:/usr/include/linux/i2c-dev.h src/nativeInterop/cinterop/headers/linux/i2c-dev.h
 
     ldd /usr/sbin/i2cdetect
         libi2c.so.0 => /lib/aarch64-linux-gnu/libi2c.so.0 (0x00007fff45ac0000)
-    scp guru@raspberrypi:/lib/aarch64-linux-gnu/libi2c.so.0 src/nativeInterop/cinterop/libi2c.so
+    scp guru@raspberrypi:/lib/aarch64-linux-gnu/libi2c.so.0 libs/libi2c.so
  */
 
 public class I2c(bus: Int) : Closeable {
