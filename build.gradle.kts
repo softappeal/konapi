@@ -2,47 +2,30 @@ plugins {
     alias(libs.plugins.multiplatform)
 }
 
+@Suppress("SpellCheckingInspection")
 kotlin {
-    @Suppress("SpellCheckingInspection")
     linuxArm64 {
         compilations["main"].apply {
-            cinterops {
-                create("gpiod") {
-                    includeDirs("src/nativeInterop/cinterop/headers/")
-                }
-                create("i2c") {
-                    includeDirs("src/nativeInterop/cinterop/headers/")
-                }
-            }
-            compilerOptions
-                .options
-                .freeCompilerArgs
-                .add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
-        }
-        binaries {
-            executable(listOf(RELEASE)) {
-                entryPoint = "ch.softappeal.kopi.test.main"
-                linkerOpts.add("-Llibs")
-            }
-        }
-    }
-
-    targets.all {
-        compilations.all {
             explicitApi()
             kotlinOptions {
                 allWarningsAsErrors = true
+                freeCompilerArgs += "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
             }
-        }
-    }
-
-    sourceSets {
-        val linuxArm64Main by getting {
-            dependencies {
+            cinterops {
+                // https://kotlinlang.org/docs/native-c-interop.html
+                // https://kotlinlang.org/docs/native-app-with-c-and-libcurl.html
+                val gpiod by creating
+                val i2c by creating
+            }
+            defaultSourceSet.dependencies {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.bundles.ktor.server)
                 implementation(kotlin("test"))
             }
+        }
+        binaries.executable(listOf(RELEASE)) {
+            entryPoint = "ch.softappeal.kopi.test.main"
+            linkerOpts.add("-Lsrc/nativeInterop/cInterop/libs")
         }
     }
 }

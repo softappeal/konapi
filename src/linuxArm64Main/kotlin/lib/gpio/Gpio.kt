@@ -37,7 +37,7 @@ import kotlin.time.Duration
  *
  * ldd /usr/bin/gpiodetect
  *   libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2 (0x00007fff8a300000)
- * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 libs/libgpiod.so
+ * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cInterop/libs/libgpiod.so
  */
 @Suppress("SpellCheckingInspection")
 private const val EXPECTED_LIB_VERSION = "1.6.3"

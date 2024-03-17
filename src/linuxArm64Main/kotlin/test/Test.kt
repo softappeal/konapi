@@ -19,6 +19,7 @@ import platform.posix.getpid
 private fun runServer() = embeddedServer(CIO, port = 8080) {
     routing {
         get("/") {
+            @Suppress("SpellCheckingInspection")
             call.respondText("Hello from kopi")
         }
     }
