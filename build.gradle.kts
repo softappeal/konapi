@@ -1,3 +1,7 @@
+import kotlin.io.path.Path
+import kotlin.io.path.forEachDirectoryEntry
+import kotlin.io.path.nameWithoutExtension
+
 plugins {
     alias(libs.plugins.multiplatform)
 }
@@ -5,6 +9,7 @@ plugins {
 @Suppress("SpellCheckingInspection")
 kotlin {
     linuxArm64 {
+        val cInterop = "src/nativeInterop/cInterop"
         compilations["main"].apply {
             explicitApi()
             kotlinOptions {
@@ -14,8 +19,7 @@ kotlin {
             cinterops {
                 // https://kotlinlang.org/docs/native-c-interop.html
                 // https://kotlinlang.org/docs/native-app-with-c-and-libcurl.html
-                val gpiod by creating
-                val i2c by creating
+                Path(cInterop).forEachDirectoryEntry(glob = "*.def") { create(it.nameWithoutExtension) }
             }
             defaultSourceSet.dependencies {
                 implementation(libs.kotlinx.coroutines.core)
@@ -25,7 +29,7 @@ kotlin {
         }
         binaries.executable(listOf(RELEASE)) {
             entryPoint = "ch.softappeal.kopi.test.main"
-            linkerOpts.add("-Lsrc/nativeInterop/cInterop/libs")
+            linkerOpts.add("-L$cInterop/libs")
         }
     }
 }
