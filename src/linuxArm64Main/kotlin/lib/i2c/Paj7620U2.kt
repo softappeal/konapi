@@ -124,7 +124,7 @@ public suspend fun paj7620U2(device: I2cDevice): Paj7620U2 {
     try {
         checkPartId()
     } catch (ignored: Exception) {
-        checkPartId() // TODO: seems to fail often on first try
+        checkPartId() // NOTE: seems to fail often on first try
     }
     InitCommands.forEach { device.write(it) }
     return Paj7620U2(device)

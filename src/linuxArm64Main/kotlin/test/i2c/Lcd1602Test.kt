@@ -1,5 +1,7 @@
 package ch.softappeal.kopi.test.i2c
 
+import ch.softappeal.kopi.app.I2C_ADDRESS_LCD1602
+import ch.softappeal.kopi.app.I2C_BUS
 import ch.softappeal.kopi.lib.i2c.I2c
 import ch.softappeal.kopi.lib.i2c.lcd1602
 import ch.softappeal.kopi.lib.use
@@ -7,8 +9,9 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 public suspend fun lcd1602Test() {
-    I2c(1).use { i2c ->
-        lcd1602(i2c.device(0x027)).use { lcd ->
+    println("lcd1602Tests")
+    I2c(I2C_BUS).use { i2c ->
+        lcd1602(i2c.device(I2C_ADDRESS_LCD1602)).use { lcd ->
             delay(1.seconds)
             lcd.setBacklight(false)
             delay(1.seconds)

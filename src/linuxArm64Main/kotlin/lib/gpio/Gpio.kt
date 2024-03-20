@@ -48,6 +48,15 @@ public const val GPIO_RASPBERRY_PI_5: String = "pinctrl-rp1"
 @Suppress("SpellCheckingInspection")
 public const val GPIO_RASPBERRY_PI_ZERO_2: String = "pinctrl-bcm2835"
 
+public fun findGpioLabel(): String {
+    fun tryLabel(label: String) = label.apply { Gpio(this).close() }
+    return try {
+        tryLabel(GPIO_RASPBERRY_PI_5)
+    } catch (ignored: Exception) {
+        tryLabel(GPIO_RASPBERRY_PI_ZERO_2)
+    }
+}
+
 public typealias GpioNotification = suspend (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
 
 private inline fun Boolean.ordinal() = toByte().toInt()

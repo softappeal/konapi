@@ -1,5 +1,8 @@
 package ch.softappeal.kopi.test.gpio
 
+import ch.softappeal.kopi.app.GPIO_IN_CONNECTED_TO_OUT
+import ch.softappeal.kopi.app.GPIO_IN_UNCONNECTED
+import ch.softappeal.kopi.app.GPIO_OUT_CONNECTED_TO_IN
 import ch.softappeal.kopi.lib.gpio.Gpio
 import ch.softappeal.kopi.lib.gpio.Gpio.Active
 import ch.softappeal.kopi.lib.gpio.Gpio.Bias
@@ -14,14 +17,10 @@ import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-private const val OPEN_IN = 27 // not connected
-private const val IN = 22 // NOTE: connected to OUT
-private const val OUT = 17
-
 private suspend fun errors(label: String) {
     class MyGpio : Gpio(label) {
-        val out = output(OUT, false)
-        val `in` = input(IN, Bias.Disable)
+        val out = output(GPIO_OUT_CONNECTED_TO_IN, false)
+        val `in` = input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
     }
 
     val myChip = MyGpio()
@@ -40,15 +39,15 @@ private suspend fun errors(label: String) {
     chip1.close()
 
     Gpio(label).use { chip ->
-        assertTrue(chip.input(OPEN_IN, Bias.PullUp).get())
+        assertTrue(chip.input(GPIO_IN_UNCONNECTED, Bias.PullUp).get())
         println(assertFails {
-            chip.input(OPEN_IN, Bias.PullUp)
+            chip.input(GPIO_IN_UNCONNECTED, Bias.PullUp)
         })
         println(assertFails {
-            chip.listen(OPEN_IN, Bias.PullUp, 1.seconds) { _, _ -> true }
+            chip.listen(GPIO_IN_UNCONNECTED, Bias.PullUp, 1.seconds) { _, _ -> true }
         })
         println(assertFails {
-            chip.output(OPEN_IN, false)
+            chip.output(GPIO_IN_UNCONNECTED, false)
         })
     }
 }
@@ -56,36 +55,36 @@ private suspend fun errors(label: String) {
 private fun active(label: String) {
     Gpio(label).use { chip ->
         println("active - out: high, in: high")
-        chip.output(OUT, false).use { out ->
-            chip.input(IN, Bias.Disable).use { `in` ->
+        chip.output(GPIO_OUT_CONNECTED_TO_IN, false).use { out ->
+            chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable).use { `in` ->
                 assertFalse(`in`.get())
                 out.set(true)
                 assertTrue(`in`.get())
             }
         }
-        chip.output(OUT, false)
-        assertFalse(chip.input(IN, Bias.Disable).get())
+        chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
+        assertFalse(chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable).get())
     }
     Gpio(label).use { chip ->
         println("active - out: low, in: high")
-        val out = chip.output(OUT, false, Active.Low)
-        val `in` = chip.input(IN, Bias.Disable)
+        val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false, Active.Low)
+        val `in` = chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
         assertTrue(`in`.get())
         out.set(true)
         assertFalse(`in`.get())
     }
     Gpio(label).use { chip ->
         println("active - out: high, in: low")
-        val out = chip.output(OUT, false)
-        val `in` = chip.input(IN, Bias.Disable, Active.Low)
+        val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
+        val `in` = chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, Active.Low)
         assertTrue(`in`.get())
         out.set(true)
         assertFalse(`in`.get())
     }
     Gpio(label).use { chip ->
         println("active - out: low, in: low")
-        val out = chip.output(OUT, false, Active.Low)
-        val `in` = chip.input(IN, Bias.Disable, Active.Low)
+        val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false, Active.Low)
+        val `in` = chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, Active.Low)
         assertFalse(`in`.get())
         out.set(true)
         assertTrue(`in`.get())
@@ -95,25 +94,25 @@ private fun active(label: String) {
 private suspend fun bias(label: String) {
     Gpio(label).use { gpio ->
         println("bias - PullUp, high")
-        val input = gpio.input(OPEN_IN, Bias.PullUp)
+        val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp)
         delay(10.milliseconds)
         assertTrue(input.get())
     }
     Gpio(label).use { gpio ->
         println("bias - PullDown, high")
-        val input = gpio.input(OPEN_IN, Bias.PullDown)
+        val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullDown)
         delay(10.milliseconds)
         assertFalse(input.get())
     }
     Gpio(label).use { gpio ->
         println("bias - PullUp, Low")
-        val input = gpio.input(OPEN_IN, Bias.PullUp, Active.Low)
+        val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp, Active.Low)
         delay(10.milliseconds)
         assertFalse(input.get())
     }
     Gpio(label).use { gpio ->
         println("bias - PullDown, Low")
-        val input = gpio.input(OPEN_IN, Bias.PullDown, Active.Low)
+        val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullDown, Active.Low)
         delay(10.milliseconds)
         assertTrue(input.get())
     }
@@ -124,16 +123,15 @@ private suspend fun listen(label: String) {
         println("iteration: $iteration")
         Gpio(label).use { chip ->
             coroutineScope {
-                val out = chip.output(OUT, false)
+                val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
                 delay(100.milliseconds)
                 launch(Dispatchers.Default) {
                     var counter = 0
-                    // TODO: there is an unexpected Falling notification at start of first iteration; why?
-                    val notTimeout = chip.listen(IN, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
+                    val timedOut = !chip.listen(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
                         println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
                         ++counter < 6
                     }
-                    println("notTimeout: $notTimeout")
+                    println("timedOut: $timedOut")
                 }
                 repeat(2 + iteration) {
                     delay(100.milliseconds)
@@ -149,7 +147,7 @@ private suspend fun listen(label: String) {
 }
 
 public suspend fun gpioTest(label: String) {
-    println("chipTest")
+    println("gpioTest")
     errors(label)
     active(label)
     bias(label)

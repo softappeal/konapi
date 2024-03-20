@@ -1,6 +1,9 @@
 package ch.softappeal.kopi.test
 
+import ch.softappeal.kopi.lib.Closeable
+import ch.softappeal.kopi.lib.SuspendCloseable
 import ch.softappeal.kopi.lib.tryFinally
+import ch.softappeal.kopi.lib.use
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertSame
@@ -110,6 +113,38 @@ private suspend fun withSuspend() {
     assertTrue(finallyCalled)
 }
 
+private fun closeable() {
+    val closeable = object : Closeable {
+        var used = false
+        var closed = false
+        override fun close() {
+            closed = true
+        }
+    }
+    assertTrue(closeable.use {
+        it.used = true
+        true
+    })
+    assertTrue(closeable.used)
+    assertTrue(closeable.closed)
+}
+
+private suspend fun suspendCloseable() {
+    val closeable = object : SuspendCloseable {
+        var used = false
+        var closed = false
+        override suspend fun close() {
+            closed = true
+        }
+    }
+    assertTrue(closeable.use {
+        it.used = true
+        true
+    })
+    assertTrue(closeable.used)
+    assertTrue(closeable.closed)
+}
+
 public suspend fun cleanupTest() {
     println("cleanupTest")
     noTryExceptionNoFinallyException()
@@ -117,4 +152,6 @@ public suspend fun cleanupTest() {
     noTryExceptionWithFinallyException()
     withTryExceptionWithFinallyException()
     withSuspend()
+    closeable()
+    suspendCloseable()
 }

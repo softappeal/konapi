@@ -29,6 +29,7 @@ kotlin {
         }
         binaries.executable(listOf(RELEASE)) {
             entryPoint = "ch.softappeal.kopi.test.main"
+            // entryPoint = "ch.softappeal.kopi.app.main"
             linkerOpts.add("-L$cInterop/libs")
         }
     }
