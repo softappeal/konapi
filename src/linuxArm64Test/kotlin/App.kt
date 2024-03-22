@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.app
+package ch.softappeal.kopi
 
 import io.ktor.server.application.call
 import io.ktor.server.cio.CIO
@@ -15,7 +15,7 @@ private fun runServer() = embeddedServer(CIO, port = 8080) {
     }
 }.start(wait = true)
 
-public fun main() {
+fun main() {
     runServer()
     /*
         val gpioLabel = findGpioLabel()

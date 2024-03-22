@@ -1,8 +1,8 @@
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi.lib.i2c
+package ch.softappeal.kopi.i2c
 
-import ch.softappeal.kopi.lib.i2c.I2cDevice.Command
+import ch.softappeal.kopi.i2c.I2cDevice.Command
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

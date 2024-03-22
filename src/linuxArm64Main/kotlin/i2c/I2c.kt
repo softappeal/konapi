@@ -1,15 +1,15 @@
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi.lib.i2c
+package ch.softappeal.kopi.i2c
 
-import ch.softappeal.kopi.lib.Closeable
-import ch.softappeal.kopi.lib.i2c.native.I2C_SLAVE
-import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_read_byte
-import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_read_byte_data
-import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_read_i2c_block_data
-import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_write_byte
-import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_write_byte_data
-import ch.softappeal.kopi.lib.i2c.native.i2c_smbus_write_i2c_block_data
+import ch.softappeal.kopi.Closeable
+import ch.softappeal.kopi.i2c.native.I2C_SLAVE
+import ch.softappeal.kopi.i2c.native.i2c_smbus_read_byte
+import ch.softappeal.kopi.i2c.native.i2c_smbus_read_byte_data
+import ch.softappeal.kopi.i2c.native.i2c_smbus_read_i2c_block_data
+import ch.softappeal.kopi.i2c.native.i2c_smbus_write_byte
+import ch.softappeal.kopi.i2c.native.i2c_smbus_write_byte_data
+import ch.softappeal.kopi.i2c.native.i2c_smbus_write_i2c_block_data
 import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.allocArray

@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.lib
+package ch.softappeal.kopi
 
 public inline fun <R> tryFinally(tryBlock: () -> R, finallyBlock: () -> Unit): R {
     var tryException: Exception? = null
