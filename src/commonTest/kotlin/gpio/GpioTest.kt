@@ -18,48 +18,33 @@ import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-val gpioLabel = findGpioLabel()
-
-class GpioTest {
+abstract class GpioTest {
     @Test
     fun errors() = runBlocking {
-        class MyGpio : Gpio(gpioLabel) {
-            val out = output(GPIO_OUT_CONNECTED_TO_IN, false)
-            val `in` = input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
-        }
-
-        val myChip = MyGpio()
-        assertFalse(myChip.`in`.get())
+        val myChip = Gpio()
+        val out = myChip.output(GPIO_OUT_CONNECTED_TO_IN, false)
+        val `in` = myChip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
+        assertFalse(`in`.get())
         myChip.close()
-        println(assertFails {
-            myChip.out.set(false)
-        })
-        println(assertFails {
-            myChip.`in`.get()
-        })
+        println(assertFails { out.set(false) })
+        println(assertFails { `in`.get() })
 
-        val chip1 = Gpio(gpioLabel)
-        val chip2 = Gpio(gpioLabel) // opening the same chip twice seems to be legal
+        val chip1 = Gpio()
+        val chip2 = Gpio() // opening the same chip twice seems to be legal
         chip2.close()
         chip1.close()
 
-        Gpio(gpioLabel).use { chip ->
+        Gpio().use { chip ->
             assertTrue(chip.input(GPIO_IN_UNCONNECTED, Bias.PullUp).get())
-            println(assertFails {
-                chip.input(GPIO_IN_UNCONNECTED, Bias.PullUp)
-            })
-            println(assertFails {
-                chip.listen(GPIO_IN_UNCONNECTED, Bias.PullUp, 1.seconds) { _, _ -> true }
-            })
-            println(assertFails {
-                chip.output(GPIO_IN_UNCONNECTED, false)
-            })
+            println(assertFails { chip.input(GPIO_IN_UNCONNECTED, Bias.PullUp) })
+            println(assertFails { chip.listen(GPIO_IN_UNCONNECTED, Bias.PullUp, 1.seconds) { _, _ -> true } })
+            println(assertFails { chip.output(GPIO_IN_UNCONNECTED, false) })
         }
     }
 
     @Test
     fun active() {
-        Gpio(gpioLabel).use { chip ->
+        Gpio().use { chip ->
             println("active - out: high, in: high")
             chip.output(GPIO_OUT_CONNECTED_TO_IN, false).use { out ->
                 chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable).use { `in` ->
@@ -71,7 +56,7 @@ class GpioTest {
             chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
             assertFalse(chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable).get())
         }
-        Gpio(gpioLabel).use { chip ->
+        Gpio().use { chip ->
             println("active - out: low, in: high")
             val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false, Active.Low)
             val `in` = chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
@@ -79,7 +64,7 @@ class GpioTest {
             out.set(true)
             assertFalse(`in`.get())
         }
-        Gpio(gpioLabel).use { chip ->
+        Gpio().use { chip ->
             println("active - out: high, in: low")
             val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
             val `in` = chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, Active.Low)
@@ -87,7 +72,7 @@ class GpioTest {
             out.set(true)
             assertFalse(`in`.get())
         }
-        Gpio(gpioLabel).use { chip ->
+        Gpio().use { chip ->
             println("active - out: low, in: low")
             val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false, Active.Low)
             val `in` = chip.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, Active.Low)
@@ -99,25 +84,25 @@ class GpioTest {
 
     @Test
     fun bias() = runBlocking {
-        Gpio(gpioLabel).use { gpio ->
+        Gpio().use { gpio ->
             println("bias - PullUp, high")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp)
             delay(10.milliseconds)
             assertTrue(input.get())
         }
-        Gpio(gpioLabel).use { gpio ->
+        Gpio().use { gpio ->
             println("bias - PullDown, high")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullDown)
             delay(10.milliseconds)
             assertFalse(input.get())
         }
-        Gpio(gpioLabel).use { gpio ->
+        Gpio().use { gpio ->
             println("bias - PullUp, Low")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp, Active.Low)
             delay(10.milliseconds)
             assertFalse(input.get())
         }
-        Gpio(gpioLabel).use { gpio ->
+        Gpio().use { gpio ->
             println("bias - PullDown, Low")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullDown, Active.Low)
             delay(10.milliseconds)
@@ -129,17 +114,16 @@ class GpioTest {
     fun listen() = runBlocking {
         repeat(2) { iteration ->
             println("iteration: $iteration")
-            Gpio(gpioLabel).use { chip ->
+            Gpio().use { chip ->
                 coroutineScope {
                     val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
                     delay(100.milliseconds)
                     launch(Dispatchers.Default) {
                         var counter = 0
-                        val timedOut =
-                            !chip.listen(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
-                                println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
-                                ++counter < 6
-                            }
+                        val timedOut = !chip.listen(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
+                            println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
+                            ++counter < 6
+                        }
                         println("timedOut: $timedOut")
                     }
                     repeat(2 + iteration) {
