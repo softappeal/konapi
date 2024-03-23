@@ -1,8 +1,8 @@
 @file:Suppress("SpellCheckingInspection")
+@file:OptIn(ExperimentalUnsignedTypes::class)
 
 package ch.softappeal.kopi.i2c
 
-import ch.softappeal.kopi.i2c.I2cDevice.Command
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -76,11 +76,11 @@ private suspend fun setupMode(device: I2cDevice) {
                     Changes to this register only become effective after a write operation to "ctrl_meas".
                 5.4.5 Register 0xF4 "ctrl_meas"
          */
-        Command(
+        I2cCommand(
             0xF2U, // ctrl_hum
             0x01U // Humidity oversampling x1
         ),
-        Command(
+        I2cCommand(
             0xF4U, // ctrl_meas
             0x01U.toUByte() or // Forced mode
                 0x04U or // Pressure oversampling x1

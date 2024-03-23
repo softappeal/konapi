@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package ch.softappeal.kopi.gpio
 
 import ch.softappeal.kopi.Closeable
@@ -21,6 +23,7 @@ import ch.softappeal.kopi.gpio.native.gpiod_line_request_output_flags
 import ch.softappeal.kopi.gpio.native.gpiod_line_set_value
 import ch.softappeal.kopi.gpio.native.gpiod_version_string
 import ch.softappeal.kopi.tryFinally
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr

@@ -9,18 +9,14 @@ plugins {
 
 val cInterop = "src/nativeInterop/cInterop"
 
-@Suppress("SpellCheckingInspection")
 kotlin {
     jvm()
 
     linuxArm64 {
-        compilations["main"].apply {
-            kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
-            cinterops {
-                // https://kotlinlang.org/docs/native-c-interop.html
-                // https://kotlinlang.org/docs/native-app-with-c-and-libcurl.html
-                Path(cInterop).forEachDirectoryEntry(glob = "*.def") { create(it.nameWithoutExtension) }
-            }
+        compilations["main"].cinterops {
+            // https://kotlinlang.org/docs/native-c-interop.html
+            // https://kotlinlang.org/docs/native-app-with-c-and-libcurl.html
+            Path(cInterop).forEachDirectoryEntry(glob = "*.def") { create(it.nameWithoutExtension) }
         }
     }
 
@@ -32,20 +28,14 @@ kotlin {
     }
 
     sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.coroutines.core)
+            }
+        }
         val commonTest by getting {
             dependencies {
-                implementation(libs.kotlinx.coroutines.core)
                 implementation(kotlin("test"))
-            }
-        }
-        val linuxArm64Main by getting {
-            dependencies {
-                implementation(libs.kotlinx.coroutines.core)
-            }
-        }
-        val linuxArm64Test by getting {
-            dependencies {
-                implementation(libs.bundles.ktor.server)
             }
         }
     }

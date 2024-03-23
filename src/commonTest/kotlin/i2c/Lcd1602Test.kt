@@ -8,10 +8,10 @@ import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.seconds
 
-class Lcd1602Test {
+abstract class Lcd1602Test {
     @Test
     fun test() = runBlocking {
-        I2c(I2C_BUS).use { i2c ->
+        I2cBus(I2C_BUS).use { i2c ->
             lcd1602(i2c.device(I2C_ADDRESS_LCD1602)).use { lcd ->
                 delay(1.seconds)
                 lcd.setBacklight(false)

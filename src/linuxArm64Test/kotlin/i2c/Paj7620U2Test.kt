@@ -5,7 +5,7 @@ import ch.softappeal.kopi.I2C_ADDRESS_PAJ7620U2
 import ch.softappeal.kopi.I2C_BUS
 import ch.softappeal.kopi.gpio.Gpio
 import ch.softappeal.kopi.gpio.gpioLabel
-import ch.softappeal.kopi.i2c.I2c
+import ch.softappeal.kopi.i2c.I2cBus
 import ch.softappeal.kopi.i2c.paj7620U2
 import ch.softappeal.kopi.use
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ abstract class Paj7620U2Test {
     @Test
     fun test() {
         runBlocking {
-            I2c(I2C_BUS).use { i2c ->
+            I2cBus(I2C_BUS).use { i2c ->
                 val paj7620U2 = paj7620U2(i2c.device(I2C_ADDRESS_PAJ7620U2))
                 println(paj7620U2.gesture())
                 coroutineScope {
