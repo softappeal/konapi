@@ -7,8 +7,6 @@ plugins {
     alias(libs.plugins.multiplatform)
 }
 
-val libraries = libs
-
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.multiplatform")
     kotlin {
@@ -25,7 +23,7 @@ allprojects {
 }
 
 val cInterop = "src/nativeInterop/cInterop"
-val libraryPath = "-L$cInterop/libs"
+val libraryPath by extra("-L$cInterop/libs")
 
 kotlin {
     linuxArm64 {
@@ -43,7 +41,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libraries.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
         val commonTest by getting {
@@ -61,26 +59,4 @@ tasks.named("linkDebugTestLinuxArm64", type = KotlinNativeLink::class) {
 
 tasks.named("build") {
     dependsOn("linkDebugTestLinuxArm64")
-}
-
-project("app") {
-    kotlin {
-        linuxArm64 {
-            binaries {
-                executable(listOf(RELEASE)) {
-                    entryPoint = "ch.softappeal.kopi.app.main"
-                    linkerOpts += libraryPath
-                }
-            }
-        }
-        sourceSets {
-            val commonMain by getting {
-                dependencies {
-                    implementation(project(":"))
-                    implementation(libraries.kotlinx.coroutines.core)
-                    implementation(libraries.bundles.ktor.server)
-                }
-            }
-        }
-    }
 }
