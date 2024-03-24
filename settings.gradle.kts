@@ -1,3 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 rootProject.name = "kopi"
+
+include("app")

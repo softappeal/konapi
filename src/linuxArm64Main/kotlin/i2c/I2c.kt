@@ -1,5 +1,5 @@
-@file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalForeignApi::class)
+@file:Suppress("SpellCheckingInspection")
 
 package ch.softappeal.kopi.i2c
 

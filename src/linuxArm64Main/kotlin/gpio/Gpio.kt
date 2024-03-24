@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalForeignApi::class)
+@file:Suppress("SpellCheckingInspection")
 
 package ch.softappeal.kopi.gpio
 
@@ -44,10 +45,8 @@ import kotlin.time.Duration
  *   libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2 (0x00007fff8a300000)
  * scp guru@raspberrypi:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cInterop/libs/libgpiod.so
  */
-@Suppress("SpellCheckingInspection")
 private const val EXPECTED_LIB_VERSION = "1.6.3"
 
-@Suppress("SpellCheckingInspection")
 private const val CONSUMER = "kopi"
 
 private inline fun Boolean.ordinal() = toByte().toInt()

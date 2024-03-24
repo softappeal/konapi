@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
+@file:Suppress("SpellCheckingInspection", "unused")
 
 package ch.softappeal.kopi.i2c
 
@@ -17,7 +17,7 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 private const val RS_DATA: UByte = 0x01U        // register select: data register
 private const val RS_INSTRUCTION: UByte = 0x00U // register select: instruction register
-@Suppress("unused") private const val RW_READ: UByte = 0x02U
+private const val RW_READ: UByte = 0x02U
 private const val RW_WRITE: UByte = 0x00U
 private const val E_TRUE: UByte = 0x04U  // enable high
 private const val E_FALSE: UByte = 0x00U // enable low
@@ -34,8 +34,8 @@ private const val SET_DDRAM_ADDR: UByte = 0x80U
 
 // ENTRY_MODE_SET:
 private const val INCREMENT: UByte = 0x02U
-@Suppress("unused") private const val DECREMENT: UByte = 0x00U
-@Suppress("unused") private const val SHIFT_ON: UByte = 0x01U
+private const val DECREMENT: UByte = 0x00U
+private const val SHIFT_ON: UByte = 0x01U
 private const val SHIFT_OFF: UByte = 0x00U
 
 // DISPLAY_CONTROL:

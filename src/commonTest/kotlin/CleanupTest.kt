@@ -88,18 +88,17 @@ class CleanupTest {
         assertEquals(listOf(finallyException), tryException.suppressedExceptions)
     }
 
+    @Suppress("RedundantSuspendModifier")
     @Test
     fun withSuspend() = runBlocking {
         var tryCalled = false
         var finallyCalled = false
 
-        @Suppress("RedundantSuspendModifier")
         suspend fun tryBlock(): Int {
             tryCalled = true
             return 123
         }
 
-        @Suppress("RedundantSuspendModifier")
         suspend fun finallyBlock(): Int {
             finallyCalled = true
             return 321
