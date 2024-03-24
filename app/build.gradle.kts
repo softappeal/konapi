@@ -8,7 +8,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(rootProject)
                 implementation(libs.kotlinx.coroutines.core)

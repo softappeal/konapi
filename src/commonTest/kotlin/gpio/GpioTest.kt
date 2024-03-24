@@ -5,8 +5,10 @@ import ch.softappeal.kopi.GPIO_IN_UNCONNECTED
 import ch.softappeal.kopi.GPIO_OUT_CONNECTED_TO_IN
 import ch.softappeal.kopi.gpio.Gpio.Active
 import ch.softappeal.kopi.gpio.Gpio.Bias
+import ch.softappeal.kopi.printlnCC
 import ch.softappeal.kopi.use
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -113,26 +115,27 @@ abstract class GpioTest {
     @Test
     fun listen() = runBlocking {
         repeat(2) { iteration ->
-            println("iteration: $iteration")
+            printlnCC("iteration: $iteration")
             Gpio().use { chip ->
                 coroutineScope {
+                    printlnCC("coroutineScope")
                     val out = chip.output(GPIO_OUT_CONNECTED_TO_IN, false)
                     delay(100.milliseconds)
-                    launch(Dispatchers.Default) {
+                    launch(Dispatchers.IO) {
+                        printlnCC("launch")
                         var counter = 0
                         val timedOut = !chip.listen(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
-                            println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
+                            printlnCC("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
                             ++counter < 6
                         }
-                        println("timedOut: $timedOut")
+                        printlnCC("timedOut: $timedOut")
                     }
                     repeat(2 + iteration) {
-                        delay(100.milliseconds)
-                        println("out: true")
-                        out.set(true)
-                        delay(100.milliseconds)
-                        println("out: false")
-                        out.set(false)
+                        listOf(true, false).forEach { value ->
+                            delay(100.milliseconds)
+                            printlnCC("out: $value")
+                            out.set(value)
+                        }
                     }
                 }
             }
