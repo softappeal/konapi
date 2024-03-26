@@ -35,7 +35,7 @@ import platform.posix.open
 
     ldd /usr/sbin/i2cdetect
         libi2c.so.0 => /lib/aarch64-linux-gnu/libi2c.so.0 (0x00007fff45ac0000)
-    scp guru@raspberrypi:/lib/aarch64-linux-gnu/libi2c.so.0 src/nativeInterop/cInterop/libs/libi2c.so
+    scp guru@raspberrypi:/lib/aarch64-linux-gnu/libi2c.so.0 src/nativeInterop/cinterop/libs/libi2c.so
  */
 
 public actual fun I2cBus(bus: Int): I2cBus {
