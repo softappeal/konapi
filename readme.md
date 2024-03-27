@@ -20,7 +20,7 @@ autostart
 sudo nano /etc/rc.local
 
 #!/bin/sh -e
-sudo /home/guru/kopi/kopi.kexe &
+sudo /home/guru/kopi/app.kexe &
 exit 0
 ```
 

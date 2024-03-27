@@ -44,27 +44,42 @@ private data class TemperatureCompensateResult(val temperaturInCelsius: Double, 
 
 private fun TemperaturInCelsiusCalib.compensate(t: Double): TemperatureCompensateResult {
     // API: compensate_temperature
-    val c1 = t / 131_072.0 - t1 / 8192.0
-    val c2 = (t / 16_384.0 - t1 / 1024.0) * t2 + c1 * c1 * t3
-    return TemperatureCompensateResult(temperaturInCelsius = (c2 / 5120.0).coerceIn(-40.0, 85.0), tFine = c2)
+    val var1 = (t / 16_384.0 - t1 / 1024.0) * t2
+    var var2 = t / 131_072.0 - t1 / 8192.0
+    var2 *= var2 * t3
+    val tFine = var1 + var2
+    return TemperatureCompensateResult(temperaturInCelsius = (tFine / 5120.0).coerceIn(-40.0, 85.0), tFine)
 }
 
 private fun PressureInPascalCalib.compensate(p: Double, tFine: Double): Double {
     // API: compensate_pressure
-    val c1 = tFine / 2.0 - 64_000.0
-    val c2 = (1.0 + (p3 * c1 * c1 / 524_288.0 + p2 * c1) / 17_179_869_184.0) * p1
-    return if (c2 <= 0.0) 30_000.0 else {
-        val c3 = (1048_576.0 - p - ((c1 * c1 * p6 / 32_768.0 + c1 * p5 * 2.0) / 4.0 + p4 * 65_536.0) / 4096.0) * 6250.0 / c2
-        (c3 + (p9 * c3 * c3 / 2147_483_648.0 + c3 * p8 / 32_768.0 + p7) / 16.0).coerceIn(30_000.0, 110_000.0)
+    var var1 = tFine / 2.0 - 64_000.0
+    var var2 = var1 * var1 * p6 / 32_768.0
+    var2 += var1 * p5 * 2.0
+    var2 = var2 / 4.0 + p4 * 65_536.0
+    val var3 = p3 * var1 * var1 / 524_288.0
+    var1 = (var3 + p2 * var1) / 524_288.0
+    var1 = (1.0 + var1 / 32_768.0) * p1
+    return if (var1 <= 0.0) 30_000.0 else {
+        var pressure = 1048_576.0 - p
+        pressure = (pressure - var2 / 4096.0) * 6250.0 / var1
+        var1 = p9 * pressure * pressure / 2147_483_648.0
+        var2 = pressure * p8 / 32_768.0
+        pressure += (var1 + var2 + p7) / 16.0
+        pressure.coerceIn(30_000.0, 110_000.0)
     }
 }
 
 private fun HumidityInPercentCalib.compensate(h: Double, tFine: Double): Double {
     // API: compensate_humidity
-    val c1 = tFine - 76_800.0
-    val c2 = 1.0 + h3 / 67_108_864.0 * c1
-    val c3 = (1.0 + h6 / 67_108_864.0 * c1 * c2) * (h - (h4 * 64.0 + h5 / 16_384.0 * c1)) * h2 / 65_536.0 * c2
-    return (c3 * (1.0 - h1 * c3 / 524_288.0)).coerceIn(0.0, 100.0)
+    val var1 = tFine - 76_800.0
+    val var2 = h4 * 64.0 + h5 / 16_384.0 * var1
+    val var3 = h - var2
+    val var4 = h2 / 65_536.0
+    val var5 = 1.0 + h3 / 67_108_864.0 * var1
+    var var6 = 1.0 + h6 / 67_108_864.0 * var1 * var5
+    var6 *= var3 * var4 * var5
+    return (var6 * (1.0 - h1 * var6 / 524_288.0)).coerceIn(0.0, 100.0)
 }
 
 private suspend fun setupMode(device: I2cDevice) {

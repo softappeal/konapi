@@ -1,9 +1,9 @@
 package ch.softappeal.kopi.app
 
-const val GPIO_IN_CONNECTED_TO_PAJ7620U2_INT = 26
+const val GPIO_IN_CONNECTED_TO_PAJ7620U2_INT = 25
 
 // https://static.rapidonline.com/pdf/78-4110_v1.pdf
-const val GPIO_IN_CONNECTED_TO_HC_SR505 = 16
+@Suppress("unused") const val GPIO_IN_CONNECTED_TO_HC_SR505 = 16
 
 const val I2C_BUS = 1
 
