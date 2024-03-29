@@ -120,8 +120,8 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
     device.write(0xE0U, 0xB6U) // reset
     delay(300.milliseconds) // power-on delay
     check(device.read(0xD0U) == 0x60U.toUByte()) { "chipId isn't BME280" }
-    suspend fun setupMode(device: I2cDevice) = device.write(SetupMode)
-    setupMode(device)
+    suspend fun setupMode() = device.write(SetupMode)
+    setupMode()
     /*
         Datasheet:
             4.2.2 Trimming parameter readout:
@@ -169,7 +169,7 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
     }
     return object : Bme280 {
         override suspend fun measurements(): Measurements {
-            setupMode(device)
+            setupMode()
             /*
                 Datasheet:
                     4. Data readout
