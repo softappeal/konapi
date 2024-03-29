@@ -1,0 +1,9 @@
+headers = linux/spi/spidev.h
+package = ch.softappeal.kopi.native.spi
+compilerOpts = -Isrc/nativeInterop/cinterop/headers
+
+---
+
+static inline __u64 spiIocMessage(int arg) {
+    return SPI_IOC_MESSAGE(arg);
+}

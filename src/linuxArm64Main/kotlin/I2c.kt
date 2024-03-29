@@ -48,7 +48,7 @@ public actual fun I2cBus(bus: Int): I2cBus {
         override fun device(address: Int): I2cDevice {
             suspend fun <R> selectDevice(action: (file: Int) -> R) = mutex.withLock {
                 if (lastAddress != address) {
-                    check(ioctl(file, I2C_SLAVE.toULong(), address) == 0) { "can't communicate with I2C device $address" }
+                    check(ioctl(file, I2C_SLAVE.toULong(), address) != -1) { "can't communicate with I2C device $address" }
                     lastAddress = address
                 }
                 action(file)
@@ -97,7 +97,7 @@ public actual fun I2cBus(bus: Int): I2cBus {
         }
 
         override fun close() {
-            close(file)
+            check(close(file) == 0) { "close failed" }
         }
     }
 }

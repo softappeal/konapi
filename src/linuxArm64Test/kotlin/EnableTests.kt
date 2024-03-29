@@ -5,6 +5,7 @@ import ch.softappeal.kopi.devices.I2cLcd1602Test
 import ch.softappeal.kopi.devices.Paj7620U2Test
 
 class ConcreteGpioTest : GpioTest()
+class ConcreteSpiTest : SpiTest()
 
 class ConcreteI2cLcd1602Test : I2cLcd1602Test()
 class ConcreteBme280Test : Bme280Test()
