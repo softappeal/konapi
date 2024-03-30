@@ -1,11 +1,10 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi.devices
+package ch.softappeal.kopi.devices.bosch
 
-import ch.softappeal.kopi.I2cCommand
-import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.devices.Bme280.Measurements
+import ch.softappeal.kopi.RegisterCommand
+import ch.softappeal.kopi.devices.bosch.Bme280.Measurements
 import ch.softappeal.kopi.write
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -25,11 +24,11 @@ private val SetupMode = listOf(
                 Changes to this register only become effective after a write operation to "ctrl_meas".
             5.4.5 Register 0xF4 "ctrl_meas"
      */
-    I2cCommand(
+    RegisterCommand(
         0xF2U, // ctrl_hum
         0x01U // Humidity oversampling x1
     ),
-    I2cCommand(
+    RegisterCommand(
         0xF4U, // ctrl_meas
         0x01U.toUByte() or // Forced mode
             0x04U or // Pressure oversampling x1
@@ -47,7 +46,7 @@ public interface Bme280 {
     public suspend fun measurements(): Measurements
 }
 
-public suspend fun Bme280(device: I2cDevice): Bme280 {
+public suspend fun Bme280(device: BoschDevice): Bme280 {
     class TemperatureCalib(
         val t1: Double,
         val t2: Double,
