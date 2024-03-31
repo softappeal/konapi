@@ -3,10 +3,8 @@
 
 package ch.softappeal.kopi.devices
 
-import ch.softappeal.kopi.I2cCommand
 import ch.softappeal.kopi.I2cDevice
 import ch.softappeal.kopi.devices.Bme280.Measurements
-import ch.softappeal.kopi.write
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -16,26 +14,6 @@ import kotlin.time.Duration.Companion.milliseconds
     Datasheet: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
     API      : https://github.com/boschsensortec/BME280_SensorAPI/blob/master/bme280.c
  */
-
-private val SetupMode = listOf(
-    /*
-        Datasheet:
-            Table 7: Settings and performance for weather monitoring
-            5.4.3 Register 0xF2 "ctrl_hum"
-                Changes to this register only become effective after a write operation to "ctrl_meas".
-            5.4.5 Register 0xF4 "ctrl_meas"
-     */
-    I2cCommand(
-        0xF2U, // ctrl_hum
-        0x01U // Humidity oversampling x1
-    ),
-    I2cCommand(
-        0xF4U, // ctrl_meas
-        0x01U.toUByte() or // Forced mode
-            0x04U or // Pressure oversampling x1
-            0x20U // Temperature oversampling x1
-    ),
-)
 
 public interface Bme280 {
     public data class Measurements(
@@ -120,7 +98,25 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
     device.write(0xE0U, 0xB6U) // reset
     delay(300.milliseconds) // power-on delay
     check(device.read(0xD0U) == 0x60U.toUByte()) { "chipId isn't BME280" }
-    suspend fun setupMode() = device.write(SetupMode)
+    suspend fun setupMode() {
+        /*
+            Datasheet:
+                Table 7: Settings and performance for weather monitoring
+                5.4.3 Register 0xF2 "ctrl_hum"
+                    Changes to this register only become effective after a write operation to "ctrl_meas".
+                5.4.5 Register 0xF4 "ctrl_meas"
+         */
+        device.write(
+            0xF2U, // ctrl_hum
+            0x01U // Humidity oversampling x1
+        )
+        device.write(
+            0xF4U, // ctrl_meas
+            0x01U.toUByte() or // Forced mode
+                0x04U or // Pressure oversampling x1
+                0x20U // Temperature oversampling x1
+        )
+    }
     setupMode()
     /*
         Datasheet:

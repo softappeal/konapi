@@ -213,5 +213,4 @@ public suspend fun I2cHd44780(device: I2cDevice, config: Config): I2cHd44780 {
     }.apply { clear() }
 }
 
-@Suppress("FunctionName")
-public suspend fun I2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 = I2cHd44780(i2cDevice, Config(2, 16, Font.Dots5x8))
+public suspend fun i2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 = I2cHd44780(i2cDevice, Config(2, 16, Font.Dots5x8))

@@ -20,6 +20,7 @@ import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import platform.posix.O_RDWR
+import platform.posix.close
 import platform.posix.ioctl
 import platform.posix.open
 
@@ -96,7 +97,7 @@ public actual fun I2cBus(bus: Int): I2cBus {
         }
 
         override fun close() {
-            platform.posix.close(file)
+            close(file)
         }
     }
 }
