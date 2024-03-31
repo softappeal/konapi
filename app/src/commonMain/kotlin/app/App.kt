@@ -4,11 +4,10 @@ import ch.softappeal.kopi.Gpio
 import ch.softappeal.kopi.Gpio.Bias
 import ch.softappeal.kopi.Gpio.Edge
 import ch.softappeal.kopi.I2cBus
+import ch.softappeal.kopi.devices.Bme280
 import ch.softappeal.kopi.devices.I2cLcd1602
 import ch.softappeal.kopi.devices.Paj7620U2
 import ch.softappeal.kopi.devices.Paj7620U2.Gesture
-import ch.softappeal.kopi.devices.bosch.Bme280
-import ch.softappeal.kopi.devices.bosch.BoschDevice
 import ch.softappeal.kopi.use
 import io.ktor.server.application.call
 import io.ktor.server.cio.CIO
@@ -38,7 +37,7 @@ fun main() {
                 lcd.displayString("REBOOTED")
                 Gpio().use { gpio ->
                     val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
-                    val bme280 = Bme280(BoschDevice(bus.device(I2C_ADDRESS_BME280)))
+                    val bme280 = Bme280(bus.device(I2C_ADDRESS_BME280))
                     gpio.listen(GPIO_IN_CONNECTED_TO_PAJ7620U2_INT, Bias.PullUp, 100.days) { edge, _ ->
                         if (edge == Edge.Falling) {
                             val gesture = paj7620U2.gesture()
