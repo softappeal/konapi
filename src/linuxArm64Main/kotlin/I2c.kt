@@ -40,10 +40,10 @@ import platform.posix.open
  */
 
 public actual fun I2cBus(bus: Int): I2cBus {
-    val file = open("/dev/i2c-$bus", O_RDWR)
-    check(file >= 0) { "can't open I2C bus $bus" }
     val mutex = Mutex()
     var lastAddress = 0
+    val file = open("/dev/i2c-$bus", O_RDWR)
+    check(file >= 0) { "can't open I2C bus $bus" }
     return object : I2cBus {
         override fun device(address: Int): I2cDevice {
             suspend fun <R> selectDevice(action: (file: Int) -> R) = mutex.withLock {

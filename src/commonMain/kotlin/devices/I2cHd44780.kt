@@ -58,7 +58,11 @@ private const val FONT_5x8: UByte = 0x00U
 public interface I2cHd44780 : SuspendCloseable {
     public enum class Font { Dots5x8, Dots5x10 }
 
-    public class Config(public val lines: Int, public val columns: Int, public val font: Font) {
+    public data class Config(
+        public val lines: Int,
+        public val columns: Int,
+        public val font: Font,
+    ) {
         init {
             require(lines == 1 || lines == 2 || lines == 4) { "lines must be 1, 2 or 4" }
             require(columns > 0) { "colums must be > 0" }

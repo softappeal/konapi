@@ -4,6 +4,7 @@ import ch.softappeal.kopi.I2C_ADDRESS_BME280
 import ch.softappeal.kopi.I2C_BUS
 import ch.softappeal.kopi.I2cBus
 import ch.softappeal.kopi.I2cDevice
+import ch.softappeal.kopi.SpiDevice
 import ch.softappeal.kopi.boschSpiAdapter
 import ch.softappeal.kopi.spiDevice
 import ch.softappeal.kopi.use
@@ -31,6 +32,9 @@ abstract class Bme280Test {
     @Test
     @Ignore
     fun spi() {
-        spiDevice().use { device -> bme280Test(boschSpiAdapter(device)) }
+        spiDevice().use { device ->
+            device.config = SpiDevice.Config(speedHz = 10_000_000U)
+            bme280Test(boschSpiAdapter(device))
+        }
     }
 }
