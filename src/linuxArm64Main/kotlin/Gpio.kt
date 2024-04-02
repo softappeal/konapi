@@ -3,11 +3,6 @@
 
 package ch.softappeal.kopi
 
-import ch.softappeal.kopi.Gpio.Active
-import ch.softappeal.kopi.Gpio.Bias
-import ch.softappeal.kopi.Gpio.Edge
-import ch.softappeal.kopi.Gpio.Input
-import ch.softappeal.kopi.Gpio.Output
 import ch.softappeal.kopi.native.gpio.GPIOD_LINE_EVENT_FALLING_EDGE
 import ch.softappeal.kopi.native.gpio.GPIOD_LINE_EVENT_RISING_EDGE
 import ch.softappeal.kopi.native.gpio.GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW
@@ -50,14 +45,14 @@ private const val CONSUMER = "kopi"
 
 private inline fun Boolean.ordinal() = toByte().toInt()
 
-private inline fun flags(active: Active, bias: Bias = Bias.Disable) = when (active) {
-    Active.Low -> GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW.toInt()
-    Active.High -> 0
+private inline fun flags(active: Gpio.Active, bias: Gpio.Bias = Gpio.Bias.Disable) = when (active) {
+    Gpio.Active.Low -> GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW.toInt()
+    Gpio.Active.High -> 0
 } +
     when (bias) {
-        Bias.Disable -> GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
-        Bias.PullDown -> GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
-        Bias.PullUp -> GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
+        Gpio.Bias.Disable -> GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
+        Gpio.Bias.PullDown -> GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
+        Gpio.Bias.PullUp -> GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
     }.toInt()
 
 public actual fun Gpio(label: String): Gpio {
@@ -66,12 +61,12 @@ public actual fun Gpio(label: String): Gpio {
     val chip = gpiod_chip_open_by_label(label) ?: error("no chip with label '$label'")
     fun getLine(line: Int) = gpiod_chip_get_line(chip, line.toUInt()) ?: error("can't get line $line")
     return object : Gpio {
-        override fun output(line: Int, initValue: Boolean, active: Active): Output {
+        override fun output(line: Int, initValue: Boolean, active: Gpio.Active): Gpio.Output {
             val linePtr = getLine(line)
             check(gpiod_line_request_output_flags(linePtr, CONSUMER, flags(active), initValue.ordinal()) == 0) {
                 "can't request output for line $line"
             }
-            return object : Output {
+            return object : Gpio.Output {
                 override fun set(value: Boolean) {
                     check(gpiod_line_set_value(linePtr, value.ordinal()) == 0) { "can't set value for line $line" }
                 }
@@ -80,12 +75,12 @@ public actual fun Gpio(label: String): Gpio {
             }
         }
 
-        override fun input(line: Int, bias: Bias, active: Active): Input {
+        override fun input(line: Int, bias: Gpio.Bias, active: Gpio.Active): Gpio.Input {
             val linePtr = getLine(line)
             check(gpiod_line_request_input_flags(linePtr, CONSUMER, flags(active, bias)) == 0) {
                 "can't request input for line $line"
             }
-            return object : Input {
+            return object : Gpio.Input {
                 override fun get() = when (gpiod_line_get_value(linePtr)) {
                     0 -> false
                     1 -> true
@@ -97,7 +92,7 @@ public actual fun Gpio(label: String): Gpio {
         }
 
         override suspend fun listen(
-            line: Int, bias: Bias, timeout: Duration, active: Active, notification: GpioNotification,
+            line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
         ): Boolean {
             val linePtr = getLine(line)
             check(gpiod_line_request_both_edges_events_flags(linePtr, CONSUMER, flags(active, bias)) == 0) {
@@ -118,8 +113,8 @@ public actual fun Gpio(label: String): Gpio {
                             1 -> { // there is an event
                                 check(gpiod_line_event_read(linePtr, event.ptr) == 0) { error("can't read event for line $line") }
                                 val edge = when (event.event_type.toUInt()) {
-                                    GPIOD_LINE_EVENT_RISING_EDGE -> Edge.Rising
-                                    GPIOD_LINE_EVENT_FALLING_EDGE -> Edge.Falling
+                                    GPIOD_LINE_EVENT_RISING_EDGE -> Gpio.Edge.Rising
+                                    GPIOD_LINE_EVENT_FALLING_EDGE -> Gpio.Edge.Falling
                                     else -> error("unexpected event on line $line")
                                 }
                                 if (!notification(edge, ts.tv_sec * 1_000_000_000 + ts.tv_nsec)) break

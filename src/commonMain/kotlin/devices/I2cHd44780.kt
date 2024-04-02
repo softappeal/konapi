@@ -4,8 +4,6 @@ package ch.softappeal.kopi.devices
 
 import ch.softappeal.kopi.I2cDevice
 import ch.softappeal.kopi.SuspendCloseable
-import ch.softappeal.kopi.devices.I2cHd44780.Config
-import ch.softappeal.kopi.devices.I2cHd44780.Font
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -91,7 +89,7 @@ public interface I2cHd44780 : SuspendCloseable {
     public suspend fun setBacklight(value: Boolean)
 }
 
-public suspend fun I2cHd44780(device: I2cDevice, config: Config): I2cHd44780 {
+public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2cHd44780 {
     delay(100.milliseconds) // power on reset
 
     var blink = false
@@ -147,8 +145,8 @@ public suspend fun I2cHd44780(device: I2cDevice, config: Config): I2cHd44780 {
                 else -> LINES_2
             } or
             when (config.font) {
-                Font.Dots5x8 -> FONT_5x8
-                Font.Dots5x10 -> FONT_5x10
+                I2cHd44780.Font.Dots5x8 -> FONT_5x8
+                I2cHd44780.Font.Dots5x10 -> FONT_5x10
             }
     )
     write4Bit(ENTRY_MODE_SET or INCREMENT or SHIFT_OFF)
@@ -213,4 +211,5 @@ public suspend fun I2cHd44780(device: I2cDevice, config: Config): I2cHd44780 {
     }.apply { clear() }
 }
 
-public suspend fun i2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 = I2cHd44780(i2cDevice, Config(2, 16, Font.Dots5x8))
+public suspend fun i2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 =
+    I2cHd44780(i2cDevice, I2cHd44780.Config(2, 16, I2cHd44780.Font.Dots5x8))

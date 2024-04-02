@@ -1,7 +1,5 @@
 package ch.softappeal.kopi
 
-import ch.softappeal.kopi.Gpio.Active
-import ch.softappeal.kopi.Gpio.Bias
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.coroutineScope
@@ -20,7 +18,7 @@ abstract class GpioTest {
     fun errors() = runBlocking {
         val myGpio = Gpio()
         val out = myGpio.output(GPIO_OUT_CONNECTED_TO_IN, false)
-        val `in` = myGpio.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
+        val `in` = myGpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable)
         assertFalse(`in`.get())
         myGpio.close()
         println(assertFails { out.set(false) })
@@ -32,9 +30,9 @@ abstract class GpioTest {
         gpio1.close()
 
         Gpio().use { gpio ->
-            assertTrue(gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp).get())
-            println(assertFails { gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp) })
-            println(assertFails { gpio.listen(GPIO_IN_UNCONNECTED, Bias.PullUp, 1.seconds) { _, _ -> true } })
+            assertTrue(gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp).get())
+            println(assertFails { gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp) })
+            println(assertFails { gpio.listen(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, 1.seconds) { _, _ -> true } })
             println(assertFails { gpio.output(GPIO_IN_UNCONNECTED, false) })
         }
     }
@@ -44,19 +42,19 @@ abstract class GpioTest {
         Gpio().use { gpio ->
             println("active - out: high, in: high")
             gpio.output(GPIO_OUT_CONNECTED_TO_IN, false).use { out ->
-                gpio.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable).use { `in` ->
+                gpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable).use { `in` ->
                     assertFalse(`in`.get())
                     out.set(true)
                     assertTrue(`in`.get())
                 }
             }
             gpio.output(GPIO_OUT_CONNECTED_TO_IN, false)
-            assertFalse(gpio.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable).get())
+            assertFalse(gpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable).get())
         }
         Gpio().use { gpio ->
             println("active - out: low, in: high")
-            val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false, Active.Low)
-            val `in` = gpio.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable)
+            val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false, Gpio.Active.Low)
+            val `in` = gpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable)
             assertTrue(`in`.get())
             out.set(true)
             assertFalse(`in`.get())
@@ -64,15 +62,15 @@ abstract class GpioTest {
         Gpio().use { gpio ->
             println("active - out: high, in: low")
             val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false)
-            val `in` = gpio.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, Active.Low)
+            val `in` = gpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, Gpio.Active.Low)
             assertTrue(`in`.get())
             out.set(true)
             assertFalse(`in`.get())
         }
         Gpio().use { gpio ->
             println("active - out: low, in: low")
-            val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false, Active.Low)
-            val `in` = gpio.input(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, Active.Low)
+            val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false, Gpio.Active.Low)
+            val `in` = gpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, Gpio.Active.Low)
             assertFalse(`in`.get())
             out.set(true)
             assertTrue(`in`.get())
@@ -83,25 +81,25 @@ abstract class GpioTest {
     fun bias() = runBlocking {
         Gpio().use { gpio ->
             println("bias - PullUp, high")
-            val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp)
+            val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp)
             delay(10.milliseconds)
             assertTrue(input.get())
         }
         Gpio().use { gpio ->
             println("bias - PullDown, high")
-            val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullDown)
+            val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullDown)
             delay(10.milliseconds)
             assertFalse(input.get())
         }
         Gpio().use { gpio ->
             println("bias - PullUp, Low")
-            val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullUp, Active.Low)
+            val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, Gpio.Active.Low)
             delay(10.milliseconds)
             assertFalse(input.get())
         }
         Gpio().use { gpio ->
             println("bias - PullDown, Low")
-            val input = gpio.input(GPIO_IN_UNCONNECTED, Bias.PullDown, Active.Low)
+            val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullDown, Gpio.Active.Low)
             delay(10.milliseconds)
             assertTrue(input.get())
         }
@@ -120,10 +118,11 @@ abstract class GpioTest {
                         printlnCC("launch")
                         var counter = 0
                         // NOTE: there is an unexpected Falling notification at start of first iteration (on Pi 5 but not on Pi Zero 2 W); why?
-                        val timedOut = !gpio.listen(GPIO_IN_CONNECTED_TO_OUT, Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
-                            printlnCC("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
-                            ++counter < 6
-                        }
+                        val timedOut =
+                            !gpio.listen(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
+                                printlnCC("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
+                                ++counter < 6
+                            }
                         printlnCC("timedOut: $timedOut")
                     }
                     repeat(2 + iteration) {

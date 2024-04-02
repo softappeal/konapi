@@ -1,12 +1,9 @@
 package ch.softappeal.kopi.app
 
 import ch.softappeal.kopi.Gpio
-import ch.softappeal.kopi.Gpio.Bias
-import ch.softappeal.kopi.Gpio.Edge
 import ch.softappeal.kopi.I2cBus
 import ch.softappeal.kopi.devices.Bme280
 import ch.softappeal.kopi.devices.Paj7620U2
-import ch.softappeal.kopi.devices.Paj7620U2.Gesture
 import ch.softappeal.kopi.devices.i2cLcd1602
 import ch.softappeal.kopi.use
 import io.ktor.server.application.call
@@ -38,15 +35,15 @@ fun main() {
                 Gpio().use { gpio ->
                     val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
                     val bme280 = Bme280(bus.device(I2C_ADDRESS_BME280))
-                    gpio.listen(GPIO_IN_CONNECTED_TO_PAJ7620U2_INT, Bias.PullUp, 100.days) { edge, _ ->
-                        if (edge == Edge.Falling) {
+                    gpio.listen(GPIO_IN_CONNECTED_TO_PAJ7620U2_INT, Gpio.Bias.PullUp, 100.days) { edge, _ ->
+                        if (edge == Gpio.Edge.Falling) {
                             val gesture = paj7620U2.gesture()
                             val measurements = bme280.measurements()
                             val string = when (gesture) {
                                 null -> "<none>"
-                                Gesture.Up -> "Temp:" + (measurements.temperaturInCelsius * 10).roundToInt() + " 0.1C"
-                                Gesture.Down -> "Press:" + (measurements.pressureInPascal / 100).roundToInt() + " hPa"
-                                Gesture.Left -> "Humid:" + (measurements.humidityInPercent * 10).roundToInt() + " 0.1%"
+                                Paj7620U2.Gesture.Up -> "Temp:" + (measurements.temperaturInCelsius * 10).roundToInt() + " 0.1C"
+                                Paj7620U2.Gesture.Down -> "Press:" + (measurements.pressureInPascal / 100).roundToInt() + " hPa"
+                                Paj7620U2.Gesture.Left -> "Humid:" + (measurements.humidityInPercent * 10).roundToInt() + " 0.1%"
                                 else -> gesture.name
                             }
                             lcd.setCursorPosition(1, 0)

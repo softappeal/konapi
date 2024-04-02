@@ -1,7 +1,6 @@
 package ch.softappeal.kopi.devices
 
 import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.devices.Paj7620U2.Gesture
 
 /*
     Gesture Recognition Sensor
@@ -124,9 +123,9 @@ public suspend fun Paj7620U2(device: I2cDevice): Paj7620U2 {
         write(0x42U, 0x01U)
     }
     return object : Paj7620U2 {
-        override suspend fun gesture(): Gesture? {
+        override suspend fun gesture(): Paj7620U2.Gesture? {
             val gesture = (device.read(0x44U).toInt() shl 8) + device.read(0x43U).toInt()
-            return Gesture.entries.firstOrNull { it.value == gesture }
+            return Paj7620U2.Gesture.entries.firstOrNull { it.value == gesture }
         }
     }
 }

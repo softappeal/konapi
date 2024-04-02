@@ -4,7 +4,6 @@
 package ch.softappeal.kopi.devices
 
 import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.devices.Bme280.Measurements
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -164,7 +163,7 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
         )
     }
     return object : Bme280 {
-        override suspend fun measurements(): Measurements {
+        override suspend fun measurements(): Bme280.Measurements {
             setupMode()
             /*
                 Datasheet:
@@ -179,7 +178,7 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
             fun toUShort(offset: Int) =
                 ((adc[offset].toInt() shl 12) or (adc[offset + 1].toInt() shl 4) or (adc[offset + 2].toInt() shr 4)).toDouble()
             val (temperaturInCelsius, tFine) = temperatureCalib.compensate(toUShort(3))
-            return Measurements(
+            return Bme280.Measurements(
                 temperaturInCelsius = temperaturInCelsius,
                 pressureInPascal = pressureCalib.compensate(toUShort(0), tFine),
                 humidityInPercent = humidityCalib.compensate(((adc[6].toInt() shl 8) or adc[7].toInt()).toDouble(), tFine)
