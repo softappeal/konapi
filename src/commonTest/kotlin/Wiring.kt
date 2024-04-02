@@ -12,6 +12,7 @@ const val GPIO_DISPLAY_DC = 5
 const val GPIO_DISPLAY_RST = 6
 
 fun spiDeviceBus0CS0() = SpiDevice(0, 0)
+fun spiDeviceBus0CS1() = SpiDevice(0, 1)
 const val GPIO_SPI0_MISO = 9
 const val GPIO_SPI0_MOSI = 10
 const val GPIO_SPI0_CE0 = 8
