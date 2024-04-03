@@ -3,13 +3,13 @@
 
 package ch.softappeal.kopi
 
+import ch.softappeal.kopi.native.spi.SPI_IOC_MESSAGE_1
 import ch.softappeal.kopi.native.spi.SPI_IOC_RD_BITS_PER_WORD
 import ch.softappeal.kopi.native.spi.SPI_IOC_RD_MAX_SPEED_HZ
 import ch.softappeal.kopi.native.spi.SPI_IOC_RD_MODE
 import ch.softappeal.kopi.native.spi.SPI_IOC_WR_BITS_PER_WORD
 import ch.softappeal.kopi.native.spi.SPI_IOC_WR_MAX_SPEED_HZ
 import ch.softappeal.kopi.native.spi.SPI_IOC_WR_MODE
-import ch.softappeal.kopi.native.spi.spiIocMessage
 import ch.softappeal.kopi.native.spi.spi_ioc_transfer
 import kotlinx.cinterop.CPrimitiveVar
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -18,6 +18,7 @@ import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.UIntVar
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toLong
@@ -95,11 +96,11 @@ public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
                     while (index < size) {
                         val length = min(blockSize, size - index)
                         transfer.apply {
-                            tx_buf = pinned.addressOf(index).toLong().toULong()
+                            tx_buf = pinned.addressOf(index).toLong().convert()
                             rx_buf = tx_buf
-                            len = length.toUInt()
+                            len = length.convert()
                         }
-                        check(ioctl(file, spiIocMessage(1), transfer) != -1) { "ioctl failed" }
+                        check(ioctl(file, SPI_IOC_MESSAGE_1, transfer) != -1) { "ioctl failed" }
                         index += length
                     }
                 }

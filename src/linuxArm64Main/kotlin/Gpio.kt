@@ -24,6 +24,7 @@ import ch.softappeal.kopi.native.gpio.gpiod_line_set_value
 import ch.softappeal.kopi.native.gpio.gpiod_version_string
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toByte
@@ -59,7 +60,7 @@ public actual fun Gpio(label: String): Gpio {
     val actualLibVersion = gpiod_version_string()!!.toKString()
     check(EXPECTED_LIB_VERSION == actualLibVersion) { "lib version is '$actualLibVersion' but should be '$EXPECTED_LIB_VERSION'" }
     val chip = gpiod_chip_open_by_label(label) ?: error("no chip with label '$label'")
-    fun getLine(line: Int) = gpiod_chip_get_line(chip, line.toUInt()) ?: error("can't get line $line")
+    fun getLine(line: Int) = gpiod_chip_get_line(chip, line.convert()) ?: error("can't get line $line")
     return object : Gpio {
         override fun output(line: Int, initValue: Boolean, active: Gpio.Active): Gpio.Output {
             val linePtr = getLine(line)

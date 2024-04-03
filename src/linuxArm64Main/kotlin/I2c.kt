@@ -14,6 +14,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.usePinned
@@ -48,7 +49,7 @@ public actual fun I2cBus(bus: Int): I2cBus {
         override fun device(address: Int): I2cDevice {
             suspend fun <R> selectDevice(action: (file: Int) -> R) = mutex.withLock {
                 if (lastAddress != address) {
-                    check(ioctl(file, I2C_SLAVE.toULong(), address) != -1) { "can't communicate with I2C device $address" }
+                    check(ioctl(file, I2C_SLAVE.convert(), address) != -1) { "can't communicate with I2C device $address" }
                     lastAddress = address
                 }
                 action(file)
@@ -58,10 +59,10 @@ public actual fun I2cBus(bus: Int): I2cBus {
                     check(i2c_smbus_write_byte(file, value) == 0) { "i2c_smbus_write_byte with I2C device $address failed" }
                 }
 
-                override suspend fun read() = selectDevice { file ->
+                override suspend fun read(): UByte = selectDevice { file ->
                     val value = i2c_smbus_read_byte(file)
                     check(value >= 0) { "i2c_smbus_read_byte with I2C device $address failed" }
-                    value.toUByte()
+                    value.convert()
                 }
 
                 override suspend fun write(register: UByte, value: UByte) = selectDevice { file ->
@@ -70,15 +71,15 @@ public actual fun I2cBus(bus: Int): I2cBus {
                     }
                 }
 
-                override suspend fun read(register: UByte) = selectDevice { file ->
+                override suspend fun read(register: UByte): UByte = selectDevice { file ->
                     val value = i2c_smbus_read_byte_data(file, register)
                     check(value >= 0) { "i2c_smbus_read_byte_data with I2C device $address failed" }
-                    value.toUByte()
+                    value.convert()
                 }
 
                 override suspend fun write(register: UByte, values: UByteArray) = selectDevice { file ->
                     values.usePinned { pinned ->
-                        check(i2c_smbus_write_i2c_block_data(file, register, values.size.toUByte(), pinned.addressOf(0)) == 0) {
+                        check(i2c_smbus_write_i2c_block_data(file, register, values.size.convert(), pinned.addressOf(0)) == 0) {
                             "i2c_smbus_write_i2c_block_data with I2C device $address failed"
                         }
                     }
@@ -87,7 +88,7 @@ public actual fun I2cBus(bus: Int): I2cBus {
                 override suspend fun read(register: UByte, length: Int) = selectDevice { file ->
                     memScoped {
                         val buffer = allocArray<UByteVar>(length)
-                        check(i2c_smbus_read_i2c_block_data(file, register, length.toUByte(), buffer) == length) {
+                        check(i2c_smbus_read_i2c_block_data(file, register, length.convert(), buffer) == length) {
                             "block read with I2C device $address failed"
                         }
                         UByteArray(length) { buffer[it] }

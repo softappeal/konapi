@@ -2,14 +2,14 @@
 
 package ch.softappeal.kopi
 
-public const val SPI_MODE_0: UByte = 0b0000_0000U
-public const val SPI_MODE_1: UByte = 0b0000_0001U
-public const val SPI_MODE_2: UByte = 0b0000_0010U
-public const val SPI_MODE_3: UByte = 0b000_0011U
-public const val SPI_MODE_CS_HIGH: UByte = 0b0000_0100U
-public const val SPI_MODE_LSB_FIRST: UByte = 0b0000_1000U
-public const val SPI_MODE_3WIRE: UByte = 0b0001_0000U
-public const val SPI_MODE_LOOP: UByte = 0b0010_0000U
+public const val SPI_MODE_0: UByte = 0x00U
+public const val SPI_MODE_1: UByte = 0x01U
+public const val SPI_MODE_2: UByte = 0x02U
+public const val SPI_MODE_3: UByte = 0x03U
+public const val SPI_MODE_LSB_FIRST: UByte = 0x08U
+public const val SPI_MODE_LSB_LAST: UByte = 0x00U
+public const val SPI_MODE_3WIRE: UByte = 0x10U
+public const val SPI_MODE_4WIRE: UByte = 0x00U
 
 public interface SpiDevice : Closeable {
     public data class Config(
