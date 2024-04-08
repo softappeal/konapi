@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.devices
+package ch.softappeal.kopi.devices.waveshare
 
 import ch.softappeal.kopi.I2cDevice
 

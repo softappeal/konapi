@@ -70,6 +70,26 @@ public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
         }
     }
 
+    fun transfer(bytes: UByteArray, read: Boolean) {
+        memScoped {
+            val transfer = alloc<spi_ioc_transfer>()
+            bytes.usePinned { pinned ->
+                val size = bytes.size
+                var index = 0
+                while (index < size) {
+                    val length = min(blockSize, size - index)
+                    transfer.apply {
+                        tx_buf = pinned.addressOf(index).toLong().convert()
+                        rx_buf = if (read) tx_buf else 0U
+                        len = length.convert()
+                    }
+                    check(ioctl(file, SPI_IOC_MESSAGE_1, transfer) != -1) { "ioctl failed" }
+                    index += length
+                }
+            }
+        }
+    }
+
     return object : SpiDevice {
         override val blockSize = blockSize
 
@@ -88,23 +108,11 @@ public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
             }
 
         override fun transfer(bytes: UByteArray) {
-            memScoped {
-                val transfer = alloc<spi_ioc_transfer>()
-                bytes.usePinned { pinned ->
-                    val size = bytes.size
-                    var index = 0
-                    while (index < size) {
-                        val length = min(blockSize, size - index)
-                        transfer.apply {
-                            tx_buf = pinned.addressOf(index).toLong().convert()
-                            rx_buf = tx_buf
-                            len = length.convert()
-                        }
-                        check(ioctl(file, SPI_IOC_MESSAGE_1, transfer) != -1) { "ioctl failed" }
-                        index += length
-                    }
-                }
-            }
+            transfer(bytes, true)
+        }
+
+        override fun write(bytes: UByteArray) {
+            transfer(bytes, false)
         }
 
         override fun close() {

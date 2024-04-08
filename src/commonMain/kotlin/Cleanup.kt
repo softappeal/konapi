@@ -36,3 +36,16 @@ public suspend inline fun <C : SuspendCloseable, R> C.use(block: (closeable: C) 
 }) {
     close()
 }
+
+public inline fun <R> tryCatch(tryBlock: () -> R, catchBlock: () -> Unit): R {
+    try {
+        return tryBlock()
+    } catch (tryException: Exception) {
+        try {
+            catchBlock()
+        } catch (catchException: Exception) {
+            tryException.addSuppressed(catchException)
+        }
+        throw tryException
+    }
+}

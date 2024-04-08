@@ -1,10 +1,9 @@
 package ch.softappeal.kopi.app
 
 import ch.softappeal.kopi.Gpio
-import ch.softappeal.kopi.I2cBus
-import ch.softappeal.kopi.devices.Bme280
-import ch.softappeal.kopi.devices.Paj7620U2
-import ch.softappeal.kopi.devices.i2cLcd1602
+import ch.softappeal.kopi.devices.bosch.Bme280
+import ch.softappeal.kopi.devices.hitachi.i2cLcd1602
+import ch.softappeal.kopi.devices.waveshare.Paj7620U2
 import ch.softappeal.kopi.use
 import io.ktor.server.application.call
 import io.ktor.server.cio.CIO
@@ -27,7 +26,7 @@ private fun runServer() = embeddedServer(CIO, port = 8080) {
 fun main() {
     runBlocking {
         runServer()
-        I2cBus(I2C_BUS).use { bus ->
+        i2cBus1().use { bus ->
             i2cLcd1602(bus.device(I2C_ADDRESS_LCD1602)).use { lcd ->
                 lcd.clear()
                 lcd.setCursorPosition(1, 0)
@@ -35,7 +34,7 @@ fun main() {
                 Gpio().use { gpio ->
                     val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
                     val bme280 = Bme280(bus.device(I2C_ADDRESS_BME280))
-                    gpio.listen(GPIO_IN_CONNECTED_TO_PAJ7620U2_INT, Gpio.Bias.PullUp, 100.days) { edge, _ ->
+                    gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 100.days) { edge, _ ->
                         if (edge == Gpio.Edge.Falling) {
                             val gesture = paj7620U2.gesture()
                             val measurements = bme280.measurements()

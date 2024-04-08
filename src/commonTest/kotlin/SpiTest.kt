@@ -9,7 +9,8 @@ import kotlin.time.measureTime
 abstract class SpiTest {
     @Test
     fun test() {
-        spiDevice().use { spi ->
+        spiDeviceBus0CS0().use { spi ->
+            println("precondition for this test: pin $GPIO_SPI0_MISO must be connected to pin $GPIO_SPI0_MOSI")
             println("blockSize: ${spi.blockSize}")
             println(spi.config)
             val config =

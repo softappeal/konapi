@@ -136,4 +136,12 @@ abstract class GpioTest {
             }
         }
     }
+
+    @Test
+    fun checkDisplayPinsFree() {
+        Gpio().use { gpio ->
+            gpio.input(GPIO_DISPLAY_DC, Gpio.Bias.Disable)
+            gpio.input(GPIO_DISPLAY_RST, Gpio.Bias.Disable)
+        }
+    }
 }

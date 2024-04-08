@@ -22,7 +22,7 @@ allprojects {
     }
 }
 
-@Suppress("SpellCheckingInspection") val cinteropPath = "src/nativeInterop/cinterop"
+val cinteropPath = "src/nativeInterop/cinterop"
 val libraryPath by extra("-L$cinteropPath/libs")
 
 kotlin {

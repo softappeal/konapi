@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection", "unused")
 
-package ch.softappeal.kopi.devices
+package ch.softappeal.kopi.devices.hitachi
 
 import ch.softappeal.kopi.I2cDevice
 import ch.softappeal.kopi.SuspendCloseable

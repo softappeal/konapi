@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -148,5 +149,65 @@ class CleanupTest {
         })
         assertTrue(closeable.used)
         assertTrue(closeable.closed)
+    }
+
+    @Test
+    fun noTryException() {
+        var tryCalled = false
+        var catchCalled = false
+        assertEquals(
+            123,
+            tryCatch({
+                tryCalled = true
+                123
+            }) {
+                catchCalled = true
+            }
+        )
+        assertTrue(tryCalled)
+        assertFalse(catchCalled)
+    }
+
+    @Test
+    fun withTryExceptionNoCatchException() {
+        var tryCalled = false
+        val tryException = Exception()
+        var catchCalled = false
+        assertSame(
+            tryException,
+            assertFails {
+                tryCatch({
+                    tryCalled = true
+                    throw tryException
+                }) {
+                    catchCalled = true
+                }
+            }
+        )
+        assertTrue(tryCalled)
+        assertTrue(catchCalled)
+    }
+
+    @Test
+    fun withTryExceptionWithCatchException() {
+        var tryCalled = false
+        val tryException = Exception()
+        var catchCalled = false
+        val catchException = Exception()
+        assertSame(
+            tryException,
+            assertFails {
+                tryCatch({
+                    tryCalled = true
+                    throw tryException
+                }) {
+                    catchCalled = true
+                    throw catchException
+                }
+            }
+        )
+        assertTrue(tryCalled)
+        assertTrue(catchCalled)
+        assertEquals(listOf(catchException), tryException.suppressedExceptions)
     }
 }
