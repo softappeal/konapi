@@ -5,6 +5,7 @@ package ch.softappeal.kopi.devices.waveshare
 
 import ch.softappeal.kopi.Closeable
 import ch.softappeal.kopi.Gpio
+import ch.softappeal.kopi.I2cDevice
 import ch.softappeal.kopi.SPI_MODE_3
 import ch.softappeal.kopi.SPI_MODE_4WIRE
 import ch.softappeal.kopi.SPI_MODE_LSB_LAST
@@ -33,18 +34,23 @@ public interface Oled1in3Monochrome : Closeable {
     public val graphics: Graphics
 }
 
-public suspend fun Oled1in3Monochrome(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, rstPin: Int): Oled1in3Monochrome {
-    spiDevice.config = SpiDevice.Config(4_000_000U, 8U, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_LSB_LAST)
-    val dc = gpio.output(dcPin, false)
+public suspend fun Oled1in3Monochrome(
+    ic2Device: I2cDevice?, spiDevice: SpiDevice?,
+    gpio: Gpio, dcPin: Int?, rstPin: Int,
+): Oled1in3Monochrome {
+    check((ic2Device == null && spiDevice != null) || (ic2Device != null && spiDevice == null)) { "one of ic2Device or spiDevice must be null" }
+    check((ic2Device != null && dcPin == null) || (spiDevice != null && dcPin != null)) { "specify dcPin only for spiDevice" }
+    spiDevice?.config = SpiDevice.Config(4_000_000U, 8U, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_LSB_LAST)
+    val dc = if (dcPin == null) null else gpio.output(dcPin, false)
     val rst = tryCatch({
         gpio.output(rstPin, false)
     }) {
-        dc.close()
+        dc?.close()
     }
 
     fun closeOutputs() {
         tryFinally({
-            dc.close()
+            dc?.close()
         }) {
             rst.close()
         }
@@ -62,12 +68,16 @@ public suspend fun Oled1in3Monochrome(spiDevice: SpiDevice, gpio: Gpio, dcPin: I
 
         fun writeByte(byte: UByte) {
             oneByte[0] = byte
-            spiDevice.write(oneByte)
+            spiDevice!!.write(oneByte)
         }
 
-        fun command(cmd: UByte) {
-            dc.set(false)
-            writeByte(cmd)
+        suspend fun command(cmd: UByte) {
+            if (ic2Device != null) {
+                ic2Device.write(0x00U, cmd)
+            } else {
+                dc!!.set(false)
+                writeByte(cmd)
+            }
         }
 
         command(0xAEU) // turn off oled panel
@@ -101,13 +111,25 @@ public suspend fun Oled1in3Monochrome(spiDevice: SpiDevice, gpio: Gpio, dcPin: I
             override val width = WIDTH
             override val height = HEIGHT
 
-            override fun update(buffer: UByteArray) {
+            val chunk = UByteArray(32) // bigger chunks don't work
+
+            override suspend fun update(buffer: UByteArray) {
                 for (page in 0..<8) {
                     command((0xB0U + page.toUByte()).toUByte()) // set page address
                     command(0x02U) // set low column address
                     command(0x10U) // set high column address
-                    dc.set(true)
-                    for (i in 0..<WIDTH) writeByte(buffer[i + WIDTH * page])
+                    var p = WIDTH * page
+                    if (ic2Device != null) {
+                        for (j in 0..<WIDTH / chunk.size) {
+                            val pe = p + chunk.size
+                            buffer.copyInto(chunk, 0, p, pe)
+                            ic2Device.write(0x40U, chunk)
+                            p = pe
+                        }
+                    } else {
+                        dc!!.set(true)
+                        for (i in 0..<WIDTH) writeByte(buffer[i + p])
+                    }
                 }
             }
         })

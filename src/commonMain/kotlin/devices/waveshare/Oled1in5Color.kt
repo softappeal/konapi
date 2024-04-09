@@ -145,7 +145,7 @@ public suspend fun Oled1in5Color(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, r
             override val width = WIDTH
             override val height = HEIGHT
 
-            override fun update(buffer: UByteArray) {
+            override suspend fun update(buffer: UByteArray) {
                 command(0x15U) // set column address
                 data(0x00U) // column address start 00
                 data(0x7FU) // column address end 127

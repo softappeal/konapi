@@ -22,4 +22,4 @@ fun i2cBus1() = I2cBus(1)
 const val I2C_ADDRESS_BME280 = 0x76
 const val I2C_ADDRESS_LCD1602 = 0x27
 const val I2C_ADDRESS_PAJ7620U2 = 0x73
-
+const val I2C_ADDRESS_OLED = 0x3C

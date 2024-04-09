@@ -55,3 +55,12 @@ public fun Gpio(): Gpio = try {
 } catch (ignored: Exception) {
     Gpio("pinctrl-bcm2835")
 }
+
+public object DummyGpio : Gpio {
+    override fun close(): Unit = Unit
+    override fun output(line: Int, initValue: Boolean, active: Gpio.Active): Gpio.Output = throw NotImplementedError()
+    override fun input(line: Int, bias: Gpio.Bias, active: Gpio.Active): Gpio.Input = throw NotImplementedError()
+    override suspend fun listen(
+        line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
+    ): Boolean = true
+}

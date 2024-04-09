@@ -28,7 +28,7 @@ public val YELLOW: Color = Color(0xFFU, 0xFFU, 0x00U)
 public interface Display {
     public val width: Int
     public val height: Int
-    public fun update(buffer: UByteArray)
+    public suspend fun update(buffer: UByteArray)
 }
 
 public abstract class Graphics(private val display: Display) {
@@ -36,7 +36,7 @@ public abstract class Graphics(private val display: Display) {
     public val height: Int = display.height
 
     protected abstract val buffer: UByteArray
-    public fun update() {
+    public suspend fun update() {
         display.update(buffer)
     }
 
