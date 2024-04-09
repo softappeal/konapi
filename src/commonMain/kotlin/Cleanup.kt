@@ -2,8 +2,8 @@ package ch.softappeal.kopi
 
 public inline fun <R> tryFinally(tryBlock: () -> R, finallyBlock: () -> Unit): R {
     var tryException: Exception? = null
-    try {
-        return tryBlock()
+    return try {
+        tryBlock()
     } catch (e: Exception) {
         tryException = e
         throw tryException
@@ -37,15 +37,13 @@ public suspend inline fun <C : SuspendCloseable, R> C.use(block: (closeable: C) 
     close()
 }
 
-public inline fun <R> tryCatch(tryBlock: () -> R, catchBlock: () -> Unit): R {
+public inline fun <R> tryCatch(tryBlock: () -> R, catchBlock: () -> Unit): R = try {
+    tryBlock()
+} catch (tryException: Exception) {
     try {
-        return tryBlock()
-    } catch (tryException: Exception) {
-        try {
-            catchBlock()
-        } catch (catchException: Exception) {
-            tryException.addSuppressed(catchException)
-        }
-        throw tryException
+        catchBlock()
+    } catch (catchException: Exception) {
+        tryException.addSuppressed(catchException)
     }
+    throw tryException
 }
