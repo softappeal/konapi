@@ -25,4 +25,26 @@ class GraphicsTest {
         assertEquals(color565, Color(red = 0b10111111U, green = 0b11011111U, blue = 0b11101111U).toColor565())
         assertEquals(Color16(b1 = 0b10111_110U, b2 = 0b111_11101U), color565.toColor16())
     }
+
+    @Test
+    fun graphics() = withGraphics(5, 3) {
+        setPixel(0, 0, WHITE)
+        setPixel(0, height - 1, WHITE)
+        setPixel(width - 1, 0, WHITE)
+        assert("""
+            .......
+            .#   #.
+            .     .
+            .#    .
+            .......
+        """)
+        fillRect(2, 1, 3, 2, WHITE)
+        assert("""
+            .......
+            .     .
+            .  ###.
+            .  ###.
+            .......
+        """)
+    }
 }
