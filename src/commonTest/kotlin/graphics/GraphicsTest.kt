@@ -32,19 +32,15 @@ class GraphicsTest {
         setPixel(0, height - 1, WHITE)
         setPixel(width - 1, 0, WHITE)
         assert("""
-            .......
-            .#   #.
-            .     .
-            .#    .
-            .......
+            #...#
+            .....
+            #....
         """)
         fillRect(2, 1, 3, 2, WHITE)
         assert("""
-            .......
-            .     .
-            .  ###.
-            .  ###.
-            .......
+            .....
+            ..###
+            ..###
         """)
     }
 }

@@ -13,19 +13,13 @@ class TestGraphics(display: Display) : Graphics(display) {
 
     fun dump(): String {
         val s = StringBuilder()
-        fun line() {
-            s.append(".".repeat(width + 2)).append('\n')
-        }
-        line()
         var i = 0
         repeat(height) {
-            s.append('.')
             repeat(width) {
-                s.append(if (buffer[i++].toInt() == 0) ' ' else '#')
+                s.append(if (buffer[i++].toInt() == 0) '.' else '#')
             }
-            s.append(".\n")
+            s.append('\n')
         }
-        line()
         return s.toString()
     }
 }
