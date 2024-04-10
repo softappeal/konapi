@@ -24,7 +24,6 @@ public suspend fun oled1in3Monochrome(ic2Device: I2cDevice?, spiDevice: SpiDevic
     Oled(
         ic2Device, spiDevice, gpio, dcPin, rstPin,
         {
-            delay(100.milliseconds)
             command(0xAEU) // turn off oled panel
             command(0x02U) // set low column address
             command(0x10U) // set high column address
@@ -57,7 +56,8 @@ public suspend fun oled1in3Monochrome(ic2Device: I2cDevice?, spiDevice: SpiDevic
                 override val width = 128
                 override val height = 64
 
-                private val chunk = UByteArray(32) // bigger chunks don't work
+                private val i2cChunk = UByteArray(32) // bigger chunks don't work
+                private val spiChunk = UByteArray(width)
                 override suspend fun update(buffer: UByteArray) {
                     for (page in 0..<8) {
                         command((0xB0U + page.toUByte()).toUByte()) // set page address
@@ -65,15 +65,16 @@ public suspend fun oled1in3Monochrome(ic2Device: I2cDevice?, spiDevice: SpiDevic
                         command(0x10U) // set high column address
                         var p = width * page
                         if (ic2Device != null) {
-                            for (j in 0..<width / chunk.size) {
-                                val pe = p + chunk.size
-                                buffer.copyInto(chunk, 0, p, pe)
-                                ic2Device.write(0x40U, chunk)
+                            repeat(width / i2cChunk.size) {
+                                val pe = p + i2cChunk.size
+                                buffer.copyInto(i2cChunk, 0, p, pe)
+                                ic2Device.write(0x40U, i2cChunk)
                                 p = pe
                             }
                         } else {
                             dc!!.set(true)
-                            for (i in 0..<width) spiWrite(buffer[i + p])
+                            buffer.copyInto(spiChunk, 0, p, p + width)
+                            spiWrite(spiChunk)
                         }
                     }
                 }

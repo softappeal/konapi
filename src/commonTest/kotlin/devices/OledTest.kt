@@ -13,6 +13,7 @@ import ch.softappeal.kopi.devices.waveshare.oled1in5Color
 import ch.softappeal.kopi.graphics.BLACK
 import ch.softappeal.kopi.graphics.BLUE
 import ch.softappeal.kopi.graphics.CYAN
+import ch.softappeal.kopi.graphics.Color
 import ch.softappeal.kopi.graphics.GREEN
 import ch.softappeal.kopi.graphics.Graphics
 import ch.softappeal.kopi.graphics.MAGENTA
@@ -35,10 +36,14 @@ import kotlin.time.measureTime
 private suspend fun Graphics.test() {
     var x = 0
     val colors = listOf(BLUE, GREEN, RED, BLACK, WHITE, CYAN, MAGENTA, YELLOW)
-    val w = width / colors.size
+    val stripes = 8
+    val w = width / colors.size / stripes
     colors.forEach { color ->
-        fillRect(x, 0, w, height, color)
-        x += w
+        repeat(stripes) { s ->
+            fun map(color: UByte) = (color.toInt() / (s + 1)).toUByte()
+            fillRect(x, 0, w, height, Color(map(color.red), map(color.green), map(color.blue)))
+            x += w
+        }
         println("${measureTime { update() }}")
         delay(1.seconds)
     }
@@ -62,7 +67,7 @@ abstract class OledTest {
     }
 
     @Test
-    @Ignore
+    // @Ignore
     fun oled1in3MonochromeSpi() = runBlocking {
         spiDeviceBus0CS1().use { device ->
             Gpio().use { gpio ->
@@ -72,7 +77,7 @@ abstract class OledTest {
     }
 
     @Test
-    // @Ignore
+    @Ignore
     fun oled1in3MonochromeI2c() = runBlocking {
         i2cBus1().use { bus ->
             Gpio().use { gpio ->

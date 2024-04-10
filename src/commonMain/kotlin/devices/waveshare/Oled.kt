@@ -7,7 +7,7 @@ import ch.softappeal.kopi.Gpio
 import ch.softappeal.kopi.I2cDevice
 import ch.softappeal.kopi.SPI_MODE_3
 import ch.softappeal.kopi.SPI_MODE_4WIRE
-import ch.softappeal.kopi.SPI_MODE_LSB_LAST
+import ch.softappeal.kopi.SPI_MODE_MSB_FIRST
 import ch.softappeal.kopi.SpiDevice
 import ch.softappeal.kopi.graphics.Graphics
 import ch.softappeal.kopi.tryCatch
@@ -21,7 +21,7 @@ public interface Oled : Closeable {
 
 public interface OledWriter {
     public val dc: Gpio.Output?
-    public fun spiWrite(byte: UByte)
+    public fun spiWrite(bytes: UByteArray)
     public suspend fun command(command: UByte)
     public fun spiData(data: UByte)
 }
@@ -33,7 +33,7 @@ public suspend fun Oled(
 ): Oled {
     check((ic2Device == null && spiDevice != null) || (ic2Device != null && spiDevice == null)) { "one of ic2Device or spiDevice must be null" }
     check((ic2Device != null && dcPin == null) || (spiDevice != null && dcPin != null)) { "specify dcPin only for spiDevice" }
-    spiDevice?.config = SpiDevice.Config(4_000_000U, 8U, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_LSB_LAST)
+    spiDevice?.config = SpiDevice.Config(4_000_000U, 8U, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
     val dc = if (dcPin == null) null else gpio.output(dcPin, false)
     val rst = tryCatch({
         gpio.output(rstPin, false)
@@ -57,8 +57,12 @@ public suspend fun Oled(
         val writer = object : OledWriter {
             override val dc = dc
 
+            override fun spiWrite(bytes: UByteArray) {
+                spiDevice!!.write(bytes)
+            }
+
             private val oneByte = UByteArray(1)
-            override fun spiWrite(byte: UByte) {
+            private fun spiWrite(byte: UByte) {
                 oneByte[0] = byte
                 spiDevice!!.write(oneByte)
             }

@@ -5,7 +5,7 @@ package ch.softappeal.kopi.devices.bosch
 import ch.softappeal.kopi.I2cDevice
 import ch.softappeal.kopi.SPI_MODE_0
 import ch.softappeal.kopi.SPI_MODE_4WIRE
-import ch.softappeal.kopi.SPI_MODE_LSB_LAST
+import ch.softappeal.kopi.SPI_MODE_MSB_FIRST
 import ch.softappeal.kopi.SpiDevice
 
 /*
@@ -15,7 +15,7 @@ import ch.softappeal.kopi.SpiDevice
             the MSB of register address is not used and replaced by a read/write bit (RW = 0 for write and RW = 1 for read).
  */
 public fun boschI2cAdapter(device: SpiDevice): I2cDevice {
-    device.config = SpiDevice.Config(10_000_000U, 8U, SPI_MODE_0 or SPI_MODE_4WIRE or SPI_MODE_LSB_LAST)
+    device.config = SpiDevice.Config(10_000_000U, 8U, SPI_MODE_0 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
     fun mapWrite(register: UByte) = register and 0x7FU
     fun mapRead(register: UByte) = register or 0x80U
     return object : I2cDevice {
