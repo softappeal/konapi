@@ -8,8 +8,8 @@ import ch.softappeal.kopi.GPIO_DISPLAY_RST
 import ch.softappeal.kopi.Gpio
 import ch.softappeal.kopi.I2C_ADDRESS_OLED
 import ch.softappeal.kopi.assertFailsMessage
-import ch.softappeal.kopi.devices.waveshare.Oled1in3Monochrome
-import ch.softappeal.kopi.devices.waveshare.Oled1in5Color
+import ch.softappeal.kopi.devices.waveshare.oled1in3Monochrome
+import ch.softappeal.kopi.devices.waveshare.oled1in5Color
 import ch.softappeal.kopi.graphics.BLACK
 import ch.softappeal.kopi.graphics.BLUE
 import ch.softappeal.kopi.graphics.CYAN
@@ -56,7 +56,7 @@ abstract class OledTest {
     fun oled1in5Color() = runBlocking {
         spiDeviceBus0CS0().use { device ->
             Gpio().use { gpio ->
-                Oled1in5Color(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
+                oled1in5Color(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
             }
         }
     }
@@ -66,7 +66,7 @@ abstract class OledTest {
     fun oled1in3MonochromeSpi() = runBlocking {
         spiDeviceBus0CS1().use { device ->
             Gpio().use { gpio ->
-                Oled1in3Monochrome(null, device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
+                oled1in3Monochrome(null, device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
             }
         }
     }
@@ -76,7 +76,7 @@ abstract class OledTest {
     fun oled1in3MonochromeI2c() = runBlocking {
         i2cBus1().use { bus ->
             Gpio().use { gpio ->
-                Oled1in3Monochrome(bus.device(I2C_ADDRESS_OLED), null, gpio, null, GPIO_DISPLAY_RST).use { display ->
+                oled1in3Monochrome(bus.device(I2C_ADDRESS_OLED), null, gpio, null, GPIO_DISPLAY_RST).use { display ->
                     display.graphics.test()
                 }
             }
@@ -86,16 +86,16 @@ abstract class OledTest {
     @Test
     fun oled1in3MonochromeInvalidConfig() = runBlocking {
         assertFailsMessage<IllegalStateException>("one of ic2Device or spiDevice must be null") {
-            Oled1in3Monochrome(null, null, DummyGpio, 0, 0)
+            oled1in3Monochrome(null, null, DummyGpio, 0, 0)
         }
         assertFailsMessage<IllegalStateException>("one of ic2Device or spiDevice must be null") {
-            Oled1in3Monochrome(DummyI2cDevice, DummySpiDevice, DummyGpio, 0, 0)
+            oled1in3Monochrome(DummyI2cDevice, DummySpiDevice, DummyGpio, 0, 0)
         }
         assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
-            Oled1in3Monochrome(DummyI2cDevice, null, DummyGpio, 0, 0)
+            oled1in3Monochrome(DummyI2cDevice, null, DummyGpio, 0, 0)
         }
         assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
-            Oled1in3Monochrome(null, DummySpiDevice, DummyGpio, null, 0)
+            oled1in3Monochrome(null, DummySpiDevice, DummyGpio, null, 0)
         }
     }
 }
