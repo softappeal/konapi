@@ -8,8 +8,8 @@ import ch.softappeal.kopi.GPIO_DISPLAY_RST
 import ch.softappeal.kopi.Gpio
 import ch.softappeal.kopi.I2C_ADDRESS_OLED
 import ch.softappeal.kopi.assertFailsMessage
-import ch.softappeal.kopi.devices.waveshare.oled1in3Monochrome
-import ch.softappeal.kopi.devices.waveshare.oled1in5Color
+import ch.softappeal.kopi.devices.waveshare.bwOled1in3
+import ch.softappeal.kopi.devices.waveshare.color16Oled1in5
 import ch.softappeal.kopi.graphics.BLACK
 import ch.softappeal.kopi.graphics.BLUE
 import ch.softappeal.kopi.graphics.CYAN
@@ -58,30 +58,30 @@ private suspend fun Graphics.test() {
 
 abstract class OledTest {
     @Test
-    fun oled1in5Color() = runBlocking {
+    fun color16Oled1in5() = runBlocking {
         spiDeviceBus0CS0().use { device ->
             Gpio().use { gpio ->
-                oled1in5Color(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
+                color16Oled1in5(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
             }
         }
     }
 
     @Test
     // @Ignore
-    fun oled1in3MonochromeSpi() = runBlocking {
+    fun bwOled1in3Spi() = runBlocking {
         spiDeviceBus0CS1().use { device ->
             Gpio().use { gpio ->
-                oled1in3Monochrome(null, device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
+                bwOled1in3(null, device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
             }
         }
     }
 
     @Test
     @Ignore
-    fun oled1in3MonochromeI2c() = runBlocking {
+    fun bwOled1in3I2c() = runBlocking {
         i2cBus1().use { bus ->
             Gpio().use { gpio ->
-                oled1in3Monochrome(bus.device(I2C_ADDRESS_OLED), null, gpio, null, GPIO_DISPLAY_RST).use { display ->
+                bwOled1in3(bus.device(I2C_ADDRESS_OLED), null, gpio, null, GPIO_DISPLAY_RST).use { display ->
                     display.graphics.test()
                 }
             }
@@ -89,18 +89,18 @@ abstract class OledTest {
     }
 
     @Test
-    fun oled1in3MonochromeInvalidConfig() = runBlocking {
-        assertFailsMessage<IllegalStateException>("one of ic2Device or spiDevice must be null") {
-            oled1in3Monochrome(null, null, DummyGpio, 0, 0)
+    fun bwOled1in3InvalidConfig() = runBlocking {
+        assertFailsMessage<IllegalStateException>("one of i2cDevice or spiDevice must be null") {
+            bwOled1in3(null, null, DummyGpio, 0, 0)
         }
-        assertFailsMessage<IllegalStateException>("one of ic2Device or spiDevice must be null") {
-            oled1in3Monochrome(DummyI2cDevice, DummySpiDevice, DummyGpio, 0, 0)
-        }
-        assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
-            oled1in3Monochrome(DummyI2cDevice, null, DummyGpio, 0, 0)
+        assertFailsMessage<IllegalStateException>("one of i2cDevice or spiDevice must be null") {
+            bwOled1in3(DummyI2cDevice, DummySpiDevice, DummyGpio, 0, 0)
         }
         assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
-            oled1in3Monochrome(null, DummySpiDevice, DummyGpio, null, 0)
+            bwOled1in3(DummyI2cDevice, null, DummyGpio, 0, 0)
+        }
+        assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
+            bwOled1in3(null, DummySpiDevice, DummyGpio, null, 0)
         }
     }
 }

@@ -2,22 +2,7 @@
 
 package ch.softappeal.kopi.graphics
 
-public data class Color(public val red: UByte, public val green: UByte, public val blue: UByte) {
-    internal val b1: UByte
-    internal val b2: UByte
-
-    init {
-        // http://www.rinkydinkelectronics.com/calc_rgb565.php
-        val rb = (red.toInt() and 0xF8) shl 8
-        val rg = (green.toInt() and 0xFC) shl 3
-        val bb = blue.toInt() shr 3
-        val b = rb or rg or bb
-        b1 = (b shr 8).toUByte()
-        b2 = b.toUByte()
-    }
-
-    internal val notBlack: Boolean = (red != 0.toUByte()) || (green != 0.toUByte()) || (blue != 0.toUByte())
-}
+public data class Color(public val red: UByte, public val green: UByte, public val blue: UByte)
 
 public val BLACK: Color = Color(0x00U, 0x00U, 0x00U)
 public val WHITE: Color = Color(0xFFU, 0xFFU, 0xFFU)

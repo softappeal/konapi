@@ -4,8 +4,8 @@ package ch.softappeal.kopi.devices.waveshare
 
 import ch.softappeal.kopi.Gpio
 import ch.softappeal.kopi.SpiDevice
+import ch.softappeal.kopi.graphics.Color16Graphics
 import ch.softappeal.kopi.graphics.Display
-import ch.softappeal.kopi.graphics.GraphicsColor
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -17,8 +17,9 @@ import kotlin.time.Duration.Companion.milliseconds
     https://files.waveshare.com/upload/2/2c/OLED_Module_Code.7z
  */
 
-public suspend fun oled1in5Color(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, rstPin: Int): Oled = Oled(
-    null, spiDevice, gpio, dcPin, rstPin,
+public suspend fun color16Oled1in5(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, rstPin: Int): Oled<Color16Graphics> = Oled(
+    i2cDevice = null, spiDevice,
+    gpio, dcPin, rstPin,
     {
         command(0xFDU) // command lock
         spiData(0x12U)
@@ -71,7 +72,7 @@ public suspend fun oled1in5Color(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, r
         command(0xAFU) // turn on oled panel
     },
     {
-        GraphicsColor(object : Display {
+        Color16Graphics(object : Display {
             override val width = 128
             override val height = 128
 

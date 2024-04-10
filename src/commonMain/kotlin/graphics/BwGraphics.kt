@@ -2,7 +2,9 @@
 
 package ch.softappeal.kopi.graphics
 
-public class GraphicsMonochrome(display: Display) : Graphics(display) {
+internal inline val Color.notBlack inline get() = (red != 0.toUByte()) || (green != 0.toUByte()) || (blue != 0.toUByte())
+
+public class BwGraphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(display.width * display.height / 8)
 
     override fun setPixel(x: Int, y: Int, color: Color) {

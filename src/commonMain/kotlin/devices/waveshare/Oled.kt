@@ -15,8 +15,8 @@ import ch.softappeal.kopi.tryFinally
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-public interface Oled : Closeable {
-    public val graphics: Graphics
+public interface Oled<G : Graphics> : Closeable {
+    public val graphics: G
 }
 
 public interface OledWriter {
@@ -26,13 +26,13 @@ public interface OledWriter {
     public fun spiData(data: UByte)
 }
 
-public suspend fun Oled(
-    ic2Device: I2cDevice?, spiDevice: SpiDevice?,
+public suspend fun <G : Graphics> Oled(
+    i2cDevice: I2cDevice?, spiDevice: SpiDevice?,
     gpio: Gpio, dcPin: Int?, rstPin: Int,
-    initSequence: suspend OledWriter.() -> Unit, getGraphics: OledWriter.() -> Graphics,
-): Oled {
-    check((ic2Device == null && spiDevice != null) || (ic2Device != null && spiDevice == null)) { "one of ic2Device or spiDevice must be null" }
-    check((ic2Device != null && dcPin == null) || (spiDevice != null && dcPin != null)) { "specify dcPin only for spiDevice" }
+    initSequence: suspend OledWriter.() -> Unit, getGraphics: OledWriter.() -> G,
+): Oled<G> {
+    check((i2cDevice == null && spiDevice != null) || (i2cDevice != null && spiDevice == null)) { "one of i2cDevice or spiDevice must be null" }
+    check((i2cDevice != null && dcPin == null) || (spiDevice != null && dcPin != null)) { "specify dcPin only for spiDevice" }
     spiDevice?.config = SpiDevice.Config(4_000_000U, 8U, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
     val dc = if (dcPin == null) null else gpio.output(dcPin, false)
     val rst = tryCatch({
@@ -67,8 +67,8 @@ public suspend fun Oled(
                 spiDevice!!.write(oneByte)
             }
 
-            override suspend fun command(command: UByte) = if (ic2Device != null) {
-                ic2Device.write(0x00U, command)
+            override suspend fun command(command: UByte) = if (i2cDevice != null) {
+                i2cDevice.write(0x00U, command)
             } else {
                 dc!!.set(false)
                 spiWrite(command)
@@ -81,7 +81,7 @@ public suspend fun Oled(
         }
         writer.initSequence()
         val graphics = writer.getGraphics()
-        object : Oled {
+        object : Oled<G> {
             override val graphics = graphics
             override fun close() {
                 closeOutputs()
