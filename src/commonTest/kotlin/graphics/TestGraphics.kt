@@ -27,7 +27,7 @@ class TestGraphics(display: Display) : Graphics(display) {
 fun withGraphics(width: Int, height: Int, action: TestGraphics.() -> Unit) = TestGraphics(object : Display {
     override val width = width
     override val height = height
-    override suspend fun update(buffer: UByteArray): Unit = throw NotImplementedError()
+    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
 }).action()
 
 fun TestGraphics.assert(expected: String) {

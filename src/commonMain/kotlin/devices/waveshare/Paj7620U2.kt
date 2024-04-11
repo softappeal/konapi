@@ -24,11 +24,11 @@ public interface Paj7620U2 {
         Wave(0x100),
     }
 
-    public suspend fun gesture(): Gesture?
+    public fun gesture(): Gesture?
 }
 
-public suspend fun Paj7620U2(device: I2cDevice): Paj7620U2 {
-    suspend fun checkPartId() = check(device.read(0x00U).toInt() == 32) { "device isn't a Paj7620U2" }
+public fun Paj7620U2(device: I2cDevice): Paj7620U2 {
+    fun checkPartId() = check(device.read(0x00U).toInt() == 32) { "device isn't a Paj7620U2" }
     try {
         checkPartId()
     } catch (ignored: Exception) {
@@ -123,7 +123,7 @@ public suspend fun Paj7620U2(device: I2cDevice): Paj7620U2 {
         write(0x42U, 0x01U)
     }
     return object : Paj7620U2 {
-        override suspend fun gesture(): Paj7620U2.Gesture? {
+        override fun gesture(): Paj7620U2.Gesture? {
             val gesture = (device.read(0x44U).toInt() shl 8) + device.read(0x43U).toInt()
             return Paj7620U2.Gesture.entries.firstOrNull { it.value == gesture }
         }

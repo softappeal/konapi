@@ -22,7 +22,7 @@ public interface Oled<G : Graphics> : Closeable {
 public interface OledWriter {
     public val dc: Gpio.Output?
     public fun spiWrite(bytes: UByteArray)
-    public suspend fun command(command: UByte)
+    public fun command(command: UByte)
     public fun spiData(data: UByte)
 }
 
@@ -67,7 +67,7 @@ public suspend fun <G : Graphics> Oled(
                 spiDevice!!.write(oneByte)
             }
 
-            override suspend fun command(command: UByte) = if (i2cDevice != null) {
+            override fun command(command: UByte) = if (i2cDevice != null) {
                 i2cDevice.write(0x00U, command)
             } else {
                 dc!!.set(false)

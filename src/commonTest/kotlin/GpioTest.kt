@@ -120,7 +120,7 @@ abstract class GpioTest {
                         // NOTE: there is an unexpected Falling notification at start of first iteration (on Pi 5 but not on Pi Zero 2 W); why?
                         val timedOut =
                             !gpio.listen(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
-                                printlnCC("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
+                                println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
                                 ++counter < 6
                             }
                         printlnCC("timedOut: $timedOut")

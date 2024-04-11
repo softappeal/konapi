@@ -2,8 +2,8 @@
 
 package ch.softappeal.kopi.devices.hitachi
 
+import ch.softappeal.kopi.Closeable
 import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.SuspendCloseable
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -55,7 +55,7 @@ private const val LINES_1: UByte = 0x00U
 private const val FONT_5x10: UByte = 0x04U
 private const val FONT_5x8: UByte = 0x00U
 
-public interface I2cHd44780 : SuspendCloseable {
+public interface I2cHd44780 : Closeable {
     public enum class Font { Dots5x8, Dots5x10 }
 
     public data class Config(
@@ -85,12 +85,12 @@ public interface I2cHd44780 : SuspendCloseable {
 
     public val config: Config
     public suspend fun clear()
-    public suspend fun displayString(s: String)
-    public suspend fun setCursorPosition(line: Int, column: Int)
-    public suspend fun setBlink(value: Boolean)
-    public suspend fun showCursor(value: Boolean)
-    public suspend fun showDisplay(value: Boolean)
-    public suspend fun setBacklight(value: Boolean)
+    public fun displayString(s: String)
+    public fun setCursorPosition(line: Int, column: Int)
+    public fun setBlink(value: Boolean)
+    public fun showCursor(value: Boolean)
+    public fun showDisplay(value: Boolean)
+    public fun setBacklight(value: Boolean)
 }
 
 public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2cHd44780 {
@@ -101,7 +101,7 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
     var on = true
     var backlight = true
 
-    suspend fun writeUpper(upperData: UByte, dataRegister: Boolean = false) {
+    fun writeUpper(upperData: UByte, dataRegister: Boolean = false) {
         val data = RW_WRITE or
             (upperData and DB4_DB7) or
             (if (dataRegister) RS_DATA else RS_INSTRUCTION) or
@@ -136,7 +136,7 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
     writeUpper(FUNCTION_SET or MODE_8BIT) // we are now guaranteed in 8-bit mode
     writeUpper(FUNCTION_SET or MODE_4BIT) // we are now guaranteed in 4-bit mode
 
-    suspend fun write4Bit(instruction: UByte, dataRegister: Boolean = false) {
+    fun write4Bit(instruction: UByte, dataRegister: Boolean = false) {
         writeUpper(instruction, dataRegister)
         writeUpper((instruction.toInt() shl 4).toUByte(), dataRegister)
     }
@@ -155,7 +155,7 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
     )
     write4Bit(ENTRY_MODE_SET or INCREMENT or SHIFT_OFF)
 
-    suspend fun setDisplayControl() {
+    fun setDisplayControl() {
         write4Bit(
             DISPLAY_CONTROL or
                 (if (on) DISPLAY_ON else DISPLAY_OFF) or
@@ -174,40 +174,40 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
             delay(2.milliseconds)
         }
 
-        override suspend fun displayString(s: String) {
+        override fun displayString(s: String) {
             s.forEach { char -> write4Bit(char.code.toUByte(), dataRegister = true) }
         }
 
-        override suspend fun setCursorPosition(line: Int, column: Int) {
+        override fun setCursorPosition(line: Int, column: Int) {
             config.requireCursorPosition(line, column)
             write4Bit(SET_DDRAM_ADDR or (config.lineOffset(line) + column).toUByte())
         }
 
-        override suspend fun close() {
+        override fun close() {
             backlight = false
             on = false
             setDisplayControl()
         }
 
-        override suspend fun setBlink(value: Boolean) {
+        override fun setBlink(value: Boolean) {
             if (blink == value) return
             blink = value
             setDisplayControl()
         }
 
-        override suspend fun showCursor(value: Boolean) {
+        override fun showCursor(value: Boolean) {
             if (cursor == value) return
             cursor = value
             setDisplayControl()
         }
 
-        override suspend fun showDisplay(value: Boolean) {
+        override fun showDisplay(value: Boolean) {
             if (on == value) return
             on = value
             setDisplayControl()
         }
 
-        override suspend fun setBacklight(value: Boolean) {
+        override fun setBacklight(value: Boolean) {
             if (backlight == value) return
             backlight = value
             setDisplayControl()

@@ -92,7 +92,7 @@ public actual fun Gpio(label: String): Gpio {
             }
         }
 
-        override suspend fun listen(
+        override fun listen(
             line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
         ): Boolean {
             val linePtr = getLine(line)

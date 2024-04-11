@@ -60,7 +60,7 @@ public suspend fun bwOled1in3(
 
             private val i2cChunk = UByteArray(32) // bigger chunks don't work
             private val spiChunk = UByteArray(width)
-            override suspend fun update(buffer: UByteArray) {
+            override fun update(buffer: UByteArray) {
                 var pageStart = 0
                 for (page in 0..<8) {
                     command((0xB0U + page.toUByte()).toUByte()) // set page address

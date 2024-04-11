@@ -11,9 +11,13 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.days
+import kotlin.time.measureTime
 
 private fun runServer() = embeddedServer(CIO, port = 8080) {
     routing {
@@ -36,17 +40,25 @@ fun main() {
                     val bme280 = Bme280(bus.device(I2C_ADDRESS_BME280))
                     gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 100.days) { edge, _ ->
                         if (edge == Gpio.Edge.Falling) {
-                            val gesture = paj7620U2.gesture()
-                            val measurements = bme280.measurements()
-                            val string = when (gesture) {
-                                null -> "<none>"
-                                Paj7620U2.Gesture.Up -> "Temp:" + (measurements.temperaturInCelsius * 10).roundToInt() + " 0.1C"
-                                Paj7620U2.Gesture.Down -> "Press:" + (measurements.pressureInPascal / 100).roundToInt() + " hPa"
-                                Paj7620U2.Gesture.Left -> "Humid:" + (measurements.humidityInPercent * 10).roundToInt() + " 0.1%"
-                                else -> gesture.name
+                            val launchTime = measureTime {
+                                launch(Dispatchers.IO) { // should be short or we will miss interrupts
+                                    val displayTime = measureTime {
+                                        val gesture = paj7620U2.gesture()
+                                        val measurements = bme280.measurements()
+                                        val string = when (gesture) {
+                                            null -> "<none>"
+                                            Paj7620U2.Gesture.Up -> "Temp:" + (measurements.temperaturInCelsius * 10).roundToInt() + " 0.1C"
+                                            Paj7620U2.Gesture.Down -> "Press:" + (measurements.pressureInPascal / 100).roundToInt() + " hPa"
+                                            Paj7620U2.Gesture.Left -> "Humid:" + (measurements.humidityInPercent * 10).roundToInt() + " 0.1%"
+                                            else -> gesture.name
+                                        }
+                                        lcd.setCursorPosition(1, 0)
+                                        lcd.displayString(string + " ".repeat(lcd.config.columns - string.length))
+                                    }
+                                    println("displayTime=$displayTime")
+                                }
                             }
-                            lcd.setCursorPosition(1, 0)
-                            lcd.displayString(string + " ".repeat(lcd.config.columns - string.length))
+                            println("launchTime=$launchTime")
                         }
                         true
                     }

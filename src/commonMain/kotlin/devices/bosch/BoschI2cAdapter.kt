@@ -19,34 +19,34 @@ public fun boschI2cAdapter(device: SpiDevice): I2cDevice {
     fun mapWrite(register: UByte) = register and 0x7FU
     fun mapRead(register: UByte) = register or 0x80U
     return object : I2cDevice {
-        override suspend fun write(value: UByte) {
+        override fun write(value: UByte) {
             device.write(ubyteArrayOf(value))
         }
 
-        override suspend fun read(): UByte {
+        override fun read(): UByte {
             val bytes = UByteArray(1)
             device.transfer(bytes)
             return bytes[0]
         }
 
-        override suspend fun write(register: UByte, value: UByte) {
+        override fun write(register: UByte, value: UByte) {
             device.write(ubyteArrayOf(mapWrite(register), value))
         }
 
-        override suspend fun read(register: UByte): UByte {
+        override fun read(register: UByte): UByte {
             val bytes = ubyteArrayOf(mapRead(register), 0U)
             device.transfer(bytes)
             return bytes[1]
         }
 
-        override suspend fun write(register: UByte, values: UByteArray) {
+        override fun write(register: UByte, values: UByteArray) {
             val bytes = UByteArray(values.size + 1)
             bytes[0] = mapWrite(register)
             values.copyInto(bytes, 1)
             device.write(bytes)
         }
 
-        override suspend fun read(register: UByte, length: Int): UByteArray {
+        override fun read(register: UByte, length: Int): UByteArray {
             val bytes = UByteArray(length + 1)
             bytes[0] = mapRead(register)
             device.transfer(bytes)

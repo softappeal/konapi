@@ -21,7 +21,7 @@ public interface Bme280 {
         public val humidityInPercent: Double,
     )
 
-    public suspend fun measurements(): Measurements
+    public fun measurements(): Measurements
 }
 
 public suspend fun Bme280(device: I2cDevice): Bme280 {
@@ -97,7 +97,7 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
     device.write(0xE0U, 0xB6U) // reset
     delay(300.milliseconds) // power-on delay
     check(device.read(0xD0U) == 0x60U.toUByte()) { "chipId isn't BME280" }
-    suspend fun setupMode() {
+    fun setupMode() {
         /*
             Datasheet:
                 Table 7: Settings and performance for weather monitoring
@@ -163,7 +163,7 @@ public suspend fun Bme280(device: I2cDevice): Bme280 {
         )
     }
     return object : Bme280 {
-        override suspend fun measurements(): Bme280.Measurements {
+        override fun measurements(): Bme280.Measurements {
             setupMode()
             /*
                 Datasheet:
