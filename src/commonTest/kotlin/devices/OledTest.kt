@@ -52,6 +52,7 @@ private suspend fun Graphics.test() {
     setPixel(width - 1, 0, YELLOW)
     setPixel(0, height - 1, GREEN)
     setPixel(width - 1, height - 1, WHITE)
+    setPixel(20, 10, BLUE)
     update()
     delay(1.seconds)
 }

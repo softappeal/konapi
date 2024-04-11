@@ -21,7 +21,7 @@ public class Color16Graphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(display.width * display.height * 2)
 
     override fun setPixel(x: Int, y: Int, color: Color) {
-        val i = x * 2 + y * width * 2
+        val i = (x + y * width) * 2
         val color16 = color.toColor565().toColor16()
         buffer[i] = color16.b1
         buffer[i + 1] = color16.b2

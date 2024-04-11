@@ -61,22 +61,24 @@ public suspend fun bwOled1in3(
             private val i2cChunk = UByteArray(32) // bigger chunks don't work
             private val spiChunk = UByteArray(width)
             override suspend fun update(buffer: UByteArray) {
+                var pageStart = 0
                 for (page in 0..<8) {
                     command((0xB0U + page.toUByte()).toUByte()) // set page address
                     command(0x02U) // set low column address
                     command(0x10U) // set high column address
-                    var p = width * page
                     if (i2cDevice != null) {
                         repeat(width / i2cChunk.size) {
-                            val pe = p + i2cChunk.size
-                            buffer.copyInto(i2cChunk, 0, p, pe)
+                            val chunkEnd = pageStart + i2cChunk.size
+                            buffer.copyInto(i2cChunk, 0, pageStart, chunkEnd) // pageStart is here actually chunkStart
                             i2cDevice.write(0x40U, i2cChunk)
-                            p = pe
+                            pageStart = chunkEnd
                         }
                     } else {
                         dc!!.set(true)
-                        buffer.copyInto(spiChunk, 0, p, p + width)
+                        val pageEnd = pageStart + width
+                        buffer.copyInto(spiChunk, 0, pageStart, pageEnd)
                         spiWrite(spiChunk)
+                        pageStart = pageEnd
                     }
                 }
             }

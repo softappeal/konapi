@@ -7,7 +7,7 @@ import kotlin.time.Duration
 public typealias GpioNotification = suspend (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
 
 /**
- * Note: [close] also closes all open inputs/outputs.
+ * NOTE: [close] also closes all open inputs/outputs.
  */
 public interface Gpio : Closeable {
     public enum class Bias { Disable, PullDown, PullUp }
