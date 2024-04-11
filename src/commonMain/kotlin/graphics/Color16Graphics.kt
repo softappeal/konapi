@@ -2,17 +2,17 @@
 
 package ch.softappeal.kopi.graphics
 
-internal data class Color565(val red: Int, var green: Int, var blue: Int)
+public data class Color565(public val red: Int, public var green: Int, public var blue: Int)
 
-internal fun Color.toColor565() = Color565(
+public fun Color.toColor565(): Color565 = Color565(
     red = red.toInt() shr 3,
     green = green.toInt() shr 2,
     blue = blue.toInt() shr 3,
 )
 
-internal data class Color16(val b1: UByte, val b2: UByte)
+public data class Color16(public val b1: UByte, public val b2: UByte)
 
-internal fun Color565.toColor16() = Color16(
+public fun Color565.toColor16(): Color16 = Color16(
     b1 = ((red shl 3) or (green shr 3)).toUByte(),
     b2 = ((green shl 5) or blue).toUByte(),
 )

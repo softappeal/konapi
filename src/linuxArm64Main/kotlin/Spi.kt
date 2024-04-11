@@ -33,6 +33,8 @@ import platform.posix.ioctl
 import platform.posix.open
 import kotlin.math.min
 
+private const val BLOCK_SIZE_FILE = "/sys/module/spidev/parameters/bufsiz"
+
 /*
     https://www.kernel.org/doc/html/v5.5/spi/spidev.html
 
@@ -42,7 +44,7 @@ import kotlin.math.min
  */
 
 public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
-    val blockSizeFile = fopen("/sys/module/spidev/parameters/bufsiz", "r")
+    val blockSizeFile = checkNotNull(fopen(BLOCK_SIZE_FILE, "r")) { "file '$BLOCK_SIZE_FILE' not found" }
     val blockSize = tryFinally({
         memScoped {
             val variable = alloc<IntVar>()
@@ -50,7 +52,7 @@ public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
             variable.value
         }
     }) {
-        fclose(blockSizeFile)
+        check(fclose(blockSizeFile) == 0) { "fclose failed" }
     }
 
     val file = open("/dev/spidev$bus.$chipSelect", O_RDWR)

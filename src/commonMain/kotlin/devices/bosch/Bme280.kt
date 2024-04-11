@@ -16,9 +16,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 public interface Bme280 {
     public data class Measurements(
-        val temperaturInCelsius: Double,
-        val pressureInPascal: Double,
-        val humidityInPercent: Double,
+        public val temperaturInCelsius: Double,
+        public val pressureInPascal: Double,
+        public val humidityInPercent: Double,
     )
 
     public suspend fun measurements(): Measurements

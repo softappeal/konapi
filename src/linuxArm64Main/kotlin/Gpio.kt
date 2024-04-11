@@ -44,9 +44,9 @@ private const val EXPECTED_LIB_VERSION = "1.6.3"
 
 private const val CONSUMER = "kopi"
 
-private inline fun Boolean.ordinal() = toByte().toInt()
+private fun Boolean.ordinal() = toByte().toInt()
 
-private inline fun flags(active: Gpio.Active, bias: Gpio.Bias = Gpio.Bias.Disable) = when (active) {
+private fun flags(active: Gpio.Active, bias: Gpio.Bias = Gpio.Bias.Disable) = when (active) {
     Gpio.Active.Low -> GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW.toInt()
     Gpio.Active.High -> 0
 } +
