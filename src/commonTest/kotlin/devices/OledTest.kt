@@ -68,7 +68,7 @@ abstract class OledTest {
     }
 
     @Test
-    // @Ignore
+    @Ignore
     fun bwOled1in3Spi() = runBlocking {
         spiDeviceBus0CS1().use { device ->
             Gpio().use { gpio ->
@@ -78,7 +78,7 @@ abstract class OledTest {
     }
 
     @Test
-    @Ignore
+    // @Ignore
     fun bwOled1in3I2c() = runBlocking {
         i2cBus1().use { bus ->
             Gpio().use { gpio ->
