@@ -41,6 +41,13 @@ public abstract class Graphics(private val display: Display) : HasDimensions(dis
         return this
     }
 
+    private var _font: Font? = null
+    public val font: Font get() = _font!!
+    public fun set(font: Font): Graphics {
+        _font = font
+        return this
+    }
+
     protected abstract val buffer: UByteArray
     public fun update() {
         display.update(buffer)

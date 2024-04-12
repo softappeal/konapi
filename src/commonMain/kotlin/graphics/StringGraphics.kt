@@ -2,10 +2,8 @@
 
 package ch.softappeal.kopi.graphics
 
-import kotlin.test.assertEquals
-
-class TestGraphics(display: Display) : Graphics(display) {
-    override val buffer = UByteArray(display.width * display.height)
+public class StringGraphics(display: Display) : Graphics(display) {
+    override val buffer: UByteArray = UByteArray(display.width * display.height)
 
     private var notBlack: Boolean? = null
     override fun set(color: Color): Graphics {
@@ -18,7 +16,7 @@ class TestGraphics(display: Display) : Graphics(display) {
         buffer[x + y * width] = (if (notBlack!!) 1 else 0).toUByte()
     }
 
-    fun dump(): String {
+    public fun getString(): String {
         val s = StringBuilder()
         var i = 0
         repeat(height) {
@@ -31,12 +29,8 @@ class TestGraphics(display: Display) : Graphics(display) {
     }
 }
 
-fun withGraphics(width: Int, height: Int, action: TestGraphics.() -> Unit) = TestGraphics(object : Display(width, height) {
-    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
-}).action()
-
-fun TestGraphics.assert(expected: String) {
-    assertEquals(expected.trimIndent() + '\n', dump())
-    set(BLACK).fillRect()
-    set(WHITE)
+public fun stringGraphics(width: Int, height: Int, action: StringGraphics.() -> Unit) {
+    StringGraphics(object : Display(width, height) {
+        override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
+    }).action()
 }

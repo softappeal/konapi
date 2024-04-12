@@ -20,6 +20,7 @@ import ch.softappeal.kopi.graphics.MAGENTA
 import ch.softappeal.kopi.graphics.RED
 import ch.softappeal.kopi.graphics.WHITE
 import ch.softappeal.kopi.graphics.YELLOW
+import ch.softappeal.kopi.graphics.displayFont
 import ch.softappeal.kopi.graphics.fillRect
 import ch.softappeal.kopi.i2cBus1
 import ch.softappeal.kopi.spiDeviceBus0CS0
@@ -61,6 +62,10 @@ private suspend fun Graphics.test() {
     set(BLUE).setPixel(20, 10)
     update()
     delay(1.seconds)
+    displayFont {
+        update()
+        delay(5.seconds)
+    }
 }
 
 abstract class OledTest {

@@ -1,11 +1,44 @@
 package ch.softappeal.kopi.graphics
 
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
+
+private fun StringGraphics.assert(expected: String) {
+    assertEquals(expected.trimIndent() + '\n', getString())
+    set(BLACK).fillRect()
+    set(WHITE)
+}
+
+const val TEST_FONT = "test-files/Test.font"
+
+suspend fun Graphics.displayFont(pageDone: suspend () -> Unit) {
+    assertFails { font }
+    assertFails { draw(0, 0, "hello") }
+    val testFont = readFontFile(TEST_FONT)
+    set(testFont)
+    assertSame(testFont, font)
+    val chars = FONT_CHARS.iterator()
+    while (chars.hasNext()) {
+        set(BLACK).fillRect()
+        set(BLUE)
+        var y = 0
+        lines@ for (line in 0..<height / font.height) {
+            var x = 0
+            for (column in 0..<width / font.width) {
+                if (!chars.hasNext()) break@lines
+                draw(Point(x, y), chars.nextChar())
+                x += font.width
+            }
+            y += font.height
+        }
+        pageDone()
+    }
+}
 
 class GraphicsTest {
     @Test
@@ -29,7 +62,7 @@ class GraphicsTest {
     }
 
     @Test
-    fun graphics() = withGraphics(5, 3) {
+    fun graphics() = stringGraphics(5, 3) {
         assertFails { color }
         assertFails { setPixel(0, 0) }
         set(BLACK)
@@ -54,5 +87,12 @@ class GraphicsTest {
             ..###
             ..###
         """)
+    }
+
+    @Test
+    fun displayFont() = stringGraphics(128, 32) {
+        runBlocking {
+            displayFont { println(getString()) }
+        }
     }
 }
