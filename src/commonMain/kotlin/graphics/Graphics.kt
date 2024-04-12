@@ -19,6 +19,8 @@ public interface Display {
     public fun update(buffer: UByteArray)
 }
 
+public val DEFAULT_COLOR: Color = BLACK
+
 /**
  * (x       , y         ) pixel is right of x and below of y
  *
@@ -31,22 +33,15 @@ public abstract class Graphics(private val display: Display) {
     public val width: Int = display.width
     public val height: Int = display.height
 
+    /**
+     * see [DEFAULT_COLOR]
+     */
+    public abstract fun setColor(color: Color): Graphics
+
     protected abstract val buffer: UByteArray
     public fun update() {
         display.update(buffer)
     }
 
-    public abstract fun setPixel(x: Int, y: Int, color: Color)
-}
-
-public fun Graphics.fillRect(xTopLeft: Int, yTopLeft: Int, width: Int, height: Int, color: Color) {
-    for (x in xTopLeft..<xTopLeft + width) {
-        for (y in yTopLeft..<yTopLeft + height) {
-            setPixel(x, y, color)
-        }
-    }
-}
-
-public fun Graphics.clear() {
-    fillRect(0, 0, width, height, BLACK)
+    public abstract fun setPixel(x: Int, y: Int)
 }

@@ -20,7 +20,6 @@ import ch.softappeal.kopi.graphics.MAGENTA
 import ch.softappeal.kopi.graphics.RED
 import ch.softappeal.kopi.graphics.WHITE
 import ch.softappeal.kopi.graphics.YELLOW
-import ch.softappeal.kopi.graphics.clear
 import ch.softappeal.kopi.graphics.fillRect
 import ch.softappeal.kopi.i2cBus1
 import ch.softappeal.kopi.spiDeviceBus0CS0
@@ -41,18 +40,18 @@ private suspend fun Graphics.test() {
     colors.forEach { color ->
         repeat(stripes) { s ->
             fun map(color: UByte) = (color.toInt() / (s + 1)).toUByte()
-            fillRect(x, 0, w, height, Color(map(color.red), map(color.green), map(color.blue)))
+            setColor(Color(map(color.red), map(color.green), map(color.blue))).fillRect(x, 0, w, height)
             x += w
         }
         println("${measureTime { update() }}")
         delay(1.seconds)
     }
-    clear()
-    setPixel(0, 0, RED)
-    setPixel(width - 1, 0, YELLOW)
-    setPixel(0, height - 1, GREEN)
-    setPixel(width - 1, height - 1, WHITE)
-    setPixel(20, 10, BLUE)
+    setColor(BLACK).fillRect()
+    setColor(RED).setPixel(0, 0)
+    setColor(YELLOW).setPixel(width - 1, 0)
+    setColor(GREEN).setPixel(0, height - 1)
+    setColor(WHITE).setPixel(width - 1, height - 1)
+    setColor(BLUE).setPixel(20, 10)
     update()
     delay(1.seconds)
 }

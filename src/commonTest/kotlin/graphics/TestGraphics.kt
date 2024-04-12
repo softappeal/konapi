@@ -7,8 +7,14 @@ import kotlin.test.assertEquals
 class TestGraphics(display: Display) : Graphics(display) {
     override val buffer = UByteArray(display.width * display.height)
 
-    override fun setPixel(x: Int, y: Int, color: Color) {
-        buffer[x + y * width] = (if (color.notBlack) 1 else 0).toUByte()
+    private var notBlack = DEFAULT_COLOR.notBlack
+    override fun setColor(color: Color): Graphics {
+        notBlack = color.notBlack
+        return this
+    }
+
+    override fun setPixel(x: Int, y: Int) {
+        buffer[x + y * width] = (if (notBlack) 1 else 0).toUByte()
     }
 
     fun dump(): String {
@@ -32,5 +38,5 @@ fun withGraphics(width: Int, height: Int, action: TestGraphics.() -> Unit) = Tes
 
 fun TestGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', dump())
-    clear()
+    setColor(BLACK).fillRect()
 }

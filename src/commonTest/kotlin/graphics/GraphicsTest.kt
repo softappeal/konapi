@@ -28,15 +28,17 @@ class GraphicsTest {
 
     @Test
     fun graphics() = withGraphics(5, 3) {
-        setPixel(0, 0, WHITE)
-        setPixel(0, height - 1, WHITE)
-        setPixel(width - 1, 0, WHITE)
+        setColor(WHITE)
+        setPixel(0, 0)
+        setPixel(0, height - 1)
+        setPixel(width - 1, 0)
         assert("""
             #...#
             .....
             #....
         """)
-        fillRect(2, 1, 3, 2, WHITE)
+        setColor(WHITE)
+        fillRect(2, 1, 3, 2)
         assert("""
             .....
             ..###

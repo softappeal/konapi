@@ -17,12 +17,19 @@ public fun Color565.toColor16(): Color16 = Color16(
     b2 = ((green shl 5) or blue).toUByte(),
 )
 
+public fun Color.toColor16(): Color16 = toColor565().toColor16()
+
 public class Color16Graphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(display.width * display.height * 2)
 
-    override fun setPixel(x: Int, y: Int, color: Color) {
+    private var color16 = DEFAULT_COLOR.toColor16()
+    override fun setColor(color: Color): Graphics {
+        color16 = color.toColor16()
+        return this
+    }
+
+    override fun setPixel(x: Int, y: Int) {
         val i = (x + y * width) * 2
-        val color16 = color.toColor565().toColor16()
         buffer[i] = color16.b1
         buffer[i + 1] = color16.b2
     }
