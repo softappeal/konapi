@@ -29,10 +29,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertFails
+import kotlin.test.assertSame
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
 private suspend fun Graphics.test() {
+    assertFails { color }
+    assertFails { setPixel(0, 0) }
+    setColor(BLACK)
+    assertSame(BLACK, color)
+    fillRect()
     var x = 0
     val colors = listOf(BLUE, GREEN, RED, BLACK, WHITE, CYAN, MAGENTA, YELLOW)
     val stripes = 8

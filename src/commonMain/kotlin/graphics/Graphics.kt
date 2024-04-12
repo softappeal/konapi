@@ -19,8 +19,6 @@ public interface Display {
     public fun update(buffer: UByteArray)
 }
 
-public val DEFAULT_COLOR: Color = BLACK
-
 /**
  * (x       , y         ) pixel is right of x and below of y
  *
@@ -33,10 +31,13 @@ public abstract class Graphics(private val display: Display) {
     public val width: Int = display.width
     public val height: Int = display.height
 
-    /**
-     * see [DEFAULT_COLOR]
-     */
-    public abstract fun setColor(color: Color): Graphics
+    private var _color: Color? = null
+    public val color: Color get() = _color!!
+
+    public open fun setColor(color: Color): Graphics {
+        _color = color
+        return this
+    }
 
     protected abstract val buffer: UByteArray
     public fun update() {

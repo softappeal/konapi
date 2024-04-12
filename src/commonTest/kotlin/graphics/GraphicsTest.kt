@@ -2,7 +2,9 @@ package ch.softappeal.kopi.graphics
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class GraphicsTest {
@@ -28,7 +30,16 @@ class GraphicsTest {
 
     @Test
     fun graphics() = withGraphics(5, 3) {
-        setColor(WHITE)
+        assertFails { color }
+        assertFails { setPixel(0, 0) }
+        setColor(BLACK)
+        assertSame(BLACK, color)
+        fillRect()
+        assert("""
+            .....
+            .....
+            .....
+        """)
         setPixel(0, 0)
         setPixel(0, height - 1)
         setPixel(width - 1, 0)
@@ -37,7 +48,6 @@ class GraphicsTest {
             .....
             #....
         """)
-        setColor(WHITE)
         fillRect(2, 1, 3, 2)
         assert("""
             .....
