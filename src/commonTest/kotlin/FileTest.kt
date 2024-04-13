@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package ch.softappeal.kopi
 
 import kotlin.test.Test
@@ -12,8 +10,8 @@ class FileTest {
         println(assertFails { readFile("test-files/no-such-file") })
         val bytes = readFile("test-files/read.test.bin")
         assertEquals(3, bytes.size)
-        assertEquals(0xFFU, bytes[0])
-        assertEquals(0x01U, bytes[1])
-        assertEquals(123U, bytes[2])
+        assertEquals(-1, bytes[0])
+        assertEquals(1, bytes[1])
+        assertEquals(123, bytes[2])
     }
 }

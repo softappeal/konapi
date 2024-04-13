@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalUnsignedTypes::class, ExperimentalForeignApi::class)
+@file:OptIn(ExperimentalForeignApi::class)
 
 package ch.softappeal.kopi
 
@@ -16,7 +16,7 @@ import platform.posix.open
 import platform.posix.read
 import platform.posix.stat
 
-public actual fun readFile(path: String): UByteArray {
+public actual fun readFile(path: String): ByteArray {
     val file = open(path, O_RDONLY)
     check(file >= 0) { "file '$path' not found" }
     return tryFinally({
@@ -25,7 +25,7 @@ public actual fun readFile(path: String): UByteArray {
             check(fstat(file, stat.ptr) == 0) { "fstat failed" }
             stat.st_size
         }
-        val buffer = UByteArray(size.convert())
+        val buffer = ByteArray(size.convert())
         buffer.usePinned { pinned ->
             check(read(file, pinned.addressOf(0), size.convert()) == size) { "read failed" }
         }

@@ -13,8 +13,8 @@ public const val SPI_MODE_4WIRE: UByte = 0x00U
 
 public interface SpiDevice : Closeable {
     public data class Config(
-        public val speedHz: UInt? = null,
-        public val bitsPerWord: UByte? = null,
+        public val speedHz: Int? = null,
+        public val bitsPerWord: Int? = null,
         public val mode: UByte? = null,
     )
 

@@ -33,7 +33,6 @@ public abstract class Graphics(private val display: Display) {
 
     private var _color: Color? = null
     public val color: Color get() = _color!!
-
     public open fun setColor(color: Color): Graphics {
         _color = color
         return this

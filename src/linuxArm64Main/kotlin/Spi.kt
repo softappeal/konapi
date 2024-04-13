@@ -97,14 +97,14 @@ public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
 
         override var config: SpiDevice.Config
             get() = SpiDevice.Config(
-                speedHz = readIoctl<UIntVar, _>(SPI_IOC_RD_MAX_SPEED_HZ) { it.value },
-                bitsPerWord = readIoctl<UByteVar, _>(SPI_IOC_RD_BITS_PER_WORD) { it.value },
+                speedHz = readIoctl<UIntVar, _>(SPI_IOC_RD_MAX_SPEED_HZ) { it.value.toInt() },
+                bitsPerWord = readIoctl<UByteVar, _>(SPI_IOC_RD_BITS_PER_WORD) { it.value.toInt() },
                 mode = readIoctl<UByteVar, _>(SPI_IOC_RD_MODE) { it.value },
             )
             set(value) {
                 with(value) {
-                    speedHz.writeIoctl<UIntVar, _>(SPI_IOC_WR_MAX_SPEED_HZ) { this.value = it }
-                    bitsPerWord.writeIoctl<UByteVar, _>(SPI_IOC_WR_BITS_PER_WORD) { this.value = it }
+                    speedHz.writeIoctl<UIntVar, _>(SPI_IOC_WR_MAX_SPEED_HZ) { this.value = it.toUInt() }
+                    bitsPerWord.writeIoctl<UByteVar, _>(SPI_IOC_WR_BITS_PER_WORD) { this.value = it.toUByte() }
                     mode.writeIoctl<UByteVar, _>(SPI_IOC_WR_MODE) { this.value = it }
                 }
             }

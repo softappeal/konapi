@@ -33,7 +33,7 @@ public suspend fun <G : Graphics> Oled(
 ): Oled<G> {
     check((i2cDevice == null && spiDevice != null) || (i2cDevice != null && spiDevice == null)) { "one of i2cDevice or spiDevice must be null" }
     check((i2cDevice != null && dcPin == null) || (spiDevice != null && dcPin != null)) { "specify dcPin only for spiDevice" }
-    spiDevice?.config = SpiDevice.Config(4_000_000U, 8U, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
+    spiDevice?.config = SpiDevice.Config(4_000_000, 8, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
     val dc = if (dcPin == null) null else gpio.output(dcPin, false)
     val rst = tryCatch({
         gpio.output(rstPin, false)
