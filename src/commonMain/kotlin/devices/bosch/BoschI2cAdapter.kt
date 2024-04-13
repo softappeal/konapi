@@ -42,7 +42,7 @@ public fun boschI2cAdapter(device: SpiDevice): I2cDevice {
         override fun write(register: UByte, values: UByteArray) {
             val bytes = UByteArray(values.size + 1)
             bytes[0] = mapWrite(register)
-            values.copyInto(bytes, 1)
+            values.copyInto(bytes, destinationOffset = 1)
             device.write(bytes)
         }
 

@@ -69,14 +69,14 @@ public suspend fun bwOled1in3(
                     if (i2cDevice != null) {
                         repeat(width / i2cChunk.size) {
                             val chunkEnd = pageStart + i2cChunk.size
-                            buffer.copyInto(i2cChunk, 0, pageStart, chunkEnd) // pageStart is here actually chunkStart
+                            buffer.copyInto(i2cChunk, startIndex = pageStart, endIndex = chunkEnd) // pageStart is chunkStart
                             i2cDevice.write(0x40U, i2cChunk)
                             pageStart = chunkEnd
                         }
                     } else {
                         dc!!.set(true)
                         val pageEnd = pageStart + width
-                        buffer.copyInto(spiChunk, 0, pageStart, pageEnd)
+                        buffer.copyInto(spiChunk, startIndex = pageStart, endIndex = pageEnd)
                         spiWrite(spiChunk)
                         pageStart = pageEnd
                     }
