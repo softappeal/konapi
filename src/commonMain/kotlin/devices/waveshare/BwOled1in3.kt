@@ -54,10 +54,7 @@ public suspend fun bwOled1in3(
         command(0xAFU) // turn on oled panel
     },
     {
-        BwGraphics(object : Display {
-            override val width = 128
-            override val height = 64
-
+        BwGraphics(object : Display(128, 64) {
             private val i2cChunk = UByteArray(32) // bigger chunks don't work
             private val spiChunk = UByteArray(width)
             override fun update(buffer: UByteArray) {

@@ -37,7 +37,7 @@ import kotlin.time.measureTime
 private suspend fun Graphics.test() {
     assertFails { color }
     assertFails { setPixel(0, 0) }
-    setColor(BLACK)
+    set(BLACK)
     assertSame(BLACK, color)
     fillRect()
     var x = 0
@@ -47,18 +47,18 @@ private suspend fun Graphics.test() {
     colors.forEach { color ->
         repeat(stripes) { s ->
             fun map(color: Int) = color / (s + 1)
-            setColor(Color(map(color.red), map(color.green), map(color.blue))).fillRect(x, 0, w, height)
+            set(Color(map(color.red), map(color.green), map(color.blue))).fillRect(x, 0, w, height)
             x += w
         }
         println("${measureTime { update() }}")
         delay(1.seconds)
     }
-    setColor(BLACK).fillRect()
-    setColor(RED).setPixel(0, 0)
-    setColor(YELLOW).setPixel(width - 1, 0)
-    setColor(GREEN).setPixel(0, height - 1)
-    setColor(WHITE).setPixel(width - 1, height - 1)
-    setColor(BLUE).setPixel(20, 10)
+    set(BLACK).fillRect()
+    set(RED).setPixel(0, 0)
+    set(YELLOW).setPixel(width - 1, 0)
+    set(GREEN).setPixel(0, height - 1)
+    set(WHITE).setPixel(width - 1, height - 1)
+    set(BLUE).setPixel(20, 10)
     update()
     delay(1.seconds)
 }

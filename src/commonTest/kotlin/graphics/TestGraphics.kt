@@ -8,8 +8,8 @@ class TestGraphics(display: Display) : Graphics(display) {
     override val buffer = UByteArray(display.width * display.height)
 
     private var notBlack: Boolean? = null
-    override fun setColor(color: Color): Graphics {
-        super.setColor(color)
+    override fun set(color: Color): Graphics {
+        super.set(color)
         notBlack = color.notBlack
         return this
     }
@@ -31,14 +31,12 @@ class TestGraphics(display: Display) : Graphics(display) {
     }
 }
 
-fun withGraphics(width: Int, height: Int, action: TestGraphics.() -> Unit) = TestGraphics(object : Display {
-    override val width = width
-    override val height = height
+fun withGraphics(width: Int, height: Int, action: TestGraphics.() -> Unit) = TestGraphics(object : Display(width, height) {
     override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
 }).action()
 
 fun TestGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', dump())
-    setColor(BLACK).fillRect()
-    setColor(WHITE)
+    set(BLACK).fillRect()
+    set(WHITE)
 }

@@ -23,8 +23,8 @@ public class Color16Graphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(display.width * display.height * 2)
 
     private var color16: Color16? = null
-    override fun setColor(color: Color): Graphics {
-        super.setColor(color)
+    override fun set(color: Color): Graphics {
+        super.set(color)
         color16 = color.toColor16()
         return this
     }

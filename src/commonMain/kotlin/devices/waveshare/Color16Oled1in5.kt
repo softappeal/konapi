@@ -72,10 +72,7 @@ public suspend fun color16Oled1in5(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int,
         command(0xAFU) // turn on oled panel
     },
     {
-        Color16Graphics(object : Display {
-            override val width = 128
-            override val height = 128
-
+        Color16Graphics(object : Display(128, 128) {
             override fun update(buffer: UByteArray) {
                 command(0x15U) // set column address
                 spiData(0x00U) // column address start 00

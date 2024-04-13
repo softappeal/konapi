@@ -32,7 +32,7 @@ class GraphicsTest {
     fun graphics() = withGraphics(5, 3) {
         assertFails { color }
         assertFails { setPixel(0, 0) }
-        setColor(BLACK)
+        set(BLACK)
         assertSame(BLACK, color)
         fillRect()
         assert("""
@@ -40,7 +40,7 @@ class GraphicsTest {
             .....
             .....
         """)
-        setPixel(0, 0)
+        setPixel(Point(0, 0))
         setPixel(0, height - 1)
         setPixel(width - 1, 0)
         assert("""
@@ -48,7 +48,7 @@ class GraphicsTest {
             .....
             #....
         """)
-        fillRect(2, 1, 3, 2)
+        fillRect(Point(2, 1), Dimensions(3, 2))
         assert("""
             .....
             ..###
