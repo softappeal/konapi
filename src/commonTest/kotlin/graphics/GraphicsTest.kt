@@ -24,7 +24,7 @@ class GraphicsTest {
     @Test
     fun color() {
         val color565 = Color565(red = 0b10111, green = 0b110_111, blue = 0b11101)
-        assertEquals(color565, Color(red = 0b10111111U, green = 0b11011111U, blue = 0b11101111U).toColor565())
+        assertEquals(color565, Color(red = 0b10111111, green = 0b11011111, blue = 0b11101111).toColor565())
         assertEquals(Color16(b1 = 0b10111_110U, b2 = 0b111_11101U), color565.toColor16())
     }
 

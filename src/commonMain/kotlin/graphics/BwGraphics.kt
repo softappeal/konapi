@@ -2,7 +2,7 @@
 
 package ch.softappeal.kopi.graphics
 
-public val Color.notBlack: Boolean get() = (red != 0.toUByte()) || (green != 0.toUByte()) || (blue != 0.toUByte())
+public val Color.notBlack: Boolean get() = (red != 0) || (green != 0) || (blue != 0)
 
 public class BwGraphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(display.width * display.height / 8)

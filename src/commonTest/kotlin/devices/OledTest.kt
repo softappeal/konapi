@@ -46,7 +46,7 @@ private suspend fun Graphics.test() {
     val w = width / colors.size / stripes
     colors.forEach { color ->
         repeat(stripes) { s ->
-            fun map(color: UByte) = (color.toInt() / (s + 1)).toUByte()
+            fun map(color: Int) = color / (s + 1)
             setColor(Color(map(color.red), map(color.green), map(color.blue))).fillRect(x, 0, w, height)
             x += w
         }

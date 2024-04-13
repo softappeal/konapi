@@ -2,16 +2,16 @@
 
 package ch.softappeal.kopi.graphics
 
-public data class Color(public val red: UByte, public val green: UByte, public val blue: UByte)
+public data class Color(public val red: Int, public val green: Int, public val blue: Int)
 
-public val BLACK: Color = Color(0x00U, 0x00U, 0x00U)
-public val WHITE: Color = Color(0xFFU, 0xFFU, 0xFFU)
-public val RED: Color = Color(0xFFU, 0x00U, 0x00U)
-public val GREEN: Color = Color(0x00U, 0xFFU, 0x00U)
-public val BLUE: Color = Color(0x00U, 0x00U, 0xFFU)
-public val CYAN: Color = Color(0x00U, 0xFFU, 0xFFU)
-public val MAGENTA: Color = Color(0xFFU, 0x00U, 0xFFU)
-public val YELLOW: Color = Color(0xFFU, 0xFFU, 0x00U)
+public val BLACK: Color = Color(0x00, 0x00, 0x00)
+public val WHITE: Color = Color(0xFF, 0xFF, 0xFF)
+public val RED: Color = Color(0xFF, 0x00, 0x00)
+public val GREEN: Color = Color(0x00, 0xFF, 0x00)
+public val BLUE: Color = Color(0x00, 0x00, 0xFF)
+public val CYAN: Color = Color(0x00, 0xFF, 0xFF)
+public val MAGENTA: Color = Color(0xFF, 0x00, 0xFF)
+public val YELLOW: Color = Color(0xFF, 0xFF, 0x00)
 
 public interface Display {
     public val width: Int

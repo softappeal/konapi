@@ -5,9 +5,9 @@ package ch.softappeal.kopi.graphics
 public data class Color565(public val red: Int, public var green: Int, public var blue: Int)
 
 public fun Color.toColor565(): Color565 = Color565(
-    red = red.toInt() shr 3,
-    green = green.toInt() shr 2,
-    blue = blue.toInt() shr 3,
+    red = red shr 3,
+    green = green shr 2,
+    blue = blue shr 3,
 )
 
 public data class Color16(public val b1: UByte, public val b2: UByte)
