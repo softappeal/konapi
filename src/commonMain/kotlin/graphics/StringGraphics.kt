@@ -29,8 +29,6 @@ public class StringGraphics(display: Display) : Graphics(display) {
     }
 }
 
-public fun stringGraphics(width: Int, height: Int, action: StringGraphics.() -> Unit) {
-    StringGraphics(object : Display(width, height) {
-        override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
-    }).action()
-}
+public fun StringGraphics(width: Int, height: Int): StringGraphics = StringGraphics(object : Display(width, height) {
+    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
+})

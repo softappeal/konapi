@@ -62,7 +62,7 @@ class GraphicsTest {
     }
 
     @Test
-    fun graphics() = stringGraphics(5, 3) {
+    fun graphics() = with(StringGraphics(5, 3)) {
         assertFails { color }
         assertFails { setPixel(0, 0) }
         set(BLACK)
@@ -90,7 +90,7 @@ class GraphicsTest {
     }
 
     @Test
-    fun displayFont() = stringGraphics(128, 32) {
+    fun displayFont() = with(StringGraphics(128, 32)) {
         runBlocking {
             displayFont { println(getString()) }
         }
