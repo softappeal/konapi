@@ -2,10 +2,9 @@ package ch.softappeal.kopi.graphics.tools
 
 import ch.softappeal.kopi.graphics.BLACK
 import ch.softappeal.kopi.graphics.FONT_CHARS
-import ch.softappeal.kopi.graphics.Font
 import ch.softappeal.kopi.graphics.Graphics
 import ch.softappeal.kopi.graphics.StringGraphics
-import ch.softappeal.kopi.graphics.TEST_FONT
+import ch.softappeal.kopi.graphics.TEST_FONT_PATH
 import ch.softappeal.kopi.graphics.WHITE
 import ch.softappeal.kopi.graphics.draw
 import ch.softappeal.kopi.graphics.fillRect
@@ -17,10 +16,10 @@ import kotlin.test.Test
 private const val TTF_TEST_FONT = "test-files/Lcd-5x8.ttf"
 
 fun <G : Graphics> showFont(graphics: (width: Int, height: Int) -> G): G {
-    val font = Font(createFont(
+    val font = createFont(
         File(TTF_TEST_FONT).readBytes(),
         size = 8,
-    ).toOverlays())
+    ).toOverlays()
     val lowerText = "The quick brown fox jumps over the lazy dog".lowercase(Locale.getDefault())
     val upperText = lowerText.uppercase(Locale.getDefault())
     val remainingChars = (FONT_CHARS.toList() - lowerText.toSet() - upperText.toSet()).joinToString(separator = "")
@@ -37,7 +36,7 @@ fun <G : Graphics> showFont(graphics: (width: Int, height: Int) -> G): G {
 class CreateFontTest {
     @Test
     fun createTestFont() {
-        createFont(TTF_TEST_FONT, 8, TEST_FONT)
+        createFont(TTF_TEST_FONT, 8, TEST_FONT_PATH)
     }
 
     @Test

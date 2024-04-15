@@ -2,14 +2,8 @@ package ch.softappeal.kopi.graphics
 
 public val FONT_CHARS: CharRange = ' '..'~'
 
-public class Font(private val overlays: Overlays) : HasDimensions(overlays.width, overlays.height) {
-    internal fun draw(graphics: Graphics, xTopLeft: Int, yTopLeft: Int, ch: Char) {
-        overlays.draw(graphics, xTopLeft, yTopLeft, ch - FONT_CHARS.first)
-    }
-}
-
 public fun Graphics.draw(xTopLeft: Int, yTopLeft: Int, ch: Char) {
-    font.draw(this, xTopLeft, yTopLeft, ch)
+    font.draw(this, xTopLeft, yTopLeft, ch - FONT_CHARS.first)
 }
 
 public fun Graphics.draw(topLeft: Point, ch: Char) {
@@ -27,5 +21,3 @@ public fun Graphics.draw(xTopLeft: Int, yTopLeft: Int, string: String) {
 public fun Graphics.draw(topLeft: Point, string: String) {
     draw(topLeft.x, topLeft.y, string)
 }
-
-public fun readFontFile(path: String): Font = Font(readOverlaysFile(path))

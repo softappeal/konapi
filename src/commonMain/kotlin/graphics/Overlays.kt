@@ -4,7 +4,9 @@ import ch.softappeal.kopi.readFile
 
 private fun ByteArray.isSet(bit: Int) = (this[bit / 8].toInt() and (1 shl (bit % 8))) != 0
 
-public class Overlays(width: Int, height: Int, internal val bitmap: ByteArray) : HasDimensions(width, height) {
+public open class Overlays(width: Int, height: Int, internal val bitmap: ByteArray) : Dimensions(width, height) {
+    public constructor(overlays: Overlays) : this(overlays.width, overlays.height, overlays.bitmap)
+
     private val bits = width * height
     public fun draw(graphics: Graphics, xTopLeft: Int, yTopLeft: Int, index: Int) {
         var bit = index * bits

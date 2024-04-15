@@ -10,18 +10,21 @@ import kotlin.test.assertTrue
 
 private fun StringGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', getString())
-    set(BLACK).fillRect()
-    set(WHITE)
 }
 
-const val TEST_FONT = "test-files/Test.font"
+const val TEST_FONT_PATH = "test-files/Test.font"
+val TEST_FONT = readOverlaysFile(TEST_FONT_PATH)
+
+object MyIcons : Overlays(TEST_FONT) {
+    val a = Icon('a' - FONT_CHARS.first)
+    val b = Icon('b' - FONT_CHARS.first)
+}
 
 suspend fun Graphics.displayFont(pageDone: suspend () -> Unit) {
     assertFails { font }
     assertFails { draw(0, 0, "hello") }
-    val testFont = readFontFile(TEST_FONT)
-    set(testFont)
-    assertSame(testFont, font)
+    set(TEST_FONT)
+    assertSame(TEST_FONT, font)
     val chars = FONT_CHARS.iterator()
     while (chars.hasNext()) {
         set(BLACK).fillRect()
@@ -73,6 +76,8 @@ class GraphicsTest {
             .....
             .....
         """)
+        fillRect()
+        set(WHITE)
         setPixel(Point(0, 0))
         setPixel(0, height - 1)
         setPixel(width - 1, 0)
@@ -81,11 +86,51 @@ class GraphicsTest {
             .....
             #....
         """)
+        set(BLACK).fillRect()
+        set(WHITE)
         fillRect(Point(2, 1), Dimensions(3, 2))
         assert("""
             .....
             ..###
             ..###
+        """)
+    }
+
+    @Test
+    fun icons() = with(StringGraphics(MyIcons.width * 2, MyIcons.height)) {
+        assertEquals(width / 2, MyIcons.a.width)
+        assertEquals(height, MyIcons.a.height)
+        set(BLACK).fillRect()
+        set(WHITE)
+        val ch0 = Point(0, 0)
+        val ch1 = Point(MyIcons.width, 0)
+        draw(ch0, MyIcons.a)
+        draw(ch1, MyIcons.b)
+        assert("""
+            ............
+            ............
+            ......#.....
+            ......#.....
+            .###..#.##..
+            ....#.##..#.
+            .####.#...#.
+            #...#.#...#.
+            .####.####..
+            ............
+        """)
+        set(BLACK).fillRect(ch1, MyIcons)
+        set(WHITE).draw(ch1, MyIcons.a)
+        assert("""
+            ............
+            ............
+            ............
+            ............
+            .###...###..
+            ....#.....#.
+            .####..####.
+            #...#.#...#.
+            .####..####.
+            ............
         """)
     }
 
