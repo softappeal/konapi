@@ -20,8 +20,10 @@ public fun Graphics.fillRect() {
     fillRect(0, 0, width, height)
 }
 
-public data class Rect(public val xTopLeft: Int, public val yTopLeft: Int, public val width: Int, public val height: Int) {
+public class Rect(public val xTopLeft: Int, public val yTopLeft: Int, width: Int, height: Int) : Dimensions(width, height) {
     public constructor(topLeft: Point, dimensions: Dimensions) : this(topLeft.x, topLeft.y, dimensions.width, dimensions.height)
+
+    public val topLeft: Point get() = Point(xTopLeft, yTopLeft)
 }
 
 public fun Graphics.fillRect(rect: Rect) {

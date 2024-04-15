@@ -88,7 +88,7 @@ class GraphicsTest {
         """)
         set(BLACK).fillRect()
         set(WHITE)
-        fillRect(Point(2, 1), Dimensions(3, 2))
+        fillRect(Rect(Point(2, 1), Dimensions(3, 2)))
         assert("""
             .....
             ..###

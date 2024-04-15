@@ -10,7 +10,7 @@ import java.awt.Graphics
 import ch.softappeal.kopi.graphics.Color as KopiColor
 import ch.softappeal.kopi.graphics.Graphics as KopiGraphics
 
-public class AwtGraphics(display: Display, private val zoom: Int) : KopiGraphics(display) {
+public class AwtGraphics(private val location: Point, display: Display, private val zoom: Int) : KopiGraphics(display) {
     override val buffer: UByteArray = UByteArray(0) // dummy
 
     private data class Pixel(val x: Int, val y: Int, val color: KopiColor)
@@ -31,12 +31,16 @@ public class AwtGraphics(display: Display, private val zoom: Int) : KopiGraphics
                 }
             }
         }, BorderLayout.CENTER)
-        frame.setLocation(200, 200)
+        frame.setLocation(location.x, location.y)
         frame.isVisible = true
         frame.setSize(width * zoom, height * zoom + frame.insets.top)
     }
 }
 
-public fun AwtGraphics(width: Int, height: Int, zoom: Int): AwtGraphics = AwtGraphics(object : Display(width, height) {
-    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
-}, zoom)
+public fun AwtGraphics(location: Point, dimensions: Dimensions, zoom: Int): AwtGraphics = AwtGraphics(
+    location,
+    object : Display(dimensions.width, dimensions.height) {
+        override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
+    },
+    zoom,
+)

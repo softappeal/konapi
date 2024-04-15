@@ -1,6 +1,7 @@
 package ch.softappeal.kopi.graphics.tools
 
 import ch.softappeal.kopi.graphics.BLACK
+import ch.softappeal.kopi.graphics.Dimensions
 import ch.softappeal.kopi.graphics.FONT_CHARS
 import ch.softappeal.kopi.graphics.Graphics
 import ch.softappeal.kopi.graphics.StringGraphics
@@ -15,7 +16,7 @@ import kotlin.test.Test
 
 private const val TTF_TEST_FONT = "test-files/Lcd-5x8.ttf"
 
-fun <G : Graphics> showFont(graphics: (width: Int, height: Int) -> G): G {
+fun <G : Graphics> showFont(graphics: (dimensions: Dimensions) -> G): G {
     val font = createFont(
         File(TTF_TEST_FONT).readBytes(),
         size = 8,
@@ -23,7 +24,7 @@ fun <G : Graphics> showFont(graphics: (width: Int, height: Int) -> G): G {
     val lowerText = "The quick brown fox jumps over the lazy dog".lowercase(Locale.getDefault())
     val upperText = lowerText.uppercase(Locale.getDefault())
     val remainingChars = (FONT_CHARS.toList() - lowerText.toSet() - upperText.toSet()).joinToString(separator = "")
-    return graphics(font.width * lowerText.length, font.height * 4).apply {
+    return graphics(Dimensions(font.width * lowerText.length, font.height * 4)).apply {
         set(BLACK).fillRect()
         set(font).set(WHITE)
         draw(0, 0, "width=${font.width} height=${font.height}")
@@ -41,6 +42,6 @@ class CreateFontTest {
 
     @Test
     fun showFont() {
-        println(showFont { width, height -> StringGraphics(width, height) }.getString())
+        println(showFont { dimensions -> StringGraphics(dimensions.width, dimensions.height) }.getString())
     }
 }
