@@ -1,5 +1,6 @@
 package ch.softappeal.kopi.graphics
 
+import ch.softappeal.kopi.assertFailsMessage
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -138,6 +139,94 @@ class GraphicsTest {
     fun displayFont() = with(StringGraphics(128, 32)) {
         runBlocking {
             displayFont { println(getString()) }
+        }
+    }
+
+    @Test
+    fun dumpFont() {
+        val dump = TEST_FONT.dump()
+        print(dump)
+        assertEquals(dump, dump.toOverlays().dump())
+    }
+
+    @Test
+    fun dump() {
+        val overlays = """
+            2
+            3
+            2
+            
+            0
+            #..
+            ...
+            
+            1
+            ...
+            ..#
+        """.toOverlays()
+        with(StringGraphics(overlays.width * 2, overlays.height)) {
+            set(BLACK).fillRect()
+            set(WHITE)
+            overlays.draw(this, 0, 0, 0)
+            overlays.draw(this, overlays.width, 0, 1)
+            assert("""
+                #.....
+                .....#
+            """)
+        }
+        assertFailsMessage<IllegalStateException>("missing empty line before index 0") {
+            """
+                2
+                3
+                2
+                x
+            """.toOverlays()
+        }
+        assertFailsMessage<IllegalStateException>("index 0 expected (actual is 1)") {
+            """
+                2
+                3
+                2
+
+                1
+                ..
+            """.toOverlays()
+        }
+        assertFailsMessage<IllegalStateException>("wrong line width at index 0 (2 instead of 3)") {
+            """
+                2
+                3
+                2
+
+                0
+                ..
+            """.toOverlays()
+        }
+        assertFailsMessage<IllegalStateException>("unexpected char 'X' at index 0") {
+            """
+                2
+                3
+                2
+
+                0
+                .X.
+            """.toOverlays()
+        }
+        assertFailsMessage<IllegalStateException>("unexpected lines at end") {
+            """
+                2
+                3
+                2
+
+                0
+                ...
+                ...
+                
+                1
+                ...
+                ...
+                
+            """.toOverlays()
         }
     }
 }

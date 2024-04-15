@@ -54,7 +54,7 @@ public fun createFont(trueTypeFont: ByteArray, size: Int): ByteArray {
 
     for (ch in FONT_CHARS) addChar(ch)
     bitmap[bitmapIndex] = true // needed so that toByteArray below gets all bytes
-    return Overlays(width, height, bitmap.toByteArray()).toBytes()
+    return Overlays(FONT_CHARS.count(), width, height, bitmap.toByteArray()).toBytes()
 }
 
 public fun createFont(trueTypeFontPath: String, size: Int, createdFontPath: String) {
