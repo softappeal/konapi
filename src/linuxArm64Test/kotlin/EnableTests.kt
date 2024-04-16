@@ -1,9 +1,9 @@
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
-import ch.softappeal.kopi.devices.Bme280Test
-import ch.softappeal.kopi.devices.I2cLcd1602Test
-import ch.softappeal.kopi.devices.OledTest
-import ch.softappeal.kopi.devices.Paj7620U2Test
+import ch.softappeal.konapi.devices.Bme280Test
+import ch.softappeal.konapi.devices.I2cLcd1602Test
+import ch.softappeal.konapi.devices.OledTest
+import ch.softappeal.konapi.devices.Paj7620U2Test
 
 class ConcreteGpioTest : GpioTest()
 class ConcreteSpiTest : SpiTest()

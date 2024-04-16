@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 public class Icon(internal val overlays: Overlays, internal val index: Int) : Dimensions(overlays)
 

@@ -1,6 +1,6 @@
-package ch.softappeal.kopi.app
+package ch.softappeal.konapi.app
 
-import ch.softappeal.kopi.I2cBus
+import ch.softappeal.konapi.I2cBus
 
 const val GPIO_PAJ7620U2_INT = 25
 

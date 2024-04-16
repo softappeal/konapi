@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 public val FONT_CHARS: CharRange = ' '..'~'
 

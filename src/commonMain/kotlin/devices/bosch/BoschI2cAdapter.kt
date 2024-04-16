@@ -1,12 +1,12 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.devices.bosch
+package ch.softappeal.konapi.devices.bosch
 
-import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.SPI_MODE_0
-import ch.softappeal.kopi.SPI_MODE_4WIRE
-import ch.softappeal.kopi.SPI_MODE_MSB_FIRST
-import ch.softappeal.kopi.SpiDevice
+import ch.softappeal.konapi.I2cDevice
+import ch.softappeal.konapi.SPI_MODE_0
+import ch.softappeal.konapi.SPI_MODE_4WIRE
+import ch.softappeal.konapi.SPI_MODE_MSB_FIRST
+import ch.softappeal.konapi.SpiDevice
 
 /*
     Datasheet: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf

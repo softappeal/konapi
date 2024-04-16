@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

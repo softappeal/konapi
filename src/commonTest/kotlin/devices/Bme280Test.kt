@@ -1,12 +1,12 @@
-package ch.softappeal.kopi.devices
+package ch.softappeal.konapi.devices
 
-import ch.softappeal.kopi.I2C_ADDRESS_BME280
-import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.devices.bosch.Bme280
-import ch.softappeal.kopi.devices.bosch.boschI2cAdapter
-import ch.softappeal.kopi.i2cBus1
-import ch.softappeal.kopi.spiDeviceBus0CS0
-import ch.softappeal.kopi.use
+import ch.softappeal.konapi.I2C_ADDRESS_BME280
+import ch.softappeal.konapi.I2cDevice
+import ch.softappeal.konapi.devices.bosch.Bme280
+import ch.softappeal.konapi.devices.bosch.boschI2cAdapter
+import ch.softappeal.konapi.i2cBus1
+import ch.softappeal.konapi.spiDeviceBus0CS0
+import ch.softappeal.konapi.use
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Ignore

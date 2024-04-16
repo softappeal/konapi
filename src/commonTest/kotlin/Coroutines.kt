@@ -1,4 +1,4 @@
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
 import kotlinx.coroutines.currentCoroutineContext
 

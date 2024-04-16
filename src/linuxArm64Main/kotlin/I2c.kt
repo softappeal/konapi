@@ -1,15 +1,15 @@
 @file:OptIn(ExperimentalForeignApi::class)
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
-import ch.softappeal.kopi.native.i2c.I2C_SLAVE
-import ch.softappeal.kopi.native.i2c.i2c_smbus_read_byte
-import ch.softappeal.kopi.native.i2c.i2c_smbus_read_byte_data
-import ch.softappeal.kopi.native.i2c.i2c_smbus_read_i2c_block_data
-import ch.softappeal.kopi.native.i2c.i2c_smbus_write_byte
-import ch.softappeal.kopi.native.i2c.i2c_smbus_write_byte_data
-import ch.softappeal.kopi.native.i2c.i2c_smbus_write_i2c_block_data
+import ch.softappeal.konapi.native.i2c.I2C_SLAVE
+import ch.softappeal.konapi.native.i2c.i2c_smbus_read_byte
+import ch.softappeal.konapi.native.i2c.i2c_smbus_read_byte_data
+import ch.softappeal.konapi.native.i2c.i2c_smbus_read_i2c_block_data
+import ch.softappeal.konapi.native.i2c.i2c_smbus_write_byte
+import ch.softappeal.konapi.native.i2c.i2c_smbus_write_byte_data
+import ch.softappeal.konapi.native.i2c.i2c_smbus_write_i2c_block_data
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.addressOf

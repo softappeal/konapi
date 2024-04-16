@@ -1,6 +1,6 @@
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
-import ch.softappeal.kopi.assertFailsMessage
+import ch.softappeal.konapi.assertFailsMessage
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,7 +13,7 @@ private fun StringGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', getString())
 }
 
-const val TEST_FONT_PATH = "test-files/Test.font"
+const val TEST_FONT_PATH = "test.files/test.font"
 val TEST_FONT = readOverlaysFile(TEST_FONT_PATH)
 
 object MyIcons : Overlays(TEST_FONT) {

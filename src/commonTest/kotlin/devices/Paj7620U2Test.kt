@@ -1,11 +1,11 @@
-package ch.softappeal.kopi.devices
+package ch.softappeal.konapi.devices
 
-import ch.softappeal.kopi.GPIO_PAJ7620U2_INT
-import ch.softappeal.kopi.Gpio
-import ch.softappeal.kopi.I2C_ADDRESS_PAJ7620U2
-import ch.softappeal.kopi.devices.waveshare.Paj7620U2
-import ch.softappeal.kopi.i2cBus1
-import ch.softappeal.kopi.use
+import ch.softappeal.konapi.GPIO_PAJ7620U2_INT
+import ch.softappeal.konapi.Gpio
+import ch.softappeal.konapi.I2C_ADDRESS_PAJ7620U2
+import ch.softappeal.konapi.devices.waveshare.Paj7620U2
+import ch.softappeal.konapi.i2cBus1
+import ch.softappeal.konapi.use
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.seconds

@@ -1,9 +1,9 @@
 @file:Suppress("SpellCheckingInspection", "unused")
 
-package ch.softappeal.kopi.devices.hitachi
+package ch.softappeal.konapi.devices.hitachi
 
-import ch.softappeal.kopi.Closeable
-import ch.softappeal.kopi.I2cDevice
+import ch.softappeal.konapi.Closeable
+import ch.softappeal.konapi.I2cDevice
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

@@ -1,4 +1,4 @@
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 /** Pixel is right of [x] and below of [y]. */
 public data class Point(public val x: Int, public val y: Int)

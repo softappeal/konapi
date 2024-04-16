@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
 public const val SPI_MODE_0: UByte = 0x00U
 public const val SPI_MODE_1: UByte = 0x01U

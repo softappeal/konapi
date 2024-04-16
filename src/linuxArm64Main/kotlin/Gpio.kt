@@ -1,27 +1,27 @@
 @file:OptIn(ExperimentalForeignApi::class)
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
-import ch.softappeal.kopi.native.gpio.GPIOD_LINE_EVENT_FALLING_EDGE
-import ch.softappeal.kopi.native.gpio.GPIOD_LINE_EVENT_RISING_EDGE
-import ch.softappeal.kopi.native.gpio.GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW
-import ch.softappeal.kopi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
-import ch.softappeal.kopi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
-import ch.softappeal.kopi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
-import ch.softappeal.kopi.native.gpio.gpiod_chip_close
-import ch.softappeal.kopi.native.gpio.gpiod_chip_get_line
-import ch.softappeal.kopi.native.gpio.gpiod_chip_open_by_label
-import ch.softappeal.kopi.native.gpio.gpiod_line_event
-import ch.softappeal.kopi.native.gpio.gpiod_line_event_read
-import ch.softappeal.kopi.native.gpio.gpiod_line_event_wait
-import ch.softappeal.kopi.native.gpio.gpiod_line_get_value
-import ch.softappeal.kopi.native.gpio.gpiod_line_release
-import ch.softappeal.kopi.native.gpio.gpiod_line_request_both_edges_events_flags
-import ch.softappeal.kopi.native.gpio.gpiod_line_request_input_flags
-import ch.softappeal.kopi.native.gpio.gpiod_line_request_output_flags
-import ch.softappeal.kopi.native.gpio.gpiod_line_set_value
-import ch.softappeal.kopi.native.gpio.gpiod_version_string
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_EVENT_FALLING_EDGE
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_EVENT_RISING_EDGE
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
+import ch.softappeal.konapi.native.gpio.gpiod_chip_close
+import ch.softappeal.konapi.native.gpio.gpiod_chip_get_line
+import ch.softappeal.konapi.native.gpio.gpiod_chip_open_by_label
+import ch.softappeal.konapi.native.gpio.gpiod_line_event
+import ch.softappeal.konapi.native.gpio.gpiod_line_event_read
+import ch.softappeal.konapi.native.gpio.gpiod_line_event_wait
+import ch.softappeal.konapi.native.gpio.gpiod_line_get_value
+import ch.softappeal.konapi.native.gpio.gpiod_line_release
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_both_edges_events_flags
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_input_flags
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_output_flags
+import ch.softappeal.konapi.native.gpio.gpiod_line_set_value
+import ch.softappeal.konapi.native.gpio.gpiod_version_string
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
@@ -42,7 +42,7 @@ import kotlin.time.Duration
  */
 private const val EXPECTED_LIB_VERSION = "1.6.3"
 
-private const val CONSUMER = "kopi"
+private const val CONSUMER = "konapi"
 
 private fun Boolean.ordinal() = toByte().toInt()
 

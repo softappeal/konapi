@@ -1,6 +1,6 @@
-package ch.softappeal.kopi.devices.waveshare
+package ch.softappeal.konapi.devices.waveshare
 
-import ch.softappeal.kopi.I2cDevice
+import ch.softappeal.konapi.I2cDevice
 
 /*
     Gesture Recognition Sensor
