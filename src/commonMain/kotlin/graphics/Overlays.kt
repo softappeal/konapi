@@ -8,7 +8,7 @@ private fun ByteArray.set(bit: Int) {
 }
 
 public open class Overlays(
-    internal val size: Int, width: Int, height: Int, internal val bitmap: ByteArray,
+    public val size: Int, width: Int, height: Int, internal val bitmap: ByteArray,
 ) : Dimensions(width, height) {
     public constructor(overlays: Overlays) : this(overlays.size, overlays.width, overlays.height, overlays.bitmap)
 
@@ -52,7 +52,7 @@ public fun Overlays.dump(): String {
         s.append("$index\n")
         repeat(height) {
             repeat(width) {
-                s.append(if (bitmap.isSet(bit++)) "#" else ".")
+                s.append(if (bitmap.isSet(bit++)) STRING_PIXEL_ON else STRING_PIXEL_OFF)
             }
             s.append('\n')
         }
@@ -64,6 +64,7 @@ public fun String.toOverlays(): Overlays {
     val lines = trimIndent().split("\n").iterator()
     val size = lines.next().toInt()
     val width = lines.next().toInt()
+    val lineWidth = width * STRING_PIXEL_WIDTH
     val height = lines.next().toInt()
     val bitmap = ByteArray((size * width * height / 8) + 1)
     var bit = 0
@@ -73,12 +74,12 @@ public fun String.toOverlays(): Overlays {
         check(index == actualIndex) { "index $index expected (actual is $actualIndex)" }
         repeat(height) {
             val line = lines.next()
-            check(width == line.length) { "wrong line width at index $index (${line.length} instead of $width)" }
-            for (w in 0..<width) {
-                when (val ch = line[w]) {
-                    '.' -> {} // empty
-                    '#' -> bitmap.set(bit)
-                    else -> error("unexpected char '$ch' at index $index")
+            check(lineWidth == line.length) { "wrong line width at index $index (${line.length} instead of $lineWidth)" }
+            for (w in 0..<lineWidth step 2) {
+                when (val p = line.subSequence(w, w + STRING_PIXEL_WIDTH)) {
+                    STRING_PIXEL_OFF -> {} // empty
+                    STRING_PIXEL_ON -> bitmap.set(bit)
+                    else -> error("unexpected pixel '$p' at index $index")
                 }
                 bit++
             }

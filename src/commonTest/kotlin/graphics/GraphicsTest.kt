@@ -73,9 +73,9 @@ class GraphicsTest {
         assertSame(BLACK, color)
         fillRect()
         assert("""
-            .....
-            .....
-            .....
+            ..........
+            ..........
+            ..........
         """)
         fillRect()
         set(WHITE)
@@ -83,17 +83,17 @@ class GraphicsTest {
         setPixel(0, height - 1)
         setPixel(width - 1, 0)
         assert("""
-            #...#
-            .....
-            #....
+            ##......##
+            ..........
+            ##........
         """)
         set(BLACK).fillRect()
         set(WHITE)
         fillRect(Rect(Point(2, 1), Dimensions(3, 2)))
         assert("""
-            .....
-            ..###
-            ..###
+            ..........
+            ....######
+            ....######
         """)
     }
 
@@ -108,35 +108,35 @@ class GraphicsTest {
         draw(ch0, MyIcons.a)
         draw(ch1, MyIcons.b)
         assert("""
-            ............
-            ............
-            ......#.....
-            ......#.....
-            .###..#.##..
-            ....#.##..#.
-            .####.#...#.
-            #...#.#...#.
-            .####.####..
-            ............
+            ........................
+            ........................
+            ............##..........
+            ............##..........
+            ..######....##..####....
+            ........##..####....##..
+            ..########..##......##..
+            ##......##..##......##..
+            ..########..########....
+            ........................
         """)
         set(BLACK).fillRect(ch1, MyIcons)
         set(WHITE).draw(ch1, MyIcons.a)
         assert("""
-            ............
-            ............
-            ............
-            ............
-            .###...###..
-            ....#.....#.
-            .####..####.
-            #...#.#...#.
-            .####..####.
-            ............
+            ........................
+            ........................
+            ........................
+            ........................
+            ..######......######....
+            ........##..........##..
+            ..########....########..
+            ##......##..##......##..
+            ..########....########..
+            ........................
         """)
     }
 
     @Test
-    fun displayFont() = with(StringGraphics(128, 32)) {
+    fun displayFont() = with(StringGraphics(64, 64)) {
         runBlocking {
             displayFont { println(getString()) }
         }
@@ -157,12 +157,12 @@ class GraphicsTest {
             2
             
             0
-            #..
-            ...
+            ##....
+            ......
             
             1
-            ...
-            ..#
+            ......
+            ....##
         """.toOverlays()
         with(StringGraphics(overlays.width * 2, overlays.height)) {
             set(BLACK).fillRect()
@@ -170,8 +170,8 @@ class GraphicsTest {
             overlays.draw(this, 0, 0, 0)
             overlays.draw(this, overlays.width, 0, 1)
             assert("""
-                #.....
-                .....#
+                ##..........
+                ..........##
             """)
         }
         assertFailsMessage<IllegalStateException>("missing empty line before index 0") {
@@ -189,10 +189,9 @@ class GraphicsTest {
                 2
 
                 1
-                ..
             """.toOverlays()
         }
-        assertFailsMessage<IllegalStateException>("wrong line width at index 0 (2 instead of 3)") {
+        assertFailsMessage<IllegalStateException>("wrong line width at index 0 (2 instead of 6)") {
             """
                 2
                 3
@@ -202,14 +201,14 @@ class GraphicsTest {
                 ..
             """.toOverlays()
         }
-        assertFailsMessage<IllegalStateException>("unexpected char 'X' at index 0") {
+        assertFailsMessage<IllegalStateException>("unexpected pixel '12' at index 0") {
             """
                 2
                 3
                 2
 
                 0
-                .X.
+                123456
             """.toOverlays()
         }
         assertFailsMessage<IllegalStateException>("unexpected lines at end") {
@@ -219,12 +218,12 @@ class GraphicsTest {
                 2
 
                 0
-                ...
-                ...
+                ......
+                ......
                 
                 1
-                ...
-                ...
+                ......
+                ......
                 
             """.toOverlays()
         }

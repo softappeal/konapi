@@ -2,6 +2,10 @@
 
 package ch.softappeal.kopi.graphics
 
+public const val STRING_PIXEL_WIDTH: Int = 2 // needed for near quadratic output
+public const val STRING_PIXEL_ON: String = "##"
+public const val STRING_PIXEL_OFF: String = ".."
+
 public class StringGraphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(display.width * display.height)
 
@@ -21,7 +25,7 @@ public class StringGraphics(display: Display) : Graphics(display) {
         var i = 0
         repeat(height) {
             repeat(width) {
-                s.append(if (buffer[i++].toInt() == 0) '.' else '#')
+                s.append(if (buffer[i++].toInt() == 0) STRING_PIXEL_OFF else STRING_PIXEL_ON)
             }
             s.append('\n')
         }
