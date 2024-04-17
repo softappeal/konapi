@@ -1,13 +1,13 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi.devices.waveshare
+package ch.softappeal.konapi.devices.waveshare
 
-import ch.softappeal.kopi.Gpio
-import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.SpiDevice
-import ch.softappeal.kopi.graphics.BwGraphics
-import ch.softappeal.kopi.graphics.Display
+import ch.softappeal.konapi.Gpio
+import ch.softappeal.konapi.I2cDevice
+import ch.softappeal.konapi.SpiDevice
+import ch.softappeal.konapi.graphics.BwGraphics
+import ch.softappeal.konapi.graphics.Display
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

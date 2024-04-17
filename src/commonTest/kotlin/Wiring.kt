@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection", "unused")
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
 const val GPIO_IN_UNCONNECTED = 27
 const val GPIO_IN_CONNECTED_TO_OUT = 22

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 public const val STRING_PIXEL_WIDTH: Int = 2 // needed for near quadratic output
 public const val STRING_PIXEL_ON: String = "##"

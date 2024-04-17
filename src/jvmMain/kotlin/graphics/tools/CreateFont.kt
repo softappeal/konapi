@@ -1,8 +1,8 @@
-package ch.softappeal.kopi.graphics.tools
+package ch.softappeal.konapi.graphics.tools
 
-import ch.softappeal.kopi.graphics.FONT_CHARS
-import ch.softappeal.kopi.graphics.Overlays
-import ch.softappeal.kopi.graphics.toBytes
+import ch.softappeal.konapi.graphics.FONT_CHARS
+import ch.softappeal.konapi.graphics.Overlays
+import ch.softappeal.konapi.graphics.toBytes
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage

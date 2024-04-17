@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 public data class Color565(public val red: Int, public var green: Int, public var blue: Int)
 

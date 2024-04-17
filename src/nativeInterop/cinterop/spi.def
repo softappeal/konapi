@@ -1,5 +1,5 @@
 headers = linux/spi/spidev.h
-package = ch.softappeal.kopi.native.spi
+package = ch.softappeal.konapi.native.spi
 compilerOpts = -Isrc/nativeInterop/cinterop/headers
 ---
 #define SPI_IOC_MESSAGE_1 SPI_IOC_MESSAGE(1)

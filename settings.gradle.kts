@@ -1,3 +1,3 @@
-rootProject.name = "kopi"
+rootProject.name = "konapi"
 
-include("app")
+include("demo.app")

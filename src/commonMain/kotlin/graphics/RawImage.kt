@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 /** [bytes] is (red, green, blue) x width x height. */
 public class RawImage(width: Int, height: Int, internal val bytes: ByteArray) : Dimensions(width, height)

@@ -1,9 +1,9 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi.devices.bosch
+package ch.softappeal.konapi.devices.bosch
 
-import ch.softappeal.kopi.I2cDevice
+import ch.softappeal.konapi.I2cDevice
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

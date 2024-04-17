@@ -1,9 +1,22 @@
+#file: noinspection SpellCheckingInspection
 on: push
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: gradle/wrapper-validation-action@v2
-      - run: docker image     build --tag project-image .
-      - run: docker container run         project-image ./gradlew build
+      - name: build
+        env: # printenv prevents that secrets are visible on command line
+          MAVEN_CENTRAL_KEY: ${{ secrets.MAVEN_CENTRAL_KEY }}
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: |
+          printenv MAVEN_CENTRAL_KEY | base64 -d > ~/maven.central.key.gpg
+          printenv GRADLE_PROPERTIES             > ~/gradle.properties
+          docker image     build                           --tag project-image .
+          docker container create --name project-container       project-image ./gradlew build
+          docker container cp ~/maven.central.key.gpg   project-container:/root/.gradle/maven.central.key.gpg
+          docker container cp ~/gradle.properties       project-container:/root/.gradle/gradle.properties
+          docker container start --attach --interactive project-container

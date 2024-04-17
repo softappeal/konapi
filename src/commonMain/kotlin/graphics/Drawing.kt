@@ -1,4 +1,4 @@
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 public fun Graphics.setPixel(point: Point) {
     setPixel(point.x, point.y)

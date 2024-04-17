@@ -1,9 +1,9 @@
-package ch.softappeal.kopi.devices
+package ch.softappeal.konapi.devices
 
-import ch.softappeal.kopi.I2C_ADDRESS_LCD1602
-import ch.softappeal.kopi.devices.hitachi.i2cLcd1602
-import ch.softappeal.kopi.i2cBus1
-import ch.softappeal.kopi.use
+import ch.softappeal.konapi.I2C_ADDRESS_LCD1602
+import ch.softappeal.konapi.devices.hitachi.i2cLcd1602
+import ch.softappeal.konapi.i2cBus1
+import ch.softappeal.konapi.use
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test

@@ -1,17 +1,17 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.devices.waveshare
+package ch.softappeal.konapi.devices.waveshare
 
-import ch.softappeal.kopi.Closeable
-import ch.softappeal.kopi.Gpio
-import ch.softappeal.kopi.I2cDevice
-import ch.softappeal.kopi.SPI_MODE_3
-import ch.softappeal.kopi.SPI_MODE_4WIRE
-import ch.softappeal.kopi.SPI_MODE_MSB_FIRST
-import ch.softappeal.kopi.SpiDevice
-import ch.softappeal.kopi.graphics.Graphics
-import ch.softappeal.kopi.tryCatch
-import ch.softappeal.kopi.tryFinally
+import ch.softappeal.konapi.Closeable
+import ch.softappeal.konapi.Gpio
+import ch.softappeal.konapi.I2cDevice
+import ch.softappeal.konapi.SPI_MODE_3
+import ch.softappeal.konapi.SPI_MODE_4WIRE
+import ch.softappeal.konapi.SPI_MODE_MSB_FIRST
+import ch.softappeal.konapi.SpiDevice
+import ch.softappeal.konapi.graphics.Graphics
+import ch.softappeal.konapi.tryCatch
+import ch.softappeal.konapi.tryFinally
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

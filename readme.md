@@ -1,35 +1,13 @@
-### Trying out Kotlin Native with Raspberry Pi ...
+### Kotlin Native for Raspberry Pi
 
 - Inspired by
     - https://github.com/ktgpio/ktgpio
     - https://github.com/ktgpio/ktgpio-samples
 
-```shell
-sudo apt update
-sudo apt full-upgrade
-sudo reboot
-```
+- artifacts on [Maven Central](https://central.sonatype.com/search?q=g:ch.softappeal.konapi) (GroupId: ch.softappeal.konapi)
 
-```shell
-ssh guru@raspberrypi-1
-```
+- uses [Semantic Versioning](https://semver.org)
 
-autostart
+- [demo.app](demo.app)
 
-```
-sudo nano /etc/rc.local
-
-#!/bin/sh -e
-sudo /home/guru/kopi/app.kexe &
-exit 0
-```
-
-camera
-
-```
-rpicam-vid -t 0 --inline --listen -o tcp://0.0.0.0:8090
-vlc tcp/h264://raspberrypi-1:8090
-
-rpicam-vid -t 0 --inline -o udp://0.0.0.0:8090
-vlc udp://@:<port> :demux=h264
-```
+- Open Source ([BSD-3-Clause license](license.txt))

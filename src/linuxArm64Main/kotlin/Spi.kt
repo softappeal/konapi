@@ -1,16 +1,16 @@
 @file:OptIn(ExperimentalForeignApi::class)
 @file:Suppress("SpellCheckingInspection")
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
-import ch.softappeal.kopi.native.spi.SPI_IOC_MESSAGE_1
-import ch.softappeal.kopi.native.spi.SPI_IOC_RD_BITS_PER_WORD
-import ch.softappeal.kopi.native.spi.SPI_IOC_RD_MAX_SPEED_HZ
-import ch.softappeal.kopi.native.spi.SPI_IOC_RD_MODE
-import ch.softappeal.kopi.native.spi.SPI_IOC_WR_BITS_PER_WORD
-import ch.softappeal.kopi.native.spi.SPI_IOC_WR_MAX_SPEED_HZ
-import ch.softappeal.kopi.native.spi.SPI_IOC_WR_MODE
-import ch.softappeal.kopi.native.spi.spi_ioc_transfer
+import ch.softappeal.konapi.native.spi.SPI_IOC_MESSAGE_1
+import ch.softappeal.konapi.native.spi.SPI_IOC_RD_BITS_PER_WORD
+import ch.softappeal.konapi.native.spi.SPI_IOC_RD_MAX_SPEED_HZ
+import ch.softappeal.konapi.native.spi.SPI_IOC_RD_MODE
+import ch.softappeal.konapi.native.spi.SPI_IOC_WR_BITS_PER_WORD
+import ch.softappeal.konapi.native.spi.SPI_IOC_WR_MAX_SPEED_HZ
+import ch.softappeal.konapi.native.spi.SPI_IOC_WR_MODE
+import ch.softappeal.konapi.native.spi.spi_ioc_transfer
 import kotlinx.cinterop.CPrimitiveVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.IntVar

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi
+package ch.softappeal.konapi
 
 public interface I2cBus : Closeable {
     public fun device(address: Int): I2cDevice

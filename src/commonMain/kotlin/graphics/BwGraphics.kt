@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 public val Color.notBlack: Boolean get() = (red != 0) || (green != 0) || (blue != 0)
 

@@ -1,8 +1,10 @@
+// precondition: copy contents of libraryPath to your project
+
 kotlin {
     linuxArm64 {
         binaries {
             executable(listOf(RELEASE)) {
-                entryPoint = "ch.softappeal.kopi.app.main"
+                entryPoint = "ch.softappeal.konapi.app.main"
                 linkerOpts += rootProject.extra["libraryPath"] as String
             }
         }

@@ -1,20 +1,20 @@
-package ch.softappeal.kopi.graphics.tools
+package ch.softappeal.konapi.graphics.tools
 
-import ch.softappeal.kopi.graphics.BLACK
-import ch.softappeal.kopi.graphics.Dimensions
-import ch.softappeal.kopi.graphics.FONT_CHARS
-import ch.softappeal.kopi.graphics.Graphics
-import ch.softappeal.kopi.graphics.StringGraphics
-import ch.softappeal.kopi.graphics.TEST_FONT_PATH
-import ch.softappeal.kopi.graphics.WHITE
-import ch.softappeal.kopi.graphics.draw
-import ch.softappeal.kopi.graphics.fillRect
-import ch.softappeal.kopi.graphics.toOverlays
+import ch.softappeal.konapi.graphics.BLACK
+import ch.softappeal.konapi.graphics.Dimensions
+import ch.softappeal.konapi.graphics.FONT_CHARS
+import ch.softappeal.konapi.graphics.Graphics
+import ch.softappeal.konapi.graphics.StringGraphics
+import ch.softappeal.konapi.graphics.TEST_FONT_PATH
+import ch.softappeal.konapi.graphics.WHITE
+import ch.softappeal.konapi.graphics.draw
+import ch.softappeal.konapi.graphics.fillRect
+import ch.softappeal.konapi.graphics.toOverlays
 import java.io.File
 import java.util.Locale
 import kotlin.test.Test
 
-private const val TTF_TEST_FONT = "test-files/Lcd-5x8.ttf"
+private const val TTF_TEST_FONT = "test.files/lcd.5x8.ttf"
 
 fun <G : Graphics> showFont(graphics: (dimensions: Dimensions) -> G): G {
     val font = createFont(

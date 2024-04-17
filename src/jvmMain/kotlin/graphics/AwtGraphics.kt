@@ -1,19 +1,19 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
 import java.awt.BorderLayout
 import java.awt.Canvas
 import java.awt.Color
 import java.awt.Frame
 import java.awt.Graphics
-import ch.softappeal.kopi.graphics.Color as KopiColor
-import ch.softappeal.kopi.graphics.Graphics as KopiGraphics
+import ch.softappeal.konapi.graphics.Color as KColor
+import ch.softappeal.konapi.graphics.Graphics as KGraphics
 
-public class AwtGraphics(private val location: Point, display: Display, private val zoom: Int) : KopiGraphics(display) {
+public class AwtGraphics(private val location: Point, display: Display, private val zoom: Int) : KGraphics(display) {
     override val buffer: UByteArray = UByteArray(0) // dummy
 
-    private data class Pixel(val x: Int, val y: Int, val color: KopiColor)
+    private data class Pixel(val x: Int, val y: Int, val color: KColor)
 
     private val pixels = mutableListOf<Pixel>()
     override fun setPixel(x: Int, y: Int) {

@@ -1,10 +1,10 @@
-package ch.softappeal.kopi.app
+package ch.softappeal.konapi.app
 
-import ch.softappeal.kopi.Gpio
-import ch.softappeal.kopi.devices.bosch.Bme280
-import ch.softappeal.kopi.devices.hitachi.i2cLcd1602
-import ch.softappeal.kopi.devices.waveshare.Paj7620U2
-import ch.softappeal.kopi.use
+import ch.softappeal.konapi.Gpio
+import ch.softappeal.konapi.devices.bosch.Bme280
+import ch.softappeal.konapi.devices.hitachi.i2cLcd1602
+import ch.softappeal.konapi.devices.waveshare.Paj7620U2
+import ch.softappeal.konapi.use
 import io.ktor.server.application.call
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
@@ -22,7 +22,7 @@ import kotlin.time.measureTime
 private fun runServer() = embeddedServer(CIO, port = 8080) {
     routing {
         get("/") {
-            call.respondText("Hello from kopi")
+            call.respondText("Hello")
         }
     }
 }.start()

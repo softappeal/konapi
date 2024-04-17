@@ -1,6 +1,6 @@
-package ch.softappeal.kopi.graphics
+package ch.softappeal.konapi.graphics
 
-import ch.softappeal.kopi.readFile
+import ch.softappeal.konapi.readFile
 
 private fun ByteArray.isSet(bit: Int) = (this[bit / 8].toInt() and (1 shl (bit % 8))) != 0
 private fun ByteArray.set(bit: Int) {
