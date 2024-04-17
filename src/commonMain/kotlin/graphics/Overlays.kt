@@ -7,10 +7,8 @@ private fun ByteArray.set(bit: Int) {
     this[bit / 8] = (this[bit / 8].toInt() or (1 shl (bit % 8))).toByte()
 }
 
-public open class Overlays(
-    public val size: Int, width: Int, height: Int, internal val bitmap: ByteArray,
-) : Dimensions(width, height) {
-    public constructor(overlays: Overlays) : this(overlays.size, overlays.width, overlays.height, overlays.bitmap)
+public open class Overlays(public val size: Int, dimensions: Dimensions, internal val bitmap: ByteArray) : Dimensions(dimensions) {
+    public constructor(overlays: Overlays) : this(overlays.size, overlays, overlays.bitmap)
 
     private val bits = width * height
     public fun draw(graphics: Graphics, xTopLeft: Int, yTopLeft: Int, index: Int) {
@@ -32,23 +30,15 @@ public fun Overlays.toBytes(): ByteArray {
     return bytes
 }
 
-public fun ByteArray.toOverlays(): Overlays = Overlays(
-    size = this[0].toInt(),
-    width = this[1].toInt(),
-    height = this[2].toInt(),
-    bitmap = copyOfRange(3, size),
-)
+public fun ByteArray.toOverlays(): Overlays =
+    Overlays(this[0].toInt(), Dimensions(this[1].toInt(), this[2].toInt()), copyOfRange(3, size))
 
 public fun readOverlaysFile(path: String): Overlays = readFile(path).toOverlays()
 
 public fun Overlays.dump(): String {
     val s = StringBuilder()
-    s.append("$size\n")
-    s.append("$width\n")
-    s.append("$height\n")
     var bit = 0
     for (index in 0..<size) {
-        s.append('\n')
         s.append("$index\n")
         repeat(height) {
             repeat(width) {
@@ -60,19 +50,15 @@ public fun Overlays.dump(): String {
     return s.toString()
 }
 
-public fun String.toOverlays(): Overlays {
-    val lines = trimIndent().split("\n").iterator()
-    val size = lines.next().toInt()
-    val width = lines.next().toInt()
-    val lineWidth = width * STRING_PIXEL_WIDTH
-    val height = lines.next().toInt()
-    val bitmap = ByteArray((size * width * height / 8) + 1)
+public fun Overlays(size: Int, dimensions: Dimensions, dump: String): Overlays {
+    val lineWidth = dimensions.width * STRING_PIXEL_WIDTH
+    val lines = dump.trimIndent().split("\n").iterator()
+    val bitmap = ByteArray((size * dimensions.width * dimensions.height / 8) + 1)
     var bit = 0
     for (index in 0..<size) {
-        check(lines.next().isEmpty()) { "missing empty line before index $index" }
         val actualIndex = lines.next().toInt()
         check(index == actualIndex) { "index $index expected (actual is $actualIndex)" }
-        repeat(height) {
+        repeat(dimensions.height) {
             val line = lines.next()
             check(lineWidth == line.length) { "wrong line width at index $index (${line.length} instead of $lineWidth)" }
             for (w in 0..<lineWidth step 2) {
@@ -86,5 +72,5 @@ public fun String.toOverlays(): Overlays {
         }
     }
     check(!lines.hasNext()) { "unexpected lines at end" }
-    return Overlays(size, width, height, bitmap)
+    return Overlays(size, dimensions, bitmap)
 }

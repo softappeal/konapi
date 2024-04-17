@@ -144,26 +144,22 @@ class GraphicsTest {
 
     @Test
     fun dumpFont() {
-        val dump = TEST_FONT.dump()
+        val overlays = TEST_FONT
+        val dump = overlays.dump()
         print(dump)
-        assertEquals(dump, dump.toOverlays().dump())
+        assertEquals(dump, Overlays(overlays.size, overlays, dump).dump())
     }
 
     @Test
     fun dump() {
-        val overlays = """
-            2
-            3
-            2
-            
+        val overlays = Overlays(2, Dimensions(3, 2), """
             0
             ##....
             ......
-            
             1
             ......
             ....##
-        """.toOverlays()
+        """)
         with(StringGraphics(overlays.width * 2, overlays.height)) {
             set(BLACK).fillRect()
             set(WHITE)
@@ -174,58 +170,33 @@ class GraphicsTest {
                 ..........##
             """)
         }
-        assertFailsMessage<IllegalStateException>("missing empty line before index 0") {
-            """
-                2
-                3
-                2
-                x
-            """.toOverlays()
-        }
         assertFailsMessage<IllegalStateException>("index 0 expected (actual is 1)") {
-            """
-                2
-                3
-                2
-
+            Overlays(2, Dimensions(3, 2), """
                 1
-            """.toOverlays()
+            """)
         }
         assertFailsMessage<IllegalStateException>("wrong line width at index 0 (2 instead of 6)") {
-            """
-                2
-                3
-                2
-
+            Overlays(2, Dimensions(3, 2), """
                 0
                 ..
-            """.toOverlays()
+            """)
         }
         assertFailsMessage<IllegalStateException>("unexpected pixel '12' at index 0") {
-            """
-                2
-                3
-                2
-
+            Overlays(2, Dimensions(3, 2), """
                 0
                 123456
-            """.toOverlays()
+            """)
         }
         assertFailsMessage<IllegalStateException>("unexpected lines at end") {
-            """
-                2
-                3
-                2
-
+            Overlays(2, Dimensions(3, 2), """
                 0
                 ......
                 ......
-                
                 1
                 ......
                 ......
-                
-            """.toOverlays()
+
+            """)
         }
     }
 }
