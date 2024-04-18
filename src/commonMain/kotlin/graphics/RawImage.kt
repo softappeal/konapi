@@ -1,7 +1,7 @@
 package ch.softappeal.konapi.graphics
 
 /** [bytes] is (red, green, blue) x width x height. */
-public class RawImage(dimensions: Dimensions, internal val bytes: ByteArray) : Dimensions(dimensions)
+public class RawImage(width: Int, height: Int, internal val bytes: ByteArray) : Dimensions(width, height)
 
 public fun Graphics.draw(xTopLeft: Int, yTopLeft: Int, image: RawImage) {
     val bytes = image.bytes

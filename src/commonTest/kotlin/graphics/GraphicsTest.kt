@@ -147,12 +147,12 @@ class GraphicsTest {
         val overlays = TEST_FONT
         val dump = overlays.dump()
         print(dump)
-        assertEquals(dump, Overlays(overlays, overlays.size, dump).dump())
+        assertEquals(dump, Overlays(overlays.size, overlays, dump).dump())
     }
 
     @Test
     fun dump() {
-        val overlays = Overlays(Dimensions(3, 2), 2, """
+        val overlays = Overlays(2, Dimensions(3, 2), """
             0
             ##....
             ......
@@ -171,24 +171,24 @@ class GraphicsTest {
             """)
         }
         assertFailsMessage<IllegalStateException>("index 0 expected (actual is 1)") {
-            Overlays(Dimensions(3, 2), 2, """
+            Overlays(2, Dimensions(3, 2), """
                 1
             """)
         }
         assertFailsMessage<IllegalStateException>("wrong line width at index 0 (2 instead of 6)") {
-            Overlays(Dimensions(3, 2), 2, """
+            Overlays(2, Dimensions(3, 2), """
                 0
                 ..
             """)
         }
         assertFailsMessage<IllegalStateException>("unexpected pixel '12' at index 0") {
-            Overlays(Dimensions(3, 2), 2, """
+            Overlays(2, Dimensions(3, 2), """
                 0
                 123456
             """)
         }
         assertFailsMessage<IllegalStateException>("unexpected lines at end") {
-            Overlays(Dimensions(3, 2), 2, """
+            Overlays(2, Dimensions(3, 2), """
                 0
                 ......
                 ......
