@@ -2,45 +2,67 @@
 
 package ch.softappeal.konapi.graphics
 
+import ch.softappeal.konapi.tryFinally
 import java.awt.BorderLayout
 import java.awt.Canvas
 import java.awt.Color
 import java.awt.Frame
 import java.awt.Graphics
-import ch.softappeal.konapi.graphics.Color as KColor
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.ImageIO
 import ch.softappeal.konapi.graphics.Graphics as KGraphics
 
-public class AwtGraphics(private val location: Point, display: Display, private val zoom: Int) : KGraphics(display) {
-    override val buffer: UByteArray = UByteArray(0) // dummy
+public fun drawImage(width: Int, height: Int, draw: Graphics.() -> Unit): BufferedImage {
+    val image = BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY)
+    val graphics = image.createGraphics()
+    tryFinally({
+        graphics.draw()
+    }) {
+        graphics.dispose()
+    }
+    return image
+}
 
-    private data class Pixel(val x: Int, val y: Int, val color: KColor)
+public class AwtGraphics(display: Display) : KGraphics(display) {
+    override val buffer: UByteArray = UByteArray(width * height * 3)
+    private fun index(x: Int, y: Int) = (x + y * width) * 3
 
-    private val pixels = mutableListOf<Pixel>()
     override fun setPixel(x: Int, y: Int) {
-        pixels.add(Pixel(x, y, color))
+        val b = index(x, y)
+        buffer[b] = color.red.toUByte()
+        buffer[b + 1] = color.green.toUByte()
+        buffer[b + 2] = color.blue.toUByte()
     }
 
-    public fun show() {
+    private fun Graphics.draw(zoom: Int) {
+        for (x in 0..<width) {
+            for (y in 0..<height) {
+                val b = index(x, y)
+                color = Color(buffer[b].toInt(), buffer[b + 1].toInt(), buffer[b + 2].toInt())
+                fillRect(x * zoom, y * zoom, zoom, zoom)
+            }
+        }
+    }
+
+    public fun showWindow(location: Point, zoom: Int) {
         val frame = Frame("AwtGraphics")
         frame.layout = BorderLayout()
         frame.add(object : Canvas() {
             override fun paint(g: Graphics) {
-                pixels.forEach { (x, y, color) ->
-                    g.color = Color(color.red, color.green, color.blue)
-                    g.fillRect(x * zoom, y * zoom, zoom, zoom)
-                }
+                g.draw(zoom)
             }
         }, BorderLayout.CENTER)
         frame.setLocation(location.x, location.y)
         frame.isVisible = true
         frame.setSize(width * zoom, height * zoom + frame.insets.top)
     }
+
+    public fun writePng(path: String) {
+        ImageIO.write(drawImage(width, height) { draw(1) }, "png", File(path))
+    }
 }
 
-public fun AwtGraphics(location: Point, dimensions: Dimensions, zoom: Int): AwtGraphics = AwtGraphics(
-    location,
-    object : Display(dimensions.width, dimensions.height) {
-        override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
-    },
-    zoom,
-)
+public fun AwtGraphics(width: Int, height: Int): AwtGraphics = AwtGraphics(object : Display(width, height) {
+    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
+})

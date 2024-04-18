@@ -13,10 +13,9 @@ private fun StringGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', getString())
 }
 
-const val TEST_FONT_PATH = "test.files/test.font"
-val TEST_FONT = readOverlaysFile(TEST_FONT_PATH)
+private val TEST_FONT = readOverlaysFile("test.files/test.font")
 
-object MyIcons : Overlays(TEST_FONT) {
+private object MyIcons : Overlays(TEST_FONT) {
     val a = Icon('a' - FONT_CHARS.first)
     val b = Icon('b' - FONT_CHARS.first)
 }

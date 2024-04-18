@@ -5,7 +5,7 @@ package ch.softappeal.konapi.graphics
 public val Color.notBlack: Boolean get() = (red != 0) || (green != 0) || (blue != 0)
 
 public class BwGraphics(display: Display) : Graphics(display) {
-    override val buffer: UByteArray = UByteArray(display.width * display.height / 8)
+    override val buffer: UByteArray = UByteArray(width * height / 8)
 
     private var notBlack: Boolean? = null
     override fun set(color: Color): Graphics {

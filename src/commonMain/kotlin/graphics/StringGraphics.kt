@@ -7,7 +7,7 @@ public const val STRING_PIXEL_ON: String = "##"
 public const val STRING_PIXEL_OFF: String = ".."
 
 public class StringGraphics(display: Display) : Graphics(display) {
-    override val buffer: UByteArray = UByteArray(display.width * display.height)
+    override val buffer: UByteArray = UByteArray(width * height)
 
     private var notBlack: Boolean? = null
     override fun set(color: Color): Graphics {

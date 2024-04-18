@@ -20,7 +20,7 @@ public fun Color565.toColor16(): Color16 = Color16(
 public fun Color.toColor16(): Color16 = toColor565().toColor16()
 
 public class Color16Graphics(display: Display) : Graphics(display) {
-    override val buffer: UByteArray = UByteArray(display.width * display.height * 2)
+    override val buffer: UByteArray = UByteArray(width * height * 2)
 
     private var color16: Color16? = null
     override fun set(color: Color): Graphics {
