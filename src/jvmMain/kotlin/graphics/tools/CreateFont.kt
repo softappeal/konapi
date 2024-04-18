@@ -71,7 +71,7 @@ private const val SIZE_DELIMITER = '-'
 
 public fun createFonts(fontsDir: String) {
     val fontsPath = Path(fontsDir)
-    fontsPath.forEachDirectoryEntry(glob = "*.ttf") { fontPath ->
+    fontsPath.resolve(("ttf")).forEachDirectoryEntry { fontPath ->
         val sizes = mutableListOf<Int>()
         var fontName = fontPath.nameWithoutExtension
         while (true) {
@@ -82,7 +82,7 @@ public fun createFonts(fontsDir: String) {
         }
         sizes.forEach { size ->
             val font = createFont(fontPath.toString(), size)
-            fun path(suffix: String) = fontsPath.resolve("$fontName.${font.width}x${font.height}.$suffix")
+            fun path(kind: String) = fontsPath.resolve(kind).resolve("$fontName.${font.width}x${font.height}.$kind")
             path("font").writeBytes(font.toBytes())
             drawFont(font) { width, height -> AwtGraphics(width, height) }.writePng(path("png").toString())
         }
