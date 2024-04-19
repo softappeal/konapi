@@ -51,13 +51,13 @@ public fun createFont(trueTypeFontPath: String, size: Int): Overlays {
     return Overlays(FONT_CHARS.count(), Dimensions(width, height), bitmap.toByteArray())
 }
 
-public fun <G : Graphics> drawFont(font: Overlays, graphics: (width: Int, height: Int) -> G): G {
+public fun <G : Graphics> drawFont(font: Overlays, graphics: (dimensions: Dimensions) -> G): G {
     fun Iterable<Char>.join() = this.joinToString(separator = "")
     val upper = ('A'..'Z').join()
     val lower = ('a'..'z').join()
     val digit = ('0'..'9').join() + " <>(){}[]"
     val remaining = (FONT_CHARS.toList() - upper.toSet() - lower.toSet() - digit.toSet()).join()
-    return graphics(font.width * upper.length, font.height * 4).apply {
+    return graphics(Dimensions(font.width * upper.length, font.height * 4)).apply {
         set(BLACK).fillRect()
         set(font).set(WHITE)
         draw(0, 0, upper)
@@ -84,7 +84,7 @@ public fun createFonts(fontsDir: String) {
             val font = createFont(fontPath.toString(), size)
             fun path(kind: String) = fontsPath.resolve(kind).resolve("$fontName.${font.width}x${font.height}.$kind")
             path("font").writeBytes(font.toBytes())
-            drawFont(font) { width, height -> AwtGraphics(width, height) }.writePng(path("png").toString())
+            drawFont(font) { dimensions -> AwtGraphics(4, dimensions) }.writePng(path("png").toString())
         }
     }
 }

@@ -24,7 +24,7 @@ public fun drawImage(width: Int, height: Int, draw: Graphics.() -> Unit): Buffer
     return image
 }
 
-public class AwtGraphics(display: Display) : KGraphics(display) {
+public class AwtGraphics(private val zoom: Int, display: Display) : KGraphics(display) {
     override val buffer: UByteArray = UByteArray(width * height * 3)
     private fun index(x: Int, y: Int) = (x + y * width) * 3
 
@@ -35,7 +35,7 @@ public class AwtGraphics(display: Display) : KGraphics(display) {
         buffer[b + 2] = color.blue.toUByte()
     }
 
-    private fun Graphics.draw(zoom: Int) {
+    private fun Graphics.draw() {
         for (x in 0..<width) {
             for (y in 0..<height) {
                 val b = index(x, y)
@@ -45,24 +45,25 @@ public class AwtGraphics(display: Display) : KGraphics(display) {
         }
     }
 
-    public fun showWindow(location: Point, zoom: Int) {
+    public fun showWindow(xLocation: Int, yLocation: Int) {
         val frame = Frame("AwtGraphics")
         frame.layout = BorderLayout()
         frame.add(object : Canvas() {
             override fun paint(g: Graphics) {
-                g.draw(zoom)
+                g.draw()
             }
         }, BorderLayout.CENTER)
-        frame.setLocation(location.x, location.y)
+        frame.setLocation(xLocation, yLocation)
         frame.isVisible = true
         frame.setSize(width * zoom, height * zoom + frame.insets.top)
     }
 
     public fun writePng(path: String) {
-        ImageIO.write(drawImage(width, height) { draw(1) }, "png", File(path))
+        ImageIO.write(drawImage(width * zoom, height * zoom) { draw() }, "png", File(path))
     }
 }
 
-public fun AwtGraphics(width: Int, height: Int): AwtGraphics = AwtGraphics(object : Display(width, height) {
-    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
-})
+public fun AwtGraphics(zoom: Int, dimensions: Dimensions): AwtGraphics =
+    AwtGraphics(zoom, object : Display(dimensions.width, dimensions.height) {
+        override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
+    })
