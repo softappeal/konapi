@@ -23,12 +23,6 @@ abstract class GpioTest {
         myGpio.close()
         println(assertFails { out.set(false) })
         println(assertFails { `in`.get() })
-
-        val gpio1 = Gpio()
-        val gpio2 = Gpio() // opening the same gpio twice seems to be legal
-        gpio2.close()
-        gpio1.close()
-
         Gpio().use { gpio ->
             assertTrue(gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp).get())
             println(assertFails { gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp) })

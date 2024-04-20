@@ -32,7 +32,7 @@ public fun Paj7620U2(device: I2cDevice): Paj7620U2 {
     try {
         checkPartId()
     } catch (ignored: Exception) {
-        checkPartId() // NOTE: seems to fail often on first try
+        checkPartId() // seems to fail often on first try
     }
     with(device) {
         // ------------------------------------- select register bank 0
@@ -127,5 +127,7 @@ public fun Paj7620U2(device: I2cDevice): Paj7620U2 {
             val gesture = (device.read(0x44U).toInt() shl 8) + device.read(0x43U).toInt()
             return Paj7620U2.Gesture.entries.firstOrNull { it.value == gesture }
         }
+    }.apply {
+        gesture() // seems to be necessary so that interrupts work
     }
 }

@@ -1,8 +1,6 @@
 ### Kotlin Native for Raspberry Pi
 
-- Inspired by
-    - https://github.com/ktgpio/ktgpio
-    - https://github.com/ktgpio/ktgpio-samples
+- inspired by https://github.com/ktgpio/ktgpio
 
 - artifacts on [Maven Central](https://central.sonatype.com/search?q=g:ch.softappeal.konapi) (GroupId: ch.softappeal.konapi)
 

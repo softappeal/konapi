@@ -30,7 +30,6 @@ abstract class Paj7620U2Test {
                         val job = launch {
                             flow.collect { println(it) }
                         }
-                        println("gesture: ${paj7620U2.gesture()}")
                         println("make all 9 gestures ...")
                         launch(Dispatchers.IO) {
                             gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 5.seconds) { edge, _ ->
