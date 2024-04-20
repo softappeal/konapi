@@ -92,7 +92,7 @@ public actual fun Gpio(label: String): Gpio {
             }
         }
 
-        override fun listen(
+        override suspend fun listen(
             line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
         ): Boolean {
             require(timeout.isPositive()) { "timeout=$timeout must be positive" }

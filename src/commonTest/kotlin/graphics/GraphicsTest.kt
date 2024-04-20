@@ -1,7 +1,6 @@
 package ch.softappeal.konapi.graphics
 
 import ch.softappeal.konapi.assertFailsMessage
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -13,33 +12,11 @@ private fun StringGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', getString())
 }
 
-private val TEST_FONT = readOverlaysFile("test.files/test.font")
+private val TEST_FONT = readOverlaysFile("fonts/font/Hd44780.6x10.font")
 
 private object MyIcons : Overlays(TEST_FONT) {
     val a = Icon('a' - FONT_CHARS.first)
     val b = Icon('b' - FONT_CHARS.first)
-}
-
-suspend fun Graphics.displayFont(pageDone: suspend () -> Unit) {
-    assertFails { draw(0, 0, "hello") }
-    set(TEST_FONT)
-    assertSame(TEST_FONT, font)
-    val chars = FONT_CHARS.iterator()
-    while (chars.hasNext()) {
-        set(BLACK).fillRect()
-        set(BLUE)
-        var y = 0
-        lines@ for (line in 0..<height / font.height) {
-            var x = 0
-            for (column in 0..<width / font.width) {
-                if (!chars.hasNext()) break@lines
-                draw(Point(x, y), chars.nextChar())
-                x += font.width
-            }
-            y += font.height
-        }
-        pageDone()
-    }
 }
 
 class GraphicsTest {
@@ -68,6 +45,9 @@ class GraphicsTest {
 
     @Test
     fun graphics() = with(StringGraphics(5, 3)) {
+        assertFails { draw(0, 0, "hello") }
+        set(TEST_FONT)
+        assertSame(TEST_FONT, font)
         set(BLACK)
         assertSame(BLACK, color)
         fillRect()
@@ -135,17 +115,10 @@ class GraphicsTest {
     }
 
     @Test
-    fun displayFont() = with(StringGraphics(64, 64)) {
-        runBlocking {
-            displayFont { println(getString()) }
-        }
-    }
-
-    @Test
     fun dumpFont() {
         val overlays = TEST_FONT
         val dump = overlays.dump()
-        print(dump)
+        // print(dump)
         assertEquals(dump, Overlays(overlays.size, overlays, dump).dump())
     }
 

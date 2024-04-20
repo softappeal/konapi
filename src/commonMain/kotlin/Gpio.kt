@@ -4,7 +4,7 @@ import kotlin.time.Duration
 
 // https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio-and-the-40-pin-header
 
-public typealias GpioNotification = (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
+public typealias GpioNotification = suspend (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
 
 /**
  * NOTE: [close] also closes all open inputs/outputs.
@@ -38,7 +38,7 @@ public interface Gpio : Closeable {
      * Returns if [GpioNotification] returns false or if [timeout] reached.
      * @return false if [timeout] reached else true
      */
-    public fun listen(
+    public suspend fun listen(
         line: Int,
         bias: Bias,
         timeout: Duration,
@@ -60,7 +60,7 @@ public object DummyGpio : Gpio {
     override fun close(): Unit = Unit
     override fun output(line: Int, initValue: Boolean, active: Gpio.Active): Gpio.Output = throw NotImplementedError()
     override fun input(line: Int, bias: Gpio.Bias, active: Gpio.Active): Gpio.Input = throw NotImplementedError()
-    override fun listen(
+    override suspend fun listen(
         line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
     ): Boolean = true
 }

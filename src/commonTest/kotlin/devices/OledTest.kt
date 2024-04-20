@@ -20,7 +20,6 @@ import ch.softappeal.konapi.graphics.MAGENTA
 import ch.softappeal.konapi.graphics.RED
 import ch.softappeal.konapi.graphics.WHITE
 import ch.softappeal.konapi.graphics.YELLOW
-import ch.softappeal.konapi.graphics.displayFont
 import ch.softappeal.konapi.graphics.fillRect
 import ch.softappeal.konapi.i2cBus1
 import ch.softappeal.konapi.spiDeviceBus0CS0
@@ -42,10 +41,11 @@ private suspend fun Graphics.test() {
     val colors = listOf(BLUE, GREEN, RED, BLACK, WHITE, CYAN, MAGENTA, YELLOW)
     val stripes = 8
     val w = width / colors.size / stripes
-    colors.forEach { color ->
+    colors.forEach { c ->
         repeat(stripes) { s ->
             fun map(color: Int) = color / (s + 1)
-            set(Color(map(color.red), map(color.green), map(color.blue))).fillRect(x, 0, w, height)
+            color = Color(map(c.red), map(c.green), map(c.blue))
+            fillRect(x, 0, w, height)
             x += w
         }
         println("${measureTime { update() }}")
@@ -59,10 +59,6 @@ private suspend fun Graphics.test() {
     set(BLUE).setPixel(20, 10)
     update()
     delay(1.seconds)
-    displayFont {
-        update()
-        delay(5.seconds)
-    }
 }
 
 abstract class OledTest {

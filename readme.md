@@ -8,6 +8,4 @@
 
 - uses [Semantic Versioning](https://semver.org)
 
-- [demo.app](demo.app)
-
 - Open Source ([BSD-3-Clause license](license.txt))

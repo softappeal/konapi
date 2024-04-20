@@ -12,23 +12,11 @@ plugins {
     signing
 }
 
-allprojects {
-    apply(plugin = "org.jetbrains.kotlin.multiplatform")
-    kotlin {
-        jvm()
-        targets.all {
-            compilations.all {
-                kotlinOptions.allWarningsAsErrors = true
-            }
-        }
-    }
-    repositories {
-        mavenCentral()
-    }
+repositories {
+    mavenCentral()
 }
 
 val cinteropPath = "src/nativeInterop/cinterop"
-val libraryPath by extra("-L$cinteropPath/libs")
 
 tasks.register<Jar>("javadocJar") {
     archiveClassifier = "javadoc"
@@ -50,6 +38,7 @@ kotlin {
     targets.all {
         compilations.all {
             explicitApi()
+            kotlinOptions.allWarningsAsErrors = true
         }
     }
     sourceSets {
@@ -68,7 +57,7 @@ kotlin {
 
 // see https://youtrack.jetbrains.com/issue/KT-43996
 tasks.named("linkDebugTestLinuxArm64", type = KotlinNativeLink::class) {
-    binary.linkerOpts(libraryPath)
+    binary.linkerOpts("-L$cinteropPath/libs")
 }
 
 tasks.named("build") {

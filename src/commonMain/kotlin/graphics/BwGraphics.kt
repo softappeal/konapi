@@ -8,7 +8,7 @@ public class BwGraphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(width * height / 8)
 
     private var notBlack = color.notBlack
-    override fun setImpl(color: Color) {
+    override fun setColorImpl() {
         notBlack = color.notBlack
     }
 

@@ -23,7 +23,7 @@ public class Color16Graphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(width * height * 2)
 
     private var color16 = color.toColor16()
-    override fun setImpl(color: Color) {
+    override fun setColorImpl() {
         color16 = color.toColor16()
     }
 

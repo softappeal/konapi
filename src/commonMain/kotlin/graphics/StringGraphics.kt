@@ -10,7 +10,7 @@ public class StringGraphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(width * height)
 
     private var notBlack = color.notBlack
-    override fun setImpl(color: Color) {
+    override fun setColorImpl() {
         notBlack = color.notBlack
     }
 
@@ -31,6 +31,12 @@ public class StringGraphics(display: Display) : Graphics(display) {
     }
 }
 
-public fun StringGraphics(width: Int, height: Int): StringGraphics = StringGraphics(object : Display(width, height) {
-    override fun update(buffer: UByteArray): Unit = throw NotImplementedError()
-})
+public fun StringGraphics(width: Int, height: Int, update: (string: String) -> Unit = {}): StringGraphics {
+    lateinit var graphics: StringGraphics
+    graphics = StringGraphics(object : Display(width, height) {
+        override fun update(buffer: UByteArray) {
+            update(graphics.getString())
+        }
+    })
+    return graphics
+}

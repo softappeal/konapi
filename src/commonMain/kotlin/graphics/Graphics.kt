@@ -50,13 +50,17 @@ private val NO_FONT = Overlays(0, Dimensions(1, 1), byteArrayOf())
 
 public abstract class Graphics(private val display: Display) : Dimensions(display) {
     public var color: Color = BLACK
+        set(value) {
+            field = value
+            setColorImpl()
+        }
+
+    protected abstract fun setColorImpl()
+
     public fun set(color: Color): Graphics {
         this.color = color
-        setImpl(color)
         return this
     }
-
-    protected abstract fun setImpl(color: Color)
 
     public var font: Overlays = NO_FONT
     public fun set(font: Overlays): Graphics {

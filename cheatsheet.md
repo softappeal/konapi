@@ -14,7 +14,7 @@ autostart
 sudo nano /etc/rc.local
 
 #!/bin/sh -e
-sudo /home/guru/konapi/demo.app.kexe &
+sudo /home/guru/myapp.kexe &
 exit 0
 ```
 
