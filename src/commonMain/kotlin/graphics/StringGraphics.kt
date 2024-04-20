@@ -9,15 +9,13 @@ public const val STRING_PIXEL_OFF: String = ".."
 public class StringGraphics(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(width * height)
 
-    private var notBlack: Boolean? = null
-    override fun set(color: Color): Graphics {
-        super.set(color)
+    private var notBlack = color.notBlack
+    override fun setImpl(color: Color) {
         notBlack = color.notBlack
-        return this
     }
 
-    override fun setPixel(x: Int, y: Int) {
-        buffer[x + y * width] = (if (notBlack!!) 1 else 0).toUByte()
+    override fun setPixelImpl(x: Int, y: Int) {
+        buffer[x + y * width] = (if (notBlack) 1 else 0).toUByte()
     }
 
     public fun getString(): String {

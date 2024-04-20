@@ -95,6 +95,7 @@ public actual fun Gpio(label: String): Gpio {
         override fun listen(
             line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
         ): Boolean {
+            require(timeout.isPositive()) { "timeout=$timeout must be positive" }
             val linePtr = getLine(line)
             check(gpiod_line_request_both_edges_events_flags(linePtr, CONSUMER, flags(active, bias)) == 0) {
                 "can't request events for line $line"
@@ -112,7 +113,7 @@ public actual fun Gpio(label: String): Gpio {
                         when (gpiod_line_event_wait(linePtr, ts.ptr)) {
                             0 -> return@listen false // timeout
                             1 -> { // there is an event
-                                check(gpiod_line_event_read(linePtr, event.ptr) == 0) { error("can't read event for line $line") }
+                                check(gpiod_line_event_read(linePtr, event.ptr) == 0) { "can't read event for line $line" }
                                 val edge = when (event.event_type.toUInt()) {
                                     GPIOD_LINE_EVENT_RISING_EDGE -> Gpio.Edge.Rising
                                     GPIOD_LINE_EVENT_FALLING_EDGE -> Gpio.Edge.Falling

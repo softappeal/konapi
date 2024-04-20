@@ -21,7 +21,6 @@ private object MyIcons : Overlays(TEST_FONT) {
 }
 
 suspend fun Graphics.displayFont(pageDone: suspend () -> Unit) {
-    assertFails { font }
     assertFails { draw(0, 0, "hello") }
     set(TEST_FONT)
     assertSame(TEST_FONT, font)
@@ -62,12 +61,13 @@ class GraphicsTest {
         val color565 = Color565(red = 0b10111, green = 0b110_111, blue = 0b11101)
         assertEquals(color565, Color(red = 0b10111111, green = 0b11011111, blue = 0b11101111).toColor565())
         assertEquals(Color16(b1 = 0b10111_110U, b2 = 0b111_11101U), color565.toColor16())
+        assertFailsMessage<IllegalArgumentException>("red=-1 must be in 0..255") { Color(-1, 0, 0) }
+        assertFailsMessage<IllegalArgumentException>("green=256 must be in 0..255") { Color(0, 256, 255) }
+        assertFailsMessage<IllegalArgumentException>("blue=257 must be in 0..255") { Color(0, 0, 257) }
     }
 
     @Test
     fun graphics() = with(StringGraphics(5, 3)) {
-        assertFails { color }
-        assertFails { setPixel(0, 0) }
         set(BLACK)
         assertSame(BLACK, color)
         fillRect()
@@ -169,24 +169,24 @@ class GraphicsTest {
                 ..........##
             """)
         }
-        assertFailsMessage<IllegalStateException>("index 0 expected (actual is 1)") {
+        assertFailsMessage<IllegalArgumentException>("index 0 expected (actual is 1)") {
             Overlays(2, Dimensions(3, 2), """
                 1
             """)
         }
-        assertFailsMessage<IllegalStateException>("wrong line width at index 0 (2 instead of 6)") {
+        assertFailsMessage<IllegalArgumentException>("wrong line width at index 0 (2 instead of 6)") {
             Overlays(2, Dimensions(3, 2), """
                 0
                 ..
             """)
         }
-        assertFailsMessage<IllegalStateException>("unexpected pixel '12' at index 0") {
+        assertFailsMessage<IllegalArgumentException>("unexpected pixel '12' at index 0") {
             Overlays(2, Dimensions(3, 2), """
                 0
                 123456
             """)
         }
-        assertFailsMessage<IllegalStateException>("unexpected lines at end") {
+        assertFailsMessage<IllegalArgumentException>("unexpected lines at end") {
             Overlays(2, Dimensions(3, 2), """
                 0
                 ......

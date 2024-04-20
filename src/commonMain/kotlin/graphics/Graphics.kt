@@ -16,9 +16,22 @@ public data class Point(public val x: Int, public val y: Int)
  */
 public open class Dimensions(public val width: Int, public val height: Int) {
     public constructor(dimensions: Dimensions) : this(dimensions.width, dimensions.height)
+
+    init {
+        require(width > 0) { "width=$width must be > 0" }
+        require(height > 0) { "height=$height must be > 0" }
+    }
 }
 
-public data class Color(public val red: Int, public val green: Int, public val blue: Int)
+public val PRIMARY_COLOR_RANGE: IntRange = 0..255
+
+public data class Color(public val red: Int, public val green: Int, public val blue: Int) {
+    init {
+        require(red in PRIMARY_COLOR_RANGE) { "red=$red must be in $PRIMARY_COLOR_RANGE" }
+        require(green in PRIMARY_COLOR_RANGE) { "green=$green must be in $PRIMARY_COLOR_RANGE" }
+        require(blue in PRIMARY_COLOR_RANGE) { "blue=$blue must be in $PRIMARY_COLOR_RANGE" }
+    }
+}
 
 public val BLACK: Color = Color(0x00, 0x00, 0x00)
 public val WHITE: Color = Color(0xFF, 0xFF, 0xFF)
@@ -33,18 +46,21 @@ public abstract class Display(width: Int, height: Int) : Dimensions(width, heigh
     public abstract fun update(buffer: UByteArray)
 }
 
+private val NO_FONT = Overlays(0, Dimensions(1, 1), byteArrayOf())
+
 public abstract class Graphics(private val display: Display) : Dimensions(display) {
-    private var _color: Color? = null
-    public val color: Color get() = _color!!
-    public open fun set(color: Color): Graphics {
-        _color = color
+    public var color: Color = BLACK
+    public fun set(color: Color): Graphics {
+        this.color = color
+        setImpl(color)
         return this
     }
 
-    private var _font: Overlays? = null
-    public val font: Overlays get() = _font!!
+    protected abstract fun setImpl(color: Color)
+
+    public var font: Overlays = NO_FONT
     public fun set(font: Overlays): Graphics {
-        _font = font
+        this.font = font
         return this
     }
 
@@ -53,5 +69,11 @@ public abstract class Graphics(private val display: Display) : Dimensions(displa
         display.update(buffer)
     }
 
-    public abstract fun setPixel(x: Int, y: Int)
+    public fun setPixel(x: Int, y: Int) {
+        require(x in 0..<width) { "x=$x must be in 0..<$width" }
+        require(y in 0..<height) { "y=$y must be in 0..<$height" }
+        setPixelImpl(x, y)
+    }
+
+    protected abstract fun setPixelImpl(x: Int, y: Int)
 }

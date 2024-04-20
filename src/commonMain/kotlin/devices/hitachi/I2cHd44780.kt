@@ -78,8 +78,8 @@ public interface I2cHd44780 : Closeable {
         }
 
         internal fun requireCursorPosition(line: Int, column: Int) {
-            require(line in 0..<lines) { "line must be 0..<$lines" }
-            require(column in 0..<columns) { "column must be 0..<$columns" }
+            require(line in 0..<lines) { "line must be in 0..<$lines" }
+            require(column in 0..<columns) { "column must be in 0..<$columns" }
         }
     }
 

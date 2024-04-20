@@ -16,7 +16,12 @@ public interface SpiDevice : Closeable {
         public val speedHz: Int? = null,
         public val bitsPerWord: Int? = null,
         public val mode: UByte? = null,
-    )
+    ) {
+        init {
+            require((speedHz ?: 1) > 0) { "speedHz=$speedHz must be > 0" }
+            require((bitsPerWord ?: 1) > 0) { "bitsPerWord=$bitsPerWord must be > 0" }
+        }
+    }
 
     public val blockSize: Int
     public var config: Config

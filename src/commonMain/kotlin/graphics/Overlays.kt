@@ -7,11 +7,18 @@ private fun ByteArray.set(bit: Int) {
     this[bit / 8] = (this[bit / 8].toInt() or (1 shl (bit % 8))).toByte()
 }
 
-public open class Overlays(public val size: Int, dimensions: Dimensions, internal val bitmap: ByteArray) : Dimensions(dimensions) {
+public open class Overlays internal constructor(
+    public val size: Int, dimensions: Dimensions, internal val bitmap: ByteArray,
+) : Dimensions(dimensions) {
+    init {
+        require(size >= 0) { "size=$size must >= 0" }
+    }
+
     public constructor(overlays: Overlays) : this(overlays.size, overlays, overlays.bitmap)
 
     private val bits = width * height
     public fun draw(graphics: Graphics, xTopLeft: Int, yTopLeft: Int, index: Int) {
+        require(index in 0..<size) { "index=$index must be in 0..<$size" }
         var bit = index * bits
         for (y in yTopLeft..<yTopLeft + height) {
             for (x in xTopLeft..<xTopLeft + width) {
@@ -21,17 +28,25 @@ public open class Overlays(public val size: Int, dimensions: Dimensions, interna
     }
 }
 
+private const val OVERLAYS_MAGIC_NUMBER = 0xA9.toByte()
+private const val OVERLAYS_VERSION_1 = 1.toByte()
+
 public fun Overlays.toBytes(): ByteArray {
-    val bytes = ByteArray(3 + bitmap.size)
-    bytes[0] = size.toByte()
-    bytes[1] = width.toByte()
-    bytes[2] = height.toByte()
-    bitmap.copyInto(bytes, destinationOffset = 3)
+    val bytes = ByteArray(5 + bitmap.size)
+    bytes[0] = OVERLAYS_MAGIC_NUMBER
+    bytes[1] = OVERLAYS_VERSION_1
+    bytes[2] = size.toByte()
+    bytes[3] = width.toByte()
+    bytes[4] = height.toByte()
+    bitmap.copyInto(bytes, destinationOffset = 5)
     return bytes
 }
 
-public fun ByteArray.toOverlays(): Overlays =
-    Overlays(this[0].toInt(), Dimensions(this[1].toInt(), this[2].toInt()), copyOfRange(3, size))
+public fun ByteArray.toOverlays(): Overlays {
+    require(this[0] == OVERLAYS_MAGIC_NUMBER) { "overlays has invalid magic number" }
+    require(this[1] == OVERLAYS_VERSION_1) { "overlays must have version $OVERLAYS_VERSION_1" }
+    return Overlays(this[2].toInt(), Dimensions(this[3].toInt(), this[4].toInt()), copyOfRange(5, size))
+}
 
 public fun readOverlaysFile(path: String): Overlays = readFile(path).toOverlays()
 
@@ -57,20 +72,20 @@ public fun Overlays(size: Int, dimensions: Dimensions, dump: String): Overlays {
     var bit = 0
     for (index in 0..<size) {
         val actualIndex = lines.next().toInt()
-        check(index == actualIndex) { "index $index expected (actual is $actualIndex)" }
+        require(index == actualIndex) { "index $index expected (actual is $actualIndex)" }
         repeat(dimensions.height) {
             val line = lines.next()
-            check(lineWidth == line.length) { "wrong line width at index $index (${line.length} instead of $lineWidth)" }
+            require(lineWidth == line.length) { "wrong line width at index $index (${line.length} instead of $lineWidth)" }
             for (w in 0..<lineWidth step 2) {
                 when (val p = line.subSequence(w, w + STRING_PIXEL_WIDTH)) {
                     STRING_PIXEL_OFF -> {} // empty
                     STRING_PIXEL_ON -> bitmap.set(bit)
-                    else -> error("unexpected pixel '$p' at index $index")
+                    else -> throw IllegalArgumentException("unexpected pixel '$p' at index $index")
                 }
                 bit++
             }
         }
     }
-    check(!lines.hasNext()) { "unexpected lines at end" }
+    require(!lines.hasNext()) { "unexpected lines at end" }
     return Overlays(size, dimensions, bitmap)
 }

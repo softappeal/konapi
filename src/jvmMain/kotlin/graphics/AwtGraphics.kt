@@ -11,6 +11,7 @@ import java.awt.Graphics
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
+import ch.softappeal.konapi.graphics.Color as KColor
 import ch.softappeal.konapi.graphics.Graphics as KGraphics
 
 public fun drawImage(width: Int, height: Int, draw: Graphics.() -> Unit): BufferedImage {
@@ -25,10 +26,16 @@ public fun drawImage(width: Int, height: Int, draw: Graphics.() -> Unit): Buffer
 }
 
 public class AwtGraphics(private val zoom: Int, display: Display) : KGraphics(display) {
+    init {
+        require(zoom > 0) { "zoom=$zoom must be > 0" }
+    }
+
     override val buffer: UByteArray = UByteArray(width * height * 3)
     private fun index(x: Int, y: Int) = (x + y * width) * 3
 
-    override fun setPixel(x: Int, y: Int) {
+    override fun setImpl(color: KColor) {} // empty
+
+    override fun setPixelImpl(x: Int, y: Int) {
         val b = index(x, y)
         buffer[b] = color.red.toUByte()
         buffer[b + 1] = color.green.toUByte()

@@ -44,6 +44,8 @@ private const val BLOCK_SIZE_FILE = "/sys/module/spidev/parameters/bufsiz"
  */
 
 public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
+    require(bus >= 0) { "bus=$bus must be >= 0" }
+    require(chipSelect >= 0) { "chipSelect=$chipSelect must be >= 0" }
     val blockSizeFile = checkNotNull(fopen(BLOCK_SIZE_FILE, "r")) { "file '$BLOCK_SIZE_FILE' not found" }
     val blockSize = tryFinally({
         memScoped {

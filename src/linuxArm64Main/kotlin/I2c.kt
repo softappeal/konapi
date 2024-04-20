@@ -39,6 +39,7 @@ import platform.posix.open
  */
 
 public actual fun I2cBus(bus: Int): I2cBus {
+    require(bus >= 0) { "bus=$bus must be >= 0" }
     var lastAddress = 0
     val file = open("/dev/i2c-$bus", O_RDWR)
     check(file >= 0) { "can't open I2C bus $bus" }
@@ -83,6 +84,7 @@ public actual fun I2cBus(bus: Int): I2cBus {
                 }
 
                 override fun read(register: UByte, length: Int) = selectDevice { file ->
+                    require(length >= 0) { "length=$length must be >= 0" }
                     memScoped {
                         val buffer = allocArray<UByteVar>(length)
                         check(i2c_smbus_read_i2c_block_data(file, register, length.convert(), buffer) == length) {

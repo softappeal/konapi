@@ -22,6 +22,7 @@ import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 
 public fun createFont(trueTypeFontPath: String, size: Int): Overlays {
+    require(size > 0) { "size=$size must be > 0" }
     val font = Font.createFont(Font.TRUETYPE_FONT, ByteArrayInputStream(Path(trueTypeFontPath).readBytes()))
         .deriveFont(size.toFloat())
 

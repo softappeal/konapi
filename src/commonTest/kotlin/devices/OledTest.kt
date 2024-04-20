@@ -30,14 +30,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertFails
 import kotlin.test.assertSame
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
 private suspend fun Graphics.test() {
-    assertFails { color }
-    assertFails { setPixel(0, 0) }
     set(BLACK)
     assertSame(BLACK, color)
     fillRect()
@@ -102,16 +99,16 @@ abstract class OledTest {
 
     @Test
     fun bwOled1in3InvalidConfig() = runBlocking {
-        assertFailsMessage<IllegalStateException>("one of i2cDevice or spiDevice must be null") {
+        assertFailsMessage<IllegalArgumentException>("one of i2cDevice or spiDevice must be null") {
             bwOled1in3(null, null, DummyGpio, 0, 0)
         }
-        assertFailsMessage<IllegalStateException>("one of i2cDevice or spiDevice must be null") {
+        assertFailsMessage<IllegalArgumentException>("one of i2cDevice or spiDevice must be null") {
             bwOled1in3(DummyI2cDevice, DummySpiDevice, DummyGpio, 0, 0)
         }
-        assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
+        assertFailsMessage<IllegalArgumentException>("specify dcPin only for spiDevice") {
             bwOled1in3(DummyI2cDevice, null, DummyGpio, 0, 0)
         }
-        assertFailsMessage<IllegalStateException>("specify dcPin only for spiDevice") {
+        assertFailsMessage<IllegalArgumentException>("specify dcPin only for spiDevice") {
             bwOled1in3(null, DummySpiDevice, DummyGpio, null, 0)
         }
     }
