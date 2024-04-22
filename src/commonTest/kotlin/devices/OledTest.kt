@@ -20,7 +20,9 @@ import ch.softappeal.konapi.graphics.MAGENTA
 import ch.softappeal.konapi.graphics.RED
 import ch.softappeal.konapi.graphics.WHITE
 import ch.softappeal.konapi.graphics.YELLOW
+import ch.softappeal.konapi.graphics.draw
 import ch.softappeal.konapi.graphics.fillRect
+import ch.softappeal.konapi.graphics.imageOfMe
 import ch.softappeal.konapi.i2cBus1
 import ch.softappeal.konapi.spiDeviceBus0CS0
 import ch.softappeal.konapi.spiDeviceBus0CS1
@@ -29,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
@@ -66,7 +69,17 @@ abstract class OledTest {
     fun color16Oled1in5() = runBlocking {
         spiDeviceBus0CS0().use { device ->
             Gpio().use { gpio ->
-                color16Oled1in5(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
+                color16Oled1in5(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display ->
+                    with(display.graphics) {
+                        test()
+                        val newColor = Color(1, 2, 3)
+                        color = newColor
+                        draw(0, 0, imageOfMe)
+                        assertEquals(newColor, color)
+                        update()
+                    }
+                    delay(5.seconds)
+                }
             }
         }
     }

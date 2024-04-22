@@ -1,12 +1,15 @@
 package ch.softappeal.konapi.graphics
 
 import ch.softappeal.konapi.assertFailsMessage
+import ch.softappeal.konapi.readFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
+
+val imageOfMe = RawImage(128, 128, readFile("test-files/me.128x128.rgb.raw"))
 
 private fun StringGraphics.assert(expected: String) {
     assertEquals(expected.trimIndent() + '\n', getString())
@@ -45,6 +48,13 @@ class GraphicsTest {
 
     @Test
     fun graphics() = with(StringGraphics(5, 3)) {
+        color = MAGENTA
+        val i = retainColor {
+            color = CYAN
+            123
+        }
+        assertEquals(MAGENTA, color)
+        assertEquals(123, i)
         assertFails { draw(0, 0, "hello") }
         set(TEST_FONT)
         assertSame(TEST_FONT, font)

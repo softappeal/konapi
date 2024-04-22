@@ -7,7 +7,7 @@ public class RawImage(width: Int, height: Int, internal val bytes: ByteArray) : 
     }
 }
 
-public fun Graphics.draw(xTopLeft: Int, yTopLeft: Int, image: RawImage) {
+public fun Graphics.draw(xTopLeft: Int, yTopLeft: Int, image: RawImage): Unit = retainColor {
     val bytes = image.bytes
     var b = 0
     for (y in yTopLeft..<yTopLeft + image.height) {

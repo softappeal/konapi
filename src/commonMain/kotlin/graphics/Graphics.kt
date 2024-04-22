@@ -81,3 +81,12 @@ public abstract class Graphics(private val display: Display) : Dimensions(displa
 
     protected abstract fun setPixelImpl(x: Int, y: Int)
 }
+
+public inline fun <R> Graphics.retainColor(action: Graphics.() -> R): R {
+    val retained = color
+    return try {
+        action()
+    } finally {
+        color = retained
+    }
+}
