@@ -4,7 +4,6 @@ import ch.softappeal.konapi.GPIO_DISPLAY_DC
 import ch.softappeal.konapi.GPIO_DISPLAY_RST
 import ch.softappeal.konapi.GPIO_PAJ7620U2_INT
 import ch.softappeal.konapi.Gpio
-import ch.softappeal.konapi.I2C_ADDRESS_OLED
 import ch.softappeal.konapi.I2C_ADDRESS_PAJ7620U2
 import ch.softappeal.konapi.devices.waveshare.Oled
 import ch.softappeal.konapi.devices.waveshare.Paj7620U2
@@ -16,6 +15,7 @@ import ch.softappeal.konapi.graphics.Displays
 import ch.softappeal.konapi.graphics.Graphics
 import ch.softappeal.konapi.i2cBus1
 import ch.softappeal.konapi.spiDeviceBus0CS0
+import ch.softappeal.konapi.spiDeviceBus0CS1
 import ch.softappeal.konapi.use
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -75,14 +75,16 @@ abstract class OledFontTest {
     @Test
     fun test(): Unit = runBlocking {
         Gpio().use { gpio ->
-            spiDeviceBus0CS0().use { device ->
-                i2cBus1().use { bus ->
-                    Displays(listOf(
-                        displayCreator { color16Oled1in5(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST) },
-                        displayCreator { bwOled1in3(bus.device(I2C_ADDRESS_OLED), null, gpio, null, GPIO_DISPLAY_RST) },
-                    )).use { displays ->
-                        displays.init()
-                        displays.test(gpio, Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2)))
+            spiDeviceBus0CS0().use { device0 ->
+                spiDeviceBus0CS1().use { device1 ->
+                    i2cBus1().use { bus ->
+                        Displays(listOf(
+                            displayCreator { color16Oled1in5(device0, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST) },
+                            displayCreator { bwOled1in3(null, device1, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST) },
+                        )).use { displays ->
+                            displays.init()
+                            displays.test(gpio, Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2)))
+                        }
                     }
                 }
             }
