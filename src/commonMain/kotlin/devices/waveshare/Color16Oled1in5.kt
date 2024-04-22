@@ -17,9 +17,11 @@ import kotlin.time.Duration.Companion.milliseconds
     https://files.waveshare.com/upload/2/2c/OLED_Module_Code.7z
  */
 
-public suspend fun color16Oled1in5(spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, rstPin: Int): Oled<Color16Graphics> = Oled(
+public suspend fun color16Oled1in5(
+    spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, rstPin: Int, speedHz: Int = 10_000_000,
+): Oled<Color16Graphics> = Oled(
     i2cDevice = null, spiDevice,
-    gpio, dcPin, rstPin,
+    gpio, dcPin, rstPin, speedHz,
     {
         command(0xFDU) // command lock
         spiData(0x12U)

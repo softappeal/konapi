@@ -23,8 +23,9 @@ import kotlin.time.Duration.Companion.milliseconds
 public suspend fun bwOled1in3(
     i2cDevice: I2cDevice?, spiDevice: SpiDevice?,
     gpio: Gpio, dcPin: Int?, rstPin: Int,
+    speedHz: Int = 10_000_000,
 ): Oled<BwGraphics> = Oled(
-    i2cDevice, spiDevice, gpio, dcPin, rstPin,
+    i2cDevice, spiDevice, gpio, dcPin, rstPin, speedHz,
     {
         command(0xAEU) // turn off oled panel
         command(0x02U) // set low column address
