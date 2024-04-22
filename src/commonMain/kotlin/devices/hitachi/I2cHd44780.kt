@@ -84,7 +84,6 @@ public interface I2cHd44780 : Closeable {
     }
 
     public val config: Config
-    public suspend fun clear()
     public fun displayString(s: String)
     public fun setCursorPosition(line: Int, column: Int)
     public fun setBlink(value: Boolean)
@@ -166,13 +165,11 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
 
     setDisplayControl()
 
+    write4Bit(CLEAR_DISPLAY)
+    delay(2.milliseconds)
+
     return object : I2cHd44780 {
         override val config = config
-
-        override suspend fun clear() {
-            write4Bit(CLEAR_DISPLAY)
-            delay(2.milliseconds)
-        }
 
         override fun displayString(s: String) {
             s.forEach { char -> write4Bit(char.code.toUByte(), dataRegister = true) }
@@ -212,7 +209,7 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
             backlight = value
             setDisplayControl()
         }
-    }.apply { clear() }
+    }
 }
 
 public suspend fun i2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 =

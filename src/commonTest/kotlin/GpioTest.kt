@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 
 abstract class GpioTest {
     @Test
-    fun errors() = runBlocking {
+    fun errors() {
         val myGpio = Gpio()
         val out = myGpio.output(GPIO_OUT_CONNECTED_TO_IN, false)
         val `in` = myGpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable)
@@ -26,7 +26,7 @@ abstract class GpioTest {
         Gpio().use { gpio ->
             assertTrue(gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp).get())
             println(assertFails { gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp) })
-            println(assertFails { gpio.listen(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, 1.seconds) { _, _ -> true } })
+            println(assertFails { gpio.listen(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, 1.seconds, Gpio.Edge.Both) { _, _ -> true } })
             println(assertFails { gpio.output(GPIO_IN_UNCONNECTED, false) })
         }
     }
@@ -102,27 +102,26 @@ abstract class GpioTest {
     @Test
     fun listen() = runBlocking {
         repeat(2) { iteration ->
-            printlnCC("iteration: $iteration")
+            println("iteration: $iteration")
             Gpio().use { gpio ->
                 coroutineScope {
-                    printlnCC("coroutineScope")
                     val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false)
                     delay(100.milliseconds)
                     launch(Dispatchers.IO) {
-                        printlnCC("launch")
                         var counter = 0
                         // NOTE: there is an unexpected Falling notification at start of first iteration (on Pi 5 but not on Pi Zero 2 W); why?
-                        val timedOut =
-                            !gpio.listen(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, 200.milliseconds) { edge, nanoSeconds ->
-                                println("notification: $edge ${(nanoSeconds / 1_000_000) % 10_000}")
-                                ++counter < 6
-                            }
-                        printlnCC("timedOut: $timedOut")
+                        val timedOut = !gpio.listen(
+                            GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, 200.milliseconds, Gpio.Edge.Both
+                        ) { risingEdge, nanoSeconds ->
+                            println("notification: $risingEdge ${(nanoSeconds / 1_000_000) % 10_000}")
+                            ++counter < 6
+                        }
+                        println("timedOut: $timedOut")
                     }
                     repeat(2 + iteration) {
                         listOf(true, false).forEach { value ->
                             delay(100.milliseconds)
-                            printlnCC("out: $value")
+                            println("out: $value")
                             out.set(value)
                         }
                     }

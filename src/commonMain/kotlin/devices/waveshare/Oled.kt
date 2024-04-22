@@ -26,6 +26,7 @@ public interface OledWriter {
     public fun spiData(data: UByte)
 }
 
+/** [speedHz] is only used if [spiDevice] is defined. */
 public suspend fun <G : Graphics> Oled(
     i2cDevice: I2cDevice?, spiDevice: SpiDevice?,
     gpio: Gpio, dcPin: Int?, rstPin: Int,

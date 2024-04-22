@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
 private fun <G : Graphics> displayCreator(oledCreator: suspend () -> Oled<G>) = object : DisplayCreator {
@@ -59,12 +60,10 @@ private suspend fun Displays.test(gpio: Gpio, paj7620U2: Paj7620U2) = coroutineS
         }
     }
     launch(Dispatchers.IO) {
-        gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 20.seconds) { edge, _ ->
-            if (edge == Gpio.Edge.Falling) {
-                val gesture = paj7620U2.gesture()
-                println("gesture: $gesture")
-                flow.emit(gesture)
-            }
+        gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 20.seconds, Gpio.Edge.Falling) { _, _ ->
+            val gesture = paj7620U2.gesture()
+            println("gesture: $gesture")
+            assertTrue(flow.tryEmit(gesture))
             true
         }
         job.cancel()

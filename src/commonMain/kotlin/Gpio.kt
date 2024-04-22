@@ -4,7 +4,7 @@ import kotlin.time.Duration
 
 // https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio-and-the-40-pin-header
 
-public typealias GpioNotification = suspend (edge: Gpio.Edge, nanoSeconds: Long) -> Boolean
+public typealias GpioNotification = (risingEdge: Boolean, nanoSeconds: Long) -> Boolean
 
 /**
  * NOTE: [close] also closes all open inputs/outputs.
@@ -12,7 +12,7 @@ public typealias GpioNotification = suspend (edge: Gpio.Edge, nanoSeconds: Long)
 public interface Gpio : Closeable {
     public enum class Bias { Disable, PullDown, PullUp }
     public enum class Active { Low, High }
-    public enum class Edge { Rising, Falling }
+    public enum class Edge { Rising, Falling, Both }
 
     public interface Output : Closeable {
         public fun set(value: Boolean)
@@ -38,10 +38,11 @@ public interface Gpio : Closeable {
      * Returns if [GpioNotification] returns false or if [timeout] reached.
      * @return false if [timeout] reached else true
      */
-    public suspend fun listen(
+    public fun listen(
         line: Int,
         bias: Bias,
         timeout: Duration,
+        edge: Edge,
         active: Active = Active.High,
         notification: GpioNotification,
     ): Boolean
@@ -60,7 +61,7 @@ public object DummyGpio : Gpio {
     override fun close(): Unit = Unit
     override fun output(line: Int, initValue: Boolean, active: Gpio.Active): Gpio.Output = throw NotImplementedError()
     override fun input(line: Int, bias: Gpio.Bias, active: Gpio.Active): Gpio.Input = throw NotImplementedError()
-    override suspend fun listen(
-        line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
+    override fun listen(
+        line: Int, bias: Gpio.Bias, timeout: Duration, edge: Gpio.Edge, active: Gpio.Active, notification: GpioNotification,
     ): Boolean = true
 }

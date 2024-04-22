@@ -18,8 +18,10 @@ import ch.softappeal.konapi.native.gpio.gpiod_line_event_wait
 import ch.softappeal.konapi.native.gpio.gpiod_line_get_value
 import ch.softappeal.konapi.native.gpio.gpiod_line_release
 import ch.softappeal.konapi.native.gpio.gpiod_line_request_both_edges_events_flags
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_falling_edge_events_flags
 import ch.softappeal.konapi.native.gpio.gpiod_line_request_input_flags
 import ch.softappeal.konapi.native.gpio.gpiod_line_request_output_flags
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_rising_edge_events_flags
 import ch.softappeal.konapi.native.gpio.gpiod_line_set_value
 import ch.softappeal.konapi.native.gpio.gpiod_version_string
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -92,14 +94,17 @@ public actual fun Gpio(label: String): Gpio {
             }
         }
 
-        override suspend fun listen(
-            line: Int, bias: Gpio.Bias, timeout: Duration, active: Gpio.Active, notification: GpioNotification,
+        override fun listen(
+            line: Int, bias: Gpio.Bias, timeout: Duration, edge: Gpio.Edge, active: Gpio.Active, notification: GpioNotification,
         ): Boolean {
             require(timeout.isPositive()) { "timeout=$timeout must be positive" }
             val linePtr = getLine(line)
-            check(gpiod_line_request_both_edges_events_flags(linePtr, CONSUMER, flags(active, bias)) == 0) {
-                "can't request events for line $line"
-            }
+            val flags = flags(active, bias)
+            check(when (edge) {
+                Gpio.Edge.Rising -> gpiod_line_request_rising_edge_events_flags(linePtr, CONSUMER, flags)
+                Gpio.Edge.Falling -> gpiod_line_request_falling_edge_events_flags(linePtr, CONSUMER, flags)
+                Gpio.Edge.Both -> gpiod_line_request_both_edges_events_flags(linePtr, CONSUMER, flags)
+            } == 0) { "can't request events for line $line" }
             tryFinally({
                 memScoped {
                     val event = alloc<gpiod_line_event>()
@@ -114,12 +119,12 @@ public actual fun Gpio(label: String): Gpio {
                             0 -> return@listen false // timeout
                             1 -> { // there is an event
                                 check(gpiod_line_event_read(linePtr, event.ptr) == 0) { "can't read event for line $line" }
-                                val edge = when (event.event_type.toUInt()) {
-                                    GPIOD_LINE_EVENT_RISING_EDGE -> Gpio.Edge.Rising
-                                    GPIOD_LINE_EVENT_FALLING_EDGE -> Gpio.Edge.Falling
+                                val risingEdge = when (event.event_type.toUInt()) {
+                                    GPIOD_LINE_EVENT_RISING_EDGE -> true
+                                    GPIOD_LINE_EVENT_FALLING_EDGE -> false
                                     else -> error("unexpected event on line $line")
                                 }
-                                if (!notification(edge, ts.tv_sec * 1_000_000_000 + ts.tv_nsec)) break
+                                if (!notification(risingEdge, ts.tv_sec * 1_000_000_000 + ts.tv_nsec)) break
                             }
                             else -> error("can't wait for event on line $line")
                         }

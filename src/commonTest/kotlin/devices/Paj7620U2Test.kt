@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
 abstract class Paj7620U2Test {
@@ -32,8 +33,8 @@ abstract class Paj7620U2Test {
                         }
                         println("make all 9 gestures ...")
                         launch(Dispatchers.IO) {
-                            gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 5.seconds) { edge, _ ->
-                                if (edge == Gpio.Edge.Falling) flow.emit(paj7620U2.gesture())
+                            gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 5.seconds, Gpio.Edge.Falling) { _, _ ->
+                                assertTrue(flow.tryEmit(paj7620U2.gesture()))
                                 true
                             }
                             job.cancel()

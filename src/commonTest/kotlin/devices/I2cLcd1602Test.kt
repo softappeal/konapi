@@ -26,7 +26,6 @@ abstract class I2cLcd1602Test {
                 delay(2.seconds)
                 lcd.showCursor(false)
                 delay(2.seconds)
-                lcd.clear()
                 lcd.setCursorPosition(0, 0)
                 lcd.displayString("123456789012345")
                 lcd.setCursorPosition(1, lcd.config.columns - 15)

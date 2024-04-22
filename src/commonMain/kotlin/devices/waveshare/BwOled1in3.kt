@@ -20,6 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
     https://files.waveshare.com/upload/2/2c/OLED_Module_Code.7z
  */
 
+/** [speedHz] is only used if [spiDevice] is defined. */
 public suspend fun bwOled1in3(
     i2cDevice: I2cDevice?, spiDevice: SpiDevice?,
     gpio: Gpio, dcPin: Int?, rstPin: Int,
