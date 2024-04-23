@@ -27,12 +27,3 @@ public interface I2cDevice {
     // S Addr Wr [A] Comm [A] S Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
     public fun read(register: UByte, length: Int): UByteArray
 }
-
-public object DummyI2cDevice : I2cDevice {
-    override fun write(value: UByte): Unit = Unit
-    override fun write(register: UByte, value: UByte): Unit = Unit
-    override fun write(register: UByte, values: UByteArray): Unit = Unit
-    override fun read(): UByte = 0U
-    override fun read(register: UByte): UByte = 0U
-    override fun read(register: UByte, length: Int): UByteArray = throw NotImplementedError()
-}

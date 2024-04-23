@@ -2,90 +2,89 @@
 
 package ch.softappeal.konapi.devices.waveshare
 
-import ch.softappeal.konapi.Closeable
 import ch.softappeal.konapi.Gpio
-import ch.softappeal.konapi.I2cDevice
 import ch.softappeal.konapi.SPI_MODE_3
 import ch.softappeal.konapi.SPI_MODE_4WIRE
 import ch.softappeal.konapi.SPI_MODE_MSB_FIRST
 import ch.softappeal.konapi.SpiDevice
+import ch.softappeal.konapi.SuspendCloseable
 import ch.softappeal.konapi.graphics.Graphics
 import ch.softappeal.konapi.tryCatch
 import ch.softappeal.konapi.tryFinally
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-public interface Oled<G : Graphics> : Closeable {
+public interface Oled<G : Graphics> : SuspendCloseable {
     public val graphics: G
 }
 
 public interface OledWriter {
-    public val dc: Gpio.Output?
-    public fun spiWrite(bytes: UByteArray)
     public fun command(command: UByte)
-    public fun spiData(data: UByte)
+    public fun data(data: UByte)
+    public fun data(bytes: UByteArray)
 }
 
-/** [speedHz] is only used if [spiDevice] is defined. */
 public suspend fun <G : Graphics> Oled(
-    i2cDevice: I2cDevice?, spiDevice: SpiDevice?,
-    gpio: Gpio, dcPin: Int?, rstPin: Int,
-    speedHz: Int,
+    gpio: Gpio, dcPin: Int, rstPin: Int,
+    device: SpiDevice, speedHz: Int,
     initSequence: suspend OledWriter.() -> Unit, getGraphics: OledWriter.() -> G,
 ): Oled<G> {
-    require((i2cDevice == null && spiDevice != null) || (i2cDevice != null && spiDevice == null)) { "one of i2cDevice or spiDevice must be null" }
-    require((i2cDevice != null && dcPin == null) || (spiDevice != null && dcPin != null)) { "specify dcPin only for spiDevice" }
-    spiDevice?.config = SpiDevice.Config(speedHz, 8, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
-    val dc = if (dcPin == null) null else gpio.output(dcPin, false)
+    device.config = SpiDevice.Config(speedHz, 8, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
+    val dc = gpio.output(dcPin, false)
     val rst = tryCatch({
         gpio.output(rstPin, false)
     }) {
-        dc?.close()
+        dc.close()
     }
 
-    fun closeOutputs() = tryFinally({
-        dc?.close()
-    }) {
-        rst.close()
-    }
-
-    return tryCatch({
+    suspend fun reset() {
         rst.set(true)
         delay(100.milliseconds)
         rst.set(false)
         delay(100.milliseconds)
         rst.set(true)
         delay(100.milliseconds)
+    }
+
+    suspend fun closeOutputs() = tryFinally({
+        reset()
+    }) {
+        tryFinally({
+            dc.close()
+        }) {
+            rst.close()
+        }
+    }
+
+    return tryCatch({
+        reset()
         val writer = object : OledWriter {
-            override val dc = dc
-
-            override fun spiWrite(bytes: UByteArray) {
-                spiDevice!!.write(bytes)
-            }
-
             private val oneByte = UByteArray(1)
-            private fun spiWrite(byte: UByte) {
+            private fun write(byte: UByte) {
                 oneByte[0] = byte
-                spiDevice!!.write(oneByte)
+                device.write(oneByte)
             }
 
-            override fun command(command: UByte) = if (i2cDevice != null) {
-                i2cDevice.write(0x00U, command)
-            } else {
-                dc!!.set(false)
-                spiWrite(command)
+            override fun command(command: UByte) {
+                dc.set(false)
+                write(command)
             }
 
-            override fun spiData(data: UByte) {
-                dc!!.set(true)
-                spiWrite(data)
+            override fun data(data: UByte) {
+                dc.set(true)
+                write(data)
+            }
+
+            override fun data(bytes: UByteArray) {
+                dc.set(true)
+                device.write(bytes)
             }
         }
         writer.initSequence()
         val graphics = writer.getGraphics()
         object : Oled<G> {
             override val graphics = graphics
-            override fun close() {
+            override suspend fun close() {
                 closeOutputs()
             }
         }

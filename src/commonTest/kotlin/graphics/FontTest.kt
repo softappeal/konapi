@@ -1,11 +1,12 @@
 package ch.softappeal.konapi.graphics
 
-import ch.softappeal.konapi.Closeable
+import ch.softappeal.konapi.SuspendCloseable
 import ch.softappeal.konapi.readFile
 import ch.softappeal.konapi.use
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.time.measureTime
 
 private class FontDesc(fontName: String) {
     val font = readOverlaysFile("fonts/font/$fontName.font")
@@ -17,12 +18,12 @@ private val fonts = readFile("test-files/fonts.txt").decodeToString().split('\n'
 
 private val colors = listOf(WHITE, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW)
 
-internal interface DisplayCreator : Closeable {
+internal interface DisplayCreator : SuspendCloseable {
     suspend fun create()
     val graphics: Graphics
 }
 
-internal class Displays(private val displays: List<DisplayCreator>) : Closeable {
+internal class Displays(private val displays: List<DisplayCreator>) : SuspendCloseable {
     private var fontIndex = 0
     private var colorIndex = 0
     private var displayIndex = 0
@@ -55,7 +56,7 @@ internal class Displays(private val displays: List<DisplayCreator>) : Closeable 
             }
             y += font.height
         }
-        update()
+        println("update: ${measureTime { update() }}")
     }
 
     fun nextFont() {
@@ -107,7 +108,7 @@ internal class Displays(private val displays: List<DisplayCreator>) : Closeable 
         draw()
     }
 
-    override fun close() {
+    override suspend fun close() {
         display().close()
     }
 }
@@ -121,7 +122,7 @@ class FontTest {
                 println("create: $width x $height")
             }
 
-            override fun close() {
+            override suspend fun close() {
                 println("close: $width x $height")
             }
 

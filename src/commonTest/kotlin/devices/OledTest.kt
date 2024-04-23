@@ -1,13 +1,8 @@
 package ch.softappeal.konapi.devices
 
-import ch.softappeal.konapi.DummyGpio
-import ch.softappeal.konapi.DummyI2cDevice
-import ch.softappeal.konapi.DummySpiDevice
 import ch.softappeal.konapi.GPIO_DISPLAY_DC
 import ch.softappeal.konapi.GPIO_DISPLAY_RST
 import ch.softappeal.konapi.Gpio
-import ch.softappeal.konapi.I2C_ADDRESS_OLED
-import ch.softappeal.konapi.assertFailsMessage
 import ch.softappeal.konapi.devices.waveshare.bwOled1in3
 import ch.softappeal.konapi.devices.waveshare.color16Oled1in5
 import ch.softappeal.konapi.graphics.BLACK
@@ -23,13 +18,11 @@ import ch.softappeal.konapi.graphics.YELLOW
 import ch.softappeal.konapi.graphics.draw
 import ch.softappeal.konapi.graphics.fillRect
 import ch.softappeal.konapi.graphics.imageOfMe
-import ch.softappeal.konapi.i2cBus1
 import ch.softappeal.konapi.spiDeviceBus0CS0
 import ch.softappeal.konapi.spiDeviceBus0CS1
 import ch.softappeal.konapi.use
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -69,7 +62,7 @@ abstract class OledTest {
     fun color16Oled1in5() = runBlocking {
         spiDeviceBus0CS0().use { device ->
             Gpio().use { gpio ->
-                color16Oled1in5(device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display ->
+                color16Oled1in5(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device).use { display ->
                     with(display.graphics) {
                         test()
                         val newColor = Color(1, 2, 3)
@@ -85,40 +78,11 @@ abstract class OledTest {
     }
 
     @Test
-    // @Ignore
-    fun bwOled1in3Spi() = runBlocking {
+    fun bwOled1in3() = runBlocking {
         spiDeviceBus0CS1().use { device ->
             Gpio().use { gpio ->
-                bwOled1in3(null, device, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST).use { display -> display.graphics.test() }
+                bwOled1in3(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device).use { display -> display.graphics.test() }
             }
-        }
-    }
-
-    @Test
-    @Ignore
-    fun bwOled1in3I2c() = runBlocking {
-        i2cBus1().use { bus ->
-            Gpio().use { gpio ->
-                bwOled1in3(bus.device(I2C_ADDRESS_OLED), null, gpio, null, GPIO_DISPLAY_RST).use { display ->
-                    display.graphics.test()
-                }
-            }
-        }
-    }
-
-    @Test
-    fun bwOled1in3InvalidConfig() = runBlocking {
-        assertFailsMessage<IllegalArgumentException>("one of i2cDevice or spiDevice must be null") {
-            bwOled1in3(null, null, DummyGpio, 0, 0)
-        }
-        assertFailsMessage<IllegalArgumentException>("one of i2cDevice or spiDevice must be null") {
-            bwOled1in3(DummyI2cDevice, DummySpiDevice, DummyGpio, 0, 0)
-        }
-        assertFailsMessage<IllegalArgumentException>("specify dcPin only for spiDevice") {
-            bwOled1in3(DummyI2cDevice, null, DummyGpio, 0, 0)
-        }
-        assertFailsMessage<IllegalArgumentException>("specify dcPin only for spiDevice") {
-            bwOled1in3(null, DummySpiDevice, DummyGpio, null, 0)
         }
     }
 }

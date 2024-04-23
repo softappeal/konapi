@@ -18,57 +18,58 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 
 public suspend fun color16Oled1in5(
-    spiDevice: SpiDevice, gpio: Gpio, dcPin: Int, rstPin: Int, speedHz: Int = 10_000_000,
+    gpio: Gpio, dcPin: Int, rstPin: Int,
+    device: SpiDevice, speedHz: Int = 10_000_000,
 ): Oled<Color16Graphics> = Oled(
-    i2cDevice = null, spiDevice,
-    gpio, dcPin, rstPin, speedHz,
+    gpio, dcPin, rstPin,
+    device, speedHz,
     {
         command(0xFDU) // command lock
-        spiData(0x12U)
+        data(0x12U)
         command(0xFDU) // command lock
-        spiData(0xB1U)
+        data(0xB1U)
         command(0xAEU) // display off
         command(0xA4U) // Normal Display mode
         command(0x15U) // set column address
-        spiData(0x00U) // column address start 00
-        spiData(0x7FU) // column address end 127
+        data(0x00U) // column address start 00
+        data(0x7FU) // column address end 127
         command(0x75U) // set row address
-        spiData(0x00U) // row address start 00
-        spiData(0x7FU) // row address end 127
+        data(0x00U) // row address start 00
+        data(0x7FU) // row address end 127
         command(0xB3U)
-        spiData(0xF1U)
+        data(0xF1U)
         command(0xCAU)
-        spiData(0x7FU)
+        data(0x7FU)
         command(0xA0U) // set re-map & data format
-        spiData(0x74U) // Horizontal address increment
+        data(0x74U) // Horizontal address increment
         command(0xA1U) // set display start line
-        spiData(0x00U) // start 00 line
+        data(0x00U) // start 00 line
         command(0xA2U) // set display offset
-        spiData(0x00U)
+        data(0x00U)
         command(0xABU)
         command(0x01U)
         command(0xB4U)
-        spiData(0xA0U)
-        spiData(0xB5U)
-        spiData(0x55U)
+        data(0xA0U)
+        data(0xB5U)
+        data(0x55U)
         command(0xC1U)
-        spiData(0xC8U)
-        spiData(0x80U)
-        spiData(0xC0U)
+        data(0xC8U)
+        data(0x80U)
+        data(0xC0U)
         command(0xC7U)
-        spiData(0x0FU)
+        data(0x0FU)
         command(0xB1U)
-        spiData(0x32U)
+        data(0x32U)
         command(0xB2U)
-        spiData(0xA4U)
-        spiData(0x00U)
-        spiData(0x00U)
+        data(0xA4U)
+        data(0x00U)
+        data(0x00U)
         command(0xBBU)
-        spiData(0x17U)
+        data(0x17U)
         command(0xB6U)
-        spiData(0x01U)
+        data(0x01U)
         command(0xBEU)
-        spiData(0x05U)
+        data(0x05U)
         command(0xA6U)
         delay(100.milliseconds)
         command(0xAFU) // turn on oled panel
@@ -77,14 +78,13 @@ public suspend fun color16Oled1in5(
         Color16Graphics(object : Display(128, 128) {
             override fun update(buffer: UByteArray) {
                 command(0x15U) // set column address
-                spiData(0x00U) // column address start 00
-                spiData(0x7FU) // column address end 127
+                data(0x00U) // column address start 00
+                data(0x7FU) // column address end 127
                 command(0x75U) // set row address
-                spiData(0x00U) // row address start 00
-                spiData(0x7FU) // row address end 127
+                data(0x00U) // row address start 00
+                data(0x7FU) // row address end 127
                 command(0x5CU)
-                dc!!.set(true)
-                spiDevice.write(buffer)
+                data(buffer)
             }
         })
     },

@@ -135,6 +135,23 @@ class CleanupTest {
     }
 
     @Test
+    fun suspendCloseable() = runBlocking {
+        val closeable = object : SuspendCloseable {
+            var used = false
+            var closed = false
+            override suspend fun close() {
+                closed = true
+            }
+        }
+        assertTrue(closeable.use {
+            it.used = true
+            true
+        })
+        assertTrue(closeable.used)
+        assertTrue(closeable.closed)
+    }
+
+    @Test
     fun noTryException() {
         var tryCalled = false
         var catchCalled = false

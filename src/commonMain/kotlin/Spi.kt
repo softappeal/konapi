@@ -30,13 +30,3 @@ public interface SpiDevice : Closeable {
 }
 
 public expect fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice
-
-public object DummySpiDevice : SpiDevice {
-    override val blockSize: Int = 0
-    override fun close(): Unit = Unit
-    override fun transfer(bytes: UByteArray): Unit = Unit
-    override fun write(bytes: UByteArray): Unit = Unit
-    override var config: SpiDevice.Config
-        get() = throw NotImplementedError()
-        set(_) = Unit
-}

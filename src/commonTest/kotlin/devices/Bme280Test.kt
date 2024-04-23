@@ -3,13 +3,10 @@ package ch.softappeal.konapi.devices
 import ch.softappeal.konapi.I2C_ADDRESS_BME280
 import ch.softappeal.konapi.I2cDevice
 import ch.softappeal.konapi.devices.bosch.Bme280
-import ch.softappeal.konapi.devices.bosch.boschI2cAdapter
 import ch.softappeal.konapi.i2cBus1
-import ch.softappeal.konapi.spiDeviceBus0CS0
 import ch.softappeal.konapi.use
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -23,14 +20,7 @@ private fun bme280Test(device: I2cDevice) = runBlocking {
 
 abstract class Bme280Test {
     @Test
-    // @Ignore
-    fun i2c() {
+    fun test() {
         i2cBus1().use { bus -> bme280Test(bus.device(I2C_ADDRESS_BME280)) }
-    }
-
-    @Test
-    @Ignore
-    fun spi() {
-        spiDeviceBus0CS0().use { device -> bme280Test(boschI2cAdapter(device)) }
     }
 }

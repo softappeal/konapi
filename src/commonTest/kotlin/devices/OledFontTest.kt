@@ -35,7 +35,7 @@ private fun <G : Graphics> displayCreator(oledCreator: suspend () -> Oled<G>) = 
         oled = oledCreator()
     }
 
-    override fun close() {
+    override suspend fun close() {
         oled!!.close()
     }
 
@@ -60,7 +60,7 @@ private suspend fun Displays.test(gpio: Gpio, paj7620U2: Paj7620U2) = coroutineS
         }
     }
     launch(Dispatchers.IO) {
-        gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 20.seconds, Gpio.Edge.Falling) { _, _ ->
+        gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 10.seconds, Gpio.Edge.Falling) { _, _ ->
             val gesture = paj7620U2.gesture()
             println("gesture: $gesture")
             assertTrue(flow.tryEmit(gesture))
@@ -78,8 +78,8 @@ abstract class OledFontTest {
                 spiDeviceBus0CS1().use { device1 ->
                     i2cBus1().use { bus ->
                         Displays(listOf(
-                            displayCreator { color16Oled1in5(device0, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST) },
-                            displayCreator { bwOled1in3(null, device1, gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST) },
+                            displayCreator { color16Oled1in5(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device0) },
+                            displayCreator { bwOled1in3(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device1) },
                         )).use { displays ->
                             displays.init()
                             displays.test(gpio, Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2)))

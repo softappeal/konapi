@@ -4,7 +4,6 @@
 package ch.softappeal.konapi.devices.waveshare
 
 import ch.softappeal.konapi.Gpio
-import ch.softappeal.konapi.I2cDevice
 import ch.softappeal.konapi.SpiDevice
 import ch.softappeal.konapi.graphics.BwGraphics
 import ch.softappeal.konapi.graphics.Display
@@ -20,13 +19,12 @@ import kotlin.time.Duration.Companion.milliseconds
     https://files.waveshare.com/upload/2/2c/OLED_Module_Code.7z
  */
 
-/** [speedHz] is only used if [spiDevice] is defined. */
 public suspend fun bwOled1in3(
-    i2cDevice: I2cDevice?, spiDevice: SpiDevice?,
-    gpio: Gpio, dcPin: Int?, rstPin: Int,
-    speedHz: Int = 10_000_000,
+    gpio: Gpio, dcPin: Int, rstPin: Int,
+    device: SpiDevice, speedHz: Int = 10_000_000,
 ): Oled<BwGraphics> = Oled(
-    i2cDevice, spiDevice, gpio, dcPin, rstPin, speedHz,
+    gpio, dcPin, rstPin,
+    device, speedHz,
     {
         command(0xAEU) // turn off oled panel
         command(0x02U) // set low column address
@@ -57,28 +55,17 @@ public suspend fun bwOled1in3(
     },
     {
         BwGraphics(object : Display(128, 64) {
-            private val i2cChunk = UByteArray(32) // bigger chunks don't work
-            private val spiChunk = UByteArray(width)
+            private val chunk = UByteArray(width)
             override fun update(buffer: UByteArray) {
                 var pageStart = 0
                 for (page in 0..<8) {
                     command((0xB0U + page.toUByte()).toUByte()) // set page address
                     command(0x02U) // set low column address
                     command(0x10U) // set high column address
-                    if (i2cDevice != null) {
-                        repeat(width / i2cChunk.size) {
-                            val chunkEnd = pageStart + i2cChunk.size
-                            buffer.copyInto(i2cChunk, startIndex = pageStart, endIndex = chunkEnd) // pageStart is chunkStart
-                            i2cDevice.write(0x40U, i2cChunk)
-                            pageStart = chunkEnd
-                        }
-                    } else {
-                        dc!!.set(true)
-                        val pageEnd = pageStart + width
-                        buffer.copyInto(spiChunk, startIndex = pageStart, endIndex = pageEnd)
-                        spiWrite(spiChunk)
-                        pageStart = pageEnd
-                    }
+                    val pageEnd = pageStart + width
+                    buffer.copyInto(chunk, startIndex = pageStart, endIndex = pageEnd)
+                    data(chunk)
+                    pageStart = pageEnd
                 }
             }
         })
