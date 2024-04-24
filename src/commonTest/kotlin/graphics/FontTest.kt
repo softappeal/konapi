@@ -113,21 +113,22 @@ internal class Displays(private val displays: List<DisplayCreator>) : SuspendClo
     }
 }
 
+private fun displayCreator(width: Int, height: Int) = object : DisplayCreator {
+    override suspend fun create() {
+        println("create: $width x $height")
+    }
+
+    override suspend fun close() {
+        println("close: $width x $height")
+    }
+
+    override val graphics = StringGraphics(width, height) { println(it) }
+}
+
 class FontTest {
     @Test
     @Ignore
     fun test() = runBlocking {
-        fun displayCreator(width: Int, height: Int) = object : DisplayCreator {
-            override suspend fun create() {
-                println("create: $width x $height")
-            }
-
-            override suspend fun close() {
-                println("close: $width x $height")
-            }
-
-            override val graphics = StringGraphics(width, height) { println(it) }
-        }
         Displays(listOf(displayCreator(128, 128), displayCreator(128, 64))).use { displays ->
             displays.init()
             displays.prevDisplay()

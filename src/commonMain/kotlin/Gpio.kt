@@ -22,29 +22,16 @@ public interface Gpio : Closeable {
         public fun get(): Boolean
     }
 
-    public fun output(
-        line: Int,
-        initValue: Boolean,
-        active: Active = Active.High,
-    ): Output
+    public fun output(line: Int, initValue: Boolean, active: Active = Active.High): Output
 
-    public fun input(
-        line: Int,
-        bias: Bias,
-        active: Active = Active.High,
-    ): Input
+    public fun input(line: Int, bias: Bias, active: Active = Active.High): Input
 
     /**
-     * Returns if [GpioNotification] returns false or if [timeout] reached.
+     * Returns if [notification] returns false or if [timeout] reached.
      * @return false if [timeout] reached else true
      */
     public fun listen(
-        line: Int,
-        bias: Bias,
-        timeout: Duration,
-        edge: Edge,
-        active: Active = Active.High,
-        notification: GpioNotification,
+        line: Int, bias: Bias, timeout: Duration, edge: Edge, active: Active = Active.High, notification: GpioNotification,
     ): Boolean
 }
 
