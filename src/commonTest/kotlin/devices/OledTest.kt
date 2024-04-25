@@ -18,18 +18,16 @@ import ch.softappeal.konapi.graphics.YELLOW
 import ch.softappeal.konapi.graphics.draw
 import ch.softappeal.konapi.graphics.fillRect
 import ch.softappeal.konapi.graphics.imageOfMe
+import ch.softappeal.konapi.sleepMs
 import ch.softappeal.konapi.spiDeviceBus0CS0
 import ch.softappeal.konapi.spiDeviceBus0CS1
 import ch.softappeal.konapi.use
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
 
-private suspend fun Graphics.test() {
+private fun Graphics.test() {
     set(BLACK)
     assertSame(BLACK, color)
     fillRect()
@@ -45,7 +43,7 @@ private suspend fun Graphics.test() {
             x += w
         }
         println("${measureTime { update() }}")
-        delay(1.seconds)
+        sleepMs(1000)
     }
     set(BLACK).fillRect()
     set(RED).setPixel(0, 0)
@@ -54,12 +52,12 @@ private suspend fun Graphics.test() {
     set(WHITE).setPixel(width - 1, height - 1)
     set(BLUE).setPixel(20, 10)
     update()
-    delay(1.seconds)
+    sleepMs(1000)
 }
 
 abstract class OledTest {
     @Test
-    fun color16Oled1in5() = runBlocking {
+    fun color16Oled1in5() {
         spiDeviceBus0CS0().use { device ->
             Gpio().use { gpio ->
                 color16Oled1in5(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device).use { display ->
@@ -71,14 +69,14 @@ abstract class OledTest {
                         assertEquals(newColor, color)
                         update()
                     }
-                    delay(5.seconds)
+                    sleepMs(5000)
                 }
             }
         }
     }
 
     @Test
-    fun bwOled1in3() = runBlocking {
+    fun bwOled1in3() {
         spiDeviceBus0CS1().use { device ->
             Gpio().use { gpio ->
                 bwOled1in3(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device).use { display -> display.graphics.test() }

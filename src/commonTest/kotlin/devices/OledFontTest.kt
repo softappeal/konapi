@@ -17,18 +17,17 @@ import ch.softappeal.konapi.i2cBus1
 import ch.softappeal.konapi.spiDeviceBus0CS0
 import ch.softappeal.konapi.spiDeviceBus0CS1
 import ch.softappeal.konapi.use
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.seconds
 
-private fun <G : Graphics> displayCreator(oledCreator: suspend () -> Oled<G>) = object : DisplayCreator {
+private fun <G : Graphics> displayCreator(oledCreator: () -> Oled<G>) = object : DisplayCreator {
     var oled: Oled<G>? = null
 
-    override suspend fun create() {
+    override fun create() {
         oled = oledCreator()
     }
 
-    override suspend fun close() {
+    override fun close() {
         oled!!.close()
     }
 
@@ -37,7 +36,7 @@ private fun <G : Graphics> displayCreator(oledCreator: suspend () -> Oled<G>) = 
 
 abstract class OledFontTest {
     @Test
-    fun test(): Unit = runBlocking {
+    fun test() {
         Gpio().use { gpio ->
             spiDeviceBus0CS0().use { device0 ->
                 spiDeviceBus0CS1().use { device1 ->
@@ -46,7 +45,6 @@ abstract class OledFontTest {
                             displayCreator { color16Oled1in5(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device0) },
                             displayCreator { bwOled1in3(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device1) },
                         )).use { displays ->
-                            displays.init()
                             val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
                             gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 10.seconds, Gpio.Edge.Falling) { _, _ ->
                                 val gesture = paj7620U2.gesture()
@@ -59,8 +57,8 @@ abstract class OledFontTest {
                                     Gesture.Right -> displays.nextPage()
                                     Gesture.Forward -> displays.nextColor()
                                     Gesture.Backward -> displays.prevColor()
-                                    Gesture.Clockwise -> runBlocking { displays.nextDisplay() }
-                                    Gesture.AntiClockwise -> runBlocking { displays.prevDisplay() }
+                                    Gesture.Clockwise -> displays.nextDisplay()
+                                    Gesture.AntiClockwise -> displays.prevDisplay()
                                 }
                                 true
                             }

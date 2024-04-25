@@ -1,16 +1,9 @@
 package ch.softappeal.konapi
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 abstract class GpioTest {
@@ -72,61 +65,30 @@ abstract class GpioTest {
     }
 
     @Test
-    fun bias() = runBlocking {
+    fun bias() {
         Gpio().use { gpio ->
             println("bias - PullUp, high")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp)
-            delay(10.milliseconds)
+            sleepMs(10)
             assertTrue(input.get())
         }
         Gpio().use { gpio ->
             println("bias - PullDown, high")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullDown)
-            delay(10.milliseconds)
+            sleepMs(10)
             assertFalse(input.get())
         }
         Gpio().use { gpio ->
             println("bias - PullUp, Low")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, Gpio.Active.Low)
-            delay(10.milliseconds)
+            sleepMs(10)
             assertFalse(input.get())
         }
         Gpio().use { gpio ->
             println("bias - PullDown, Low")
             val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullDown, Gpio.Active.Low)
-            delay(10.milliseconds)
+            sleepMs(10)
             assertTrue(input.get())
-        }
-    }
-
-    @Test
-    fun listen() = runBlocking {
-        repeat(2) { iteration ->
-            println("iteration: $iteration")
-            Gpio().use { gpio ->
-                coroutineScope {
-                    val out = gpio.output(GPIO_OUT_CONNECTED_TO_IN, false)
-                    delay(100.milliseconds)
-                    launch(Dispatchers.IO) {
-                        var counter = 0
-                        // NOTE: there is an unexpected Falling notification at start of first iteration (on Pi 5 but not on Pi Zero 2 W); why?
-                        val timedOut = !gpio.listen(
-                            GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable, 200.milliseconds, Gpio.Edge.Both
-                        ) { risingEdge, nanoSeconds ->
-                            println("notification: $risingEdge ${(nanoSeconds / 1_000_000) % 10_000}")
-                            ++counter < 6
-                        }
-                        println("timedOut: $timedOut")
-                    }
-                    repeat(2 + iteration) {
-                        listOf(true, false).forEach { value ->
-                            delay(100.milliseconds)
-                            println("out: $value")
-                            out.set(value)
-                        }
-                    }
-                }
-            }
         }
     }
 

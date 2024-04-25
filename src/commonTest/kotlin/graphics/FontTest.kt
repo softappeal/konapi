@@ -1,9 +1,8 @@
 package ch.softappeal.konapi.graphics
 
-import ch.softappeal.konapi.SuspendCloseable
+import ch.softappeal.konapi.Closeable
 import ch.softappeal.konapi.readFile
 import ch.softappeal.konapi.use
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.time.measureTime
@@ -18,12 +17,12 @@ private val fonts = readFile("test-files/fonts.txt").decodeToString().split('\n'
 
 private val colors = listOf(WHITE, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW)
 
-internal interface DisplayCreator : SuspendCloseable {
-    suspend fun create()
+internal interface DisplayCreator : Closeable {
+    fun create()
     val graphics: Graphics
 }
 
-internal class Displays(private val displays: List<DisplayCreator>) : SuspendCloseable {
+internal class Displays(private val displays: List<DisplayCreator>) : Closeable {
     private var fontIndex = 0
     private var colorIndex = 0
     private var displayIndex = 0
@@ -32,7 +31,7 @@ internal class Displays(private val displays: List<DisplayCreator>) : SuspendClo
     private fun font() = fonts[fontIndex]
     private fun display() = displays[displayIndex]
 
-    suspend fun init() {
+    init {
         display().create()
         draw()
     }
@@ -92,7 +91,7 @@ internal class Displays(private val displays: List<DisplayCreator>) : SuspendClo
         draw()
     }
 
-    suspend fun nextDisplay() {
+    fun nextDisplay() {
         display().close()
         if (++displayIndex >= displays.size) displayIndex = 0
         display().create()
@@ -100,7 +99,7 @@ internal class Displays(private val displays: List<DisplayCreator>) : SuspendClo
         draw()
     }
 
-    suspend fun prevDisplay() {
+    fun prevDisplay() {
         display().close()
         if (--displayIndex < 0) displayIndex = displays.size - 1
         display().create()
@@ -108,17 +107,17 @@ internal class Displays(private val displays: List<DisplayCreator>) : SuspendClo
         draw()
     }
 
-    override suspend fun close() {
+    override fun close() {
         display().close()
     }
 }
 
 private fun displayCreator(width: Int, height: Int) = object : DisplayCreator {
-    override suspend fun create() {
+    override fun create() {
         println("create: $width x $height")
     }
 
-    override suspend fun close() {
+    override fun close() {
         println("close: $width x $height")
     }
 
@@ -128,9 +127,8 @@ private fun displayCreator(width: Int, height: Int) = object : DisplayCreator {
 class FontTest {
     @Test
     @Ignore
-    fun test() = runBlocking {
+    fun test() {
         Displays(listOf(displayCreator(128, 128), displayCreator(128, 64))).use { displays ->
-            displays.init()
             displays.prevDisplay()
             displays.nextDisplay()
             displays.prevColor()

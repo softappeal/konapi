@@ -21,17 +21,7 @@ public interface Closeable {
     public fun close()
 }
 
-public interface SuspendCloseable {
-    public suspend fun close()
-}
-
 public inline fun <C : Closeable, R> C.use(block: (closeable: C) -> R): R = tryFinally({
-    block(this)
-}) {
-    close()
-}
-
-public suspend inline fun <C : SuspendCloseable, R> C.use(block: (closeable: C) -> R): R = tryFinally({
     block(this)
 }) {
     close()

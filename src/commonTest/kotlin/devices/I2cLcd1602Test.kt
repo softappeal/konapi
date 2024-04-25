@@ -3,38 +3,37 @@ package ch.softappeal.konapi.devices
 import ch.softappeal.konapi.I2C_ADDRESS_LCD1602
 import ch.softappeal.konapi.devices.hitachi.i2cLcd1602
 import ch.softappeal.konapi.i2cBus1
+import ch.softappeal.konapi.sleepMs
 import ch.softappeal.konapi.use
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
-import kotlin.time.Duration.Companion.seconds
 
 abstract class I2cLcd1602Test {
     @Test
-    fun test() = runBlocking {
+    fun test() {
         i2cBus1().use { bus ->
             i2cLcd1602(bus.device(I2C_ADDRESS_LCD1602)).use { lcd ->
-                delay(1.seconds)
+                sleepMs(1000)
                 lcd.setBacklight(false)
-                delay(1.seconds)
+                sleepMs(1000)
                 lcd.setBacklight(true)
                 lcd.showCursor(true)
                 lcd.setBlink(true)
                 lcd.setCursorPosition(1, 3)
-                delay(2.seconds)
+                sleepMs(2000)
                 lcd.setBlink(false)
-                delay(2.seconds)
+                sleepMs(2000)
                 lcd.showCursor(false)
-                delay(2.seconds)
+                sleepMs(2000)
+                lcd.clear()
                 lcd.setCursorPosition(0, 0)
                 lcd.displayString("123456789012345")
                 lcd.setCursorPosition(1, lcd.config.columns - 15)
                 lcd.displayString("234567890123456")
-                delay(2.seconds)
+                sleepMs(2000)
                 lcd.showDisplay(false)
-                delay(2.seconds)
+                sleepMs(2000)
                 lcd.showDisplay(true)
-                delay(2.seconds)
+                sleepMs(2000)
             }
         }
     }

@@ -1,6 +1,5 @@
 package ch.softappeal.konapi
 
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -89,57 +88,12 @@ class CleanupTest {
         assertEquals(listOf(finallyException), tryException.suppressedExceptions)
     }
 
-    @Suppress("RedundantSuspendModifier")
-    @Test
-    fun withSuspend() = runBlocking {
-        var tryCalled = false
-        var finallyCalled = false
-
-        suspend fun tryBlock(): Int {
-            tryCalled = true
-            return 123
-        }
-
-        suspend fun finallyBlock(): Int {
-            finallyCalled = true
-            return 321
-        }
-
-        assertEquals(
-            123,
-            tryFinally({
-                tryBlock()
-            }) {
-                finallyBlock()
-            }
-        )
-        assertTrue(tryCalled)
-        assertTrue(finallyCalled)
-    }
-
     @Test
     fun closeable() {
         val closeable = object : Closeable {
             var used = false
             var closed = false
             override fun close() {
-                closed = true
-            }
-        }
-        assertTrue(closeable.use {
-            it.used = true
-            true
-        })
-        assertTrue(closeable.used)
-        assertTrue(closeable.closed)
-    }
-
-    @Test
-    fun suspendCloseable() = runBlocking {
-        val closeable = object : SuspendCloseable {
-            var used = false
-            var closed = false
-            override suspend fun close() {
                 closed = true
             }
         }

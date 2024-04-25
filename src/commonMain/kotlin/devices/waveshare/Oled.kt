@@ -2,19 +2,18 @@
 
 package ch.softappeal.konapi.devices.waveshare
 
+import ch.softappeal.konapi.Closeable
 import ch.softappeal.konapi.Gpio
 import ch.softappeal.konapi.SPI_MODE_3
 import ch.softappeal.konapi.SPI_MODE_4WIRE
 import ch.softappeal.konapi.SPI_MODE_MSB_FIRST
 import ch.softappeal.konapi.SpiDevice
-import ch.softappeal.konapi.SuspendCloseable
 import ch.softappeal.konapi.graphics.Graphics
+import ch.softappeal.konapi.sleepMs
 import ch.softappeal.konapi.tryCatch
 import ch.softappeal.konapi.tryFinally
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
-public interface Oled<G : Graphics> : SuspendCloseable {
+public interface Oled<G : Graphics> : Closeable {
     public val graphics: G
 }
 
@@ -24,10 +23,10 @@ public interface OledWriter {
     public fun data(bytes: UByteArray)
 }
 
-public suspend fun <G : Graphics> Oled(
+public fun <G : Graphics> Oled(
     gpio: Gpio, dcPin: Int, rstPin: Int,
     device: SpiDevice, speedHz: Int,
-    initSequence: suspend OledWriter.() -> Unit, getGraphics: OledWriter.() -> G,
+    initSequence: OledWriter.() -> Unit, getGraphics: OledWriter.() -> G,
 ): Oled<G> {
     device.config = SpiDevice.Config(speedHz, 8, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
     val dc = gpio.output(dcPin, false)
@@ -37,16 +36,16 @@ public suspend fun <G : Graphics> Oled(
         dc.close()
     }
 
-    suspend fun reset() {
+    fun reset() {
         rst.set(true)
-        delay(100.milliseconds)
+        sleepMs(100)
         rst.set(false)
-        delay(100.milliseconds)
+        sleepMs(100)
         rst.set(true)
-        delay(100.milliseconds)
+        sleepMs(100)
     }
 
-    suspend fun closeOutputs() = tryFinally({
+    fun closeOutputs() = tryFinally({
         reset()
     }) {
         tryFinally({
@@ -84,7 +83,7 @@ public suspend fun <G : Graphics> Oled(
         val graphics = writer.getGraphics()
         object : Oled<G> {
             override val graphics = graphics
-            override suspend fun close() {
+            override fun close() {
                 closeOutputs()
             }
         }

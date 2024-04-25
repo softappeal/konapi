@@ -6,8 +6,7 @@ import ch.softappeal.konapi.Gpio
 import ch.softappeal.konapi.SpiDevice
 import ch.softappeal.konapi.graphics.Color16Graphics
 import ch.softappeal.konapi.graphics.Display
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
+import ch.softappeal.konapi.sleepMs
 
 /*
     1.5inch RGB OLED Module
@@ -17,7 +16,7 @@ import kotlin.time.Duration.Companion.milliseconds
     https://files.waveshare.com/upload/2/2c/OLED_Module_Code.7z
  */
 
-public suspend fun color16Oled1in5(
+public fun color16Oled1in5(
     gpio: Gpio, dcPin: Int, rstPin: Int,
     device: SpiDevice, speedHz: Int = 10_000_000,
 ): Oled<Color16Graphics> = Oled(
@@ -71,7 +70,7 @@ public suspend fun color16Oled1in5(
         command(0xBEU)
         data(0x05U)
         command(0xA6U)
-        delay(100.milliseconds)
+        sleepMs(100)
         command(0xAFU) // turn on oled panel
     },
     {

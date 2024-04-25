@@ -15,11 +15,13 @@ abstract class Paj7620U2Test {
         i2cBus1().use { bus ->
             Gpio().use { gpio ->
                 println("make all 9 gestures ...")
+                var counter = 20
                 val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
-                gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 5.seconds, Gpio.Edge.Falling) { _, _ ->
+                val timeout = !gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, 5.seconds, Gpio.Edge.Falling) { _, _ ->
                     println(paj7620U2.gesture())
-                    true
+                    counter-- > 0
                 }
+                println("timeout: $timeout")
             }
         }
     }

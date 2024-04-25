@@ -7,8 +7,7 @@ import ch.softappeal.konapi.Gpio
 import ch.softappeal.konapi.SpiDevice
 import ch.softappeal.konapi.graphics.BwGraphics
 import ch.softappeal.konapi.graphics.Display
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
+import ch.softappeal.konapi.sleepMs
 
 /*
     1.3inch OLED Monochrome
@@ -19,7 +18,7 @@ import kotlin.time.Duration.Companion.milliseconds
     https://files.waveshare.com/upload/2/2c/OLED_Module_Code.7z
  */
 
-public suspend fun bwOled1in3(
+public fun bwOled1in3(
     gpio: Gpio, dcPin: Int, rstPin: Int,
     device: SpiDevice, speedHz: Int = 10_000_000,
 ): Oled<BwGraphics> = Oled(
@@ -50,7 +49,7 @@ public suspend fun bwOled1in3(
         command(0x02U)
         command(0xA4U) // Disable Entire Display On (0xa4/0xa5)
         command(0xA6U) // Disable Inverse Display On (0xa6/a7)
-        delay(100.milliseconds)
+        sleepMs(100)
         command(0xAFU) // turn on oled panel
     },
     {

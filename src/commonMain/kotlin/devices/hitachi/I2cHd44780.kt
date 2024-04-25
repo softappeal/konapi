@@ -4,8 +4,7 @@ package ch.softappeal.konapi.devices.hitachi
 
 import ch.softappeal.konapi.Closeable
 import ch.softappeal.konapi.I2cDevice
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
+import ch.softappeal.konapi.sleepMs
 
 /*
     Dot Matrix Liquid Crystal Display Controller/Driver
@@ -55,7 +54,7 @@ private const val LINES_1: UByte = 0x00U
 private const val FONT_5x10: UByte = 0x04U
 private const val FONT_5x8: UByte = 0x00U
 
-public interface I2cHd44780 : Closeable {
+public class I2cHd44780(private val device: I2cDevice, public val config: Config) : Closeable {
     public enum class Font { Dots5x8, Dots5x10 }
 
     public data class Config(
@@ -83,24 +82,12 @@ public interface I2cHd44780 : Closeable {
         }
     }
 
-    public val config: Config
-    public fun displayString(s: String)
-    public fun setCursorPosition(line: Int, column: Int)
-    public fun setBlink(value: Boolean)
-    public fun showCursor(value: Boolean)
-    public fun showDisplay(value: Boolean)
-    public fun setBacklight(value: Boolean)
-}
+    private var blink = false
+    private var cursor = false
+    private var on = true
+    private var backlight = true
 
-public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2cHd44780 {
-    delay(100.milliseconds) // power on reset
-
-    var blink = false
-    var cursor = false
-    var on = true
-    var backlight = true
-
-    fun writeUpper(upperData: UByte, dataRegister: Boolean = false) {
+    private fun writeUpper(upperData: UByte, dataRegister: Boolean = false) {
         val data = RW_WRITE or
             (upperData and DB4_DB7) or
             (if (dataRegister) RS_DATA else RS_INSTRUCTION) or
@@ -110,51 +97,12 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
         device.write(data or E_FALSE)
     }
 
-    /*
-        The LCD may initially be in one of three states.
-        The following algorithm ensures that the LCD is in the 8-bit mode.
-
-        Starting in state 1 (8-bit configuration):
-            Send Function Set command. Command will be executed, set 8-bit mode.
-            Send Function Set command. Command will be executed, set 8-bit mode.
-            Send Function Set command. Command will be executed, set 8-bit mode.
-
-        Starting in state 2 (4-bit configuration, waiting for first 4-bit transfer):
-            Send Function Set command. First 4 bits received.
-            Send Function Set command. Last 4 bits, command accepted, set 8-bit mode.
-            Send Function Set command. Command will be executed, set 8-bit mode.
-
-        Starting in state 3 (4-bit configuration, waiting for last 4-bit transfer):
-            Send Function Set command. Last 4 bits, unknown command executed.
-            Send Function Set command. In 8-bit mode command will be executed, otherwise first 4 bits received.
-            Send Function Set command. 8-bit command will be executed or last 4 bits of previous command; set 8-bit mode.
-     */
-    writeUpper(FUNCTION_SET or MODE_8BIT)
-    delay(2.milliseconds) // needed for state 3: max. delay for unknown command
-    writeUpper(FUNCTION_SET or MODE_8BIT)
-    writeUpper(FUNCTION_SET or MODE_8BIT) // we are now guaranteed in 8-bit mode
-    writeUpper(FUNCTION_SET or MODE_4BIT) // we are now guaranteed in 4-bit mode
-
-    fun write4Bit(instruction: UByte, dataRegister: Boolean = false) {
+    private fun write4Bit(instruction: UByte, dataRegister: Boolean = false) {
         writeUpper(instruction, dataRegister)
         writeUpper((instruction.toInt() shl 4).toUByte(), dataRegister)
     }
 
-    write4Bit(
-        FUNCTION_SET or
-            MODE_4BIT or
-            when (config.lines) {
-                1 -> LINES_1
-                else -> LINES_2
-            } or
-            when (config.font) {
-                I2cHd44780.Font.Dots5x8 -> FONT_5x8
-                I2cHd44780.Font.Dots5x10 -> FONT_5x10
-            }
-    )
-    write4Bit(ENTRY_MODE_SET or INCREMENT or SHIFT_OFF)
-
-    fun setDisplayControl() {
+    private fun setDisplayControl() {
         write4Bit(
             DISPLAY_CONTROL or
                 (if (on) DISPLAY_ON else DISPLAY_OFF) or
@@ -163,54 +111,94 @@ public suspend fun I2cHd44780(device: I2cDevice, config: I2cHd44780.Config): I2c
         )
     }
 
-    setDisplayControl()
+    init {
+        sleepMs(100) // power on reset
 
-    write4Bit(CLEAR_DISPLAY)
-    delay(2.milliseconds)
+        /*
+            The LCD may initially be in one of three states.
+            The following algorithm ensures that the LCD is in the 8-bit mode.
 
-    return object : I2cHd44780 {
-        override val config = config
+            Starting in state 1 (8-bit configuration):
+                Send Function Set command. Command will be executed, set 8-bit mode.
+                Send Function Set command. Command will be executed, set 8-bit mode.
+                Send Function Set command. Command will be executed, set 8-bit mode.
 
-        override fun displayString(s: String) {
-            s.forEach { char -> write4Bit(char.code.toUByte(), dataRegister = true) }
-        }
+            Starting in state 2 (4-bit configuration, waiting for first 4-bit transfer):
+                Send Function Set command. First 4 bits received.
+                Send Function Set command. Last 4 bits, command accepted, set 8-bit mode.
+                Send Function Set command. Command will be executed, set 8-bit mode.
 
-        override fun setCursorPosition(line: Int, column: Int) {
-            config.requireCursorPosition(line, column)
-            write4Bit(SET_DDRAM_ADDR or (config.lineOffset(line) + column).toUByte())
-        }
+            Starting in state 3 (4-bit configuration, waiting for last 4-bit transfer):
+                Send Function Set command. Last 4 bits, unknown command executed.
+                Send Function Set command. In 8-bit mode command will be executed, otherwise first 4 bits received.
+                Send Function Set command. 8-bit command will be executed or last 4 bits of previous command; set 8-bit mode.
+         */
+        writeUpper(FUNCTION_SET or MODE_8BIT)
+        sleepMs(2) // needed for state 3: max. delay for unknown command
+        writeUpper(FUNCTION_SET or MODE_8BIT)
+        writeUpper(FUNCTION_SET or MODE_8BIT) // we are now guaranteed in 8-bit mode
+        writeUpper(FUNCTION_SET or MODE_4BIT) // we are now guaranteed in 4-bit mode
 
-        override fun close() {
-            backlight = false
-            on = false
-            setDisplayControl()
-        }
+        write4Bit(
+            FUNCTION_SET or
+                MODE_4BIT or
+                when (config.lines) {
+                    1 -> LINES_1
+                    else -> LINES_2
+                } or
+                when (config.font) {
+                    Font.Dots5x8 -> FONT_5x8
+                    Font.Dots5x10 -> FONT_5x10
+                }
+        )
+        write4Bit(ENTRY_MODE_SET or INCREMENT or SHIFT_OFF)
+        setDisplayControl()
+        clear()
+    }
 
-        override fun setBlink(value: Boolean) {
-            if (blink == value) return
-            blink = value
-            setDisplayControl()
-        }
+    public fun clear() {
+        write4Bit(CLEAR_DISPLAY)
+        sleepMs(2)
+    }
 
-        override fun showCursor(value: Boolean) {
-            if (cursor == value) return
-            cursor = value
-            setDisplayControl()
-        }
+    public fun displayString(s: String) {
+        s.forEach { char -> write4Bit(char.code.toUByte(), dataRegister = true) }
+    }
 
-        override fun showDisplay(value: Boolean) {
-            if (on == value) return
-            on = value
-            setDisplayControl()
-        }
+    public fun setCursorPosition(line: Int, column: Int) {
+        config.requireCursorPosition(line, column)
+        write4Bit(SET_DDRAM_ADDR or (config.lineOffset(line) + column).toUByte())
+    }
 
-        override fun setBacklight(value: Boolean) {
-            if (backlight == value) return
-            backlight = value
-            setDisplayControl()
-        }
+    public fun setBlink(value: Boolean) {
+        if (blink == value) return
+        blink = value
+        setDisplayControl()
+    }
+
+    public fun showCursor(value: Boolean) {
+        if (cursor == value) return
+        cursor = value
+        setDisplayControl()
+    }
+
+    public fun showDisplay(value: Boolean) {
+        if (on == value) return
+        on = value
+        setDisplayControl()
+    }
+
+    public fun setBacklight(value: Boolean) {
+        if (backlight == value) return
+        backlight = value
+        setDisplayControl()
+    }
+
+    override fun close() {
+        backlight = false
+        on = false
+        setDisplayControl()
     }
 }
 
-public suspend fun i2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 =
-    I2cHd44780(i2cDevice, I2cHd44780.Config(2, 16, I2cHd44780.Font.Dots5x8))
+public fun i2cLcd1602(i2cDevice: I2cDevice): I2cHd44780 = I2cHd44780(i2cDevice, I2cHd44780.Config(2, 16, I2cHd44780.Font.Dots5x8))
