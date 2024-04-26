@@ -1,4 +1,0 @@
-Hd44780.6x10
-HelloWorld.6x16
-PixelOperator.8x9
-Pxl.9x21

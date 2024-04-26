@@ -47,6 +47,11 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+        jvmMain {
+            dependencies {
+                implementation(kotlin("reflect"))
+            }
+        }
     }
 }
 

@@ -12,9 +12,10 @@ abstract class I2cLcd1602Test {
     fun test() {
         i2cBus1().use { bus ->
             i2cLcd1602(bus.device(I2C_ADDRESS_LCD1602)).use { lcd ->
-                sleepMs(1000)
+                lcd.setBacklight(true)
+                sleepMs(2000)
                 lcd.setBacklight(false)
-                sleepMs(1000)
+                sleepMs(2000)
                 lcd.setBacklight(true)
                 lcd.showCursor(true)
                 lcd.setBlink(true)

@@ -12,16 +12,16 @@ public fun Graphics.fillRect(xTopLeft: Int, yTopLeft: Int, width: Int, height: I
     }
 }
 
-public fun Graphics.fillRect(topLeft: Point, dimensions: Dimensions) {
-    fillRect(topLeft.x, topLeft.y, dimensions.width, dimensions.height)
+public fun Graphics.fillRect(topLeft: Point, dimension: Dimension) {
+    fillRect(topLeft.x, topLeft.y, dimension.width, dimension.height)
 }
 
 public fun Graphics.fillRect() {
     fillRect(0, 0, width, height)
 }
 
-public class Rect(public val xTopLeft: Int, public val yTopLeft: Int, width: Int, height: Int) : Dimensions(width, height) {
-    public constructor(topLeft: Point, dimensions: Dimensions) : this(topLeft.x, topLeft.y, dimensions.width, dimensions.height)
+public class Rect(public val xTopLeft: Int, public val yTopLeft: Int, width: Int, height: Int) : Dimension(width, height) {
+    public constructor(topLeft: Point, dimension: Dimension) : this(topLeft.x, topLeft.y, dimension.width, dimension.height)
 
     public val topLeft: Point get() = Point(xTopLeft, yTopLeft)
 }

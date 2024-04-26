@@ -1,7 +1,7 @@
 package ch.softappeal.konapi.graphics
 
 /** [bytes] is (red, green, blue) x width x height. */
-public class RawImage(width: Int, height: Int, internal val bytes: ByteArray) : Dimensions(width, height) {
+public class RawImage(width: Int, height: Int, internal val bytes: ByteArray) : Dimension(width, height) {
     init {
         require(bytes.size == width * height * 3) { "bytes.size=${bytes.size} must be ${width * height * 3}" }
     }

@@ -14,8 +14,8 @@ public data class Point(public val x: Int, public val y: Int)
  *
  * [Point] ([width] -1, [height] - 1) is bottom right.
  */
-public open class Dimensions(public val width: Int, public val height: Int) {
-    public constructor(dimensions: Dimensions) : this(dimensions.width, dimensions.height)
+public open class Dimension(public val width: Int, public val height: Int) {
+    public constructor(dimension: Dimension) : this(dimension.width, dimension.height)
 
     init {
         require(width > 0) { "width=$width must be > 0" }
@@ -42,13 +42,13 @@ public val CYAN: Color = Color(0x00, 0xFF, 0xFF)
 public val MAGENTA: Color = Color(0xFF, 0x00, 0xFF)
 public val YELLOW: Color = Color(0xFF, 0xFF, 0x00)
 
-public abstract class Display(width: Int, height: Int) : Dimensions(width, height) {
+public abstract class Display(width: Int, height: Int) : Dimension(width, height) {
     public abstract fun update(buffer: UByteArray)
 }
 
-private val NO_FONT = Overlays(0, Dimensions(1, 1), byteArrayOf())
+private val NO_FONT = Overlay(0, Dimension(1, 1), byteArrayOf())
 
-public abstract class Graphics(private val display: Display) : Dimensions(display) {
+public abstract class Graphics(private val display: Display) : Dimension(display) {
     public var color: Color = BLACK
         set(value) {
             field = value
@@ -62,8 +62,8 @@ public abstract class Graphics(private val display: Display) : Dimensions(displa
         return this
     }
 
-    public var font: Overlays = NO_FONT
-    public fun set(font: Overlays): Graphics {
+    public var font: Overlay = NO_FONT
+    public fun set(font: Overlay): Graphics {
         this.font = font
         return this
     }

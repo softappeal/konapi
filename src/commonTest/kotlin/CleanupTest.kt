@@ -106,7 +106,7 @@ class CleanupTest {
     }
 
     @Test
-    fun noTryException() {
+    fun noTryExceptionNoCatchException() {
         var tryCalled = false
         var catchCalled = false
         assertEquals(

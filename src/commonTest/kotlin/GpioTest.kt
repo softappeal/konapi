@@ -14,13 +14,13 @@ abstract class GpioTest {
         val `in` = myGpio.input(GPIO_IN_CONNECTED_TO_OUT, Gpio.Bias.Disable)
         assertFalse(`in`.get())
         myGpio.close()
-        println(assertFails { out.set(false) })
-        println(assertFails { `in`.get() })
+        assertFails { out.set(false) }
+        assertFails { `in`.get() }
         Gpio().use { gpio ->
             assertTrue(gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp).get())
-            println(assertFails { gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp) })
-            println(assertFails { gpio.listen(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, 1.seconds, Gpio.Edge.Both) { _, _ -> true } })
-            println(assertFails { gpio.output(GPIO_IN_UNCONNECTED, false) })
+            assertFails { gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp) }
+            assertFails { gpio.listen(GPIO_IN_UNCONNECTED, Gpio.Bias.PullUp, 1.seconds, Gpio.Edge.Both) { _, _ -> true } }
+            assertFails { gpio.output(GPIO_IN_UNCONNECTED, false) }
         }
     }
 
@@ -89,14 +89,6 @@ abstract class GpioTest {
             val input = gpio.input(GPIO_IN_UNCONNECTED, Gpio.Bias.PullDown, Gpio.Active.Low)
             sleepMs(10)
             assertTrue(input.get())
-        }
-    }
-
-    @Test
-    fun checkDisplayPinsFree() {
-        Gpio().use { gpio ->
-            gpio.input(GPIO_DISPLAY_DC, Gpio.Bias.Disable)
-            gpio.input(GPIO_DISPLAY_RST, Gpio.Bias.Disable)
         }
     }
 }

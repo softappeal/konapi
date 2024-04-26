@@ -2,11 +2,7 @@
 
 package ch.softappeal.konapi.graphics
 
-public const val STRING_PIXEL_WIDTH: Int = 2 // needed for near quadratic output
-public const val STRING_PIXEL_ON: String = "##"
-public const val STRING_PIXEL_OFF: String = ".."
-
-public class StringGraphics(display: Display) : Graphics(display) {
+public class StringGraphics internal constructor(display: Display) : Graphics(display) {
     override val buffer: UByteArray = UByteArray(width * height)
 
     private var notBlack = color.notBlack
@@ -23,7 +19,7 @@ public class StringGraphics(display: Display) : Graphics(display) {
         var i = 0
         repeat(height) {
             repeat(width) {
-                s.append(if (buffer[i++].toInt() == 0) STRING_PIXEL_OFF else STRING_PIXEL_ON)
+                s.append(if (buffer[i++].toInt() == 0) DUMP_PIXEL_OFF else DUMP_PIXEL_ON)
             }
             s.append('\n')
         }
@@ -31,12 +27,6 @@ public class StringGraphics(display: Display) : Graphics(display) {
     }
 }
 
-public fun StringGraphics(width: Int, height: Int, update: (string: String) -> Unit = {}): StringGraphics {
-    lateinit var graphics: StringGraphics
-    graphics = StringGraphics(object : Display(width, height) {
-        override fun update(buffer: UByteArray) {
-            update(graphics.getString())
-        }
-    })
-    return graphics
-}
+public fun StringGraphics(width: Int, height: Int): StringGraphics = StringGraphics(object : Display(width, height) {
+    override fun update(buffer: UByteArray) {}
+})

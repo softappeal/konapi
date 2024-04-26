@@ -23,7 +23,7 @@ public fun <R> drawImage(width: Int, height: Int, draw: Graphics.(image: Buffere
     }
 }
 
-public class AwtGraphics(private val zoom: Int, display: Display) : KGraphics(display) {
+public class AwtGraphics internal constructor(private val zoom: Int, display: Display) : KGraphics(display) {
     init {
         require(zoom > 0) { "zoom=$zoom must be > 0" }
     }
@@ -71,7 +71,7 @@ public class AwtGraphics(private val zoom: Int, display: Display) : KGraphics(di
     }
 }
 
-public fun AwtGraphics(zoom: Int, dimensions: Dimensions): AwtGraphics =
-    AwtGraphics(zoom, object : Display(dimensions.width, dimensions.height) {
-        override fun update(buffer: UByteArray) {} // empty
+public fun AwtGraphics(zoom: Int, dimension: Dimension): AwtGraphics =
+    AwtGraphics(zoom, object : Display(dimension.width, dimension.height) {
+        override fun update(buffer: UByteArray) {}
     })

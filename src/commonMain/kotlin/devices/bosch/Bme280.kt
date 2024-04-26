@@ -157,13 +157,13 @@ public class Bme280(private val device: I2cDevice) {
         }
     }
 
-    public data class Measurements(
+    public data class Measurement(
         public val temperaturInCelsius: Double,
         public val pressureInPascal: Double,
         public val humidityInPercent: Double,
     )
 
-    public fun measurements(): Measurements {
+    public fun measurement(): Measurement {
         setupMode()
         /*
             Datasheet:
@@ -178,7 +178,7 @@ public class Bme280(private val device: I2cDevice) {
         fun toUShort(offset: Int) =
             ((adc[offset].toInt() shl 12) or (adc[offset + 1].toInt() shl 4) or (adc[offset + 2].toInt() shr 4)).toDouble()
         val (temperaturInCelsius, tFine) = temperatureCalib.compensate(toUShort(3))
-        return Measurements(
+        return Measurement(
             temperaturInCelsius = temperaturInCelsius,
             pressureInPascal = pressureCalib.compensate(toUShort(0), tFine),
             humidityInPercent = humidityCalib.compensate(((adc[6].toInt() shl 8) or adc[7].toInt()).toDouble(), tFine)
