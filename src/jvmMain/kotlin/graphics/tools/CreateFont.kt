@@ -25,31 +25,29 @@ public fun createFont(trueTypeFontPath: String, size: Int): Overlays {
     require(size > 0) { "size=$size must be > 0" }
     val font = Font.createFont(Font.TRUETYPE_FONT, ByteArrayInputStream(Path(trueTypeFontPath).readBytes()))
         .deriveFont(size.toFloat())
-
-    var width = 0
-    var height = 0
-    drawImage(1, 1) { // Create a temporary image to get the size of the character
-        this.font = font
-        width = fontMetrics.stringWidth(FONT_CHARS.first.toString())
-        height = fontMetrics.height
-    }
-
     val bitmap = BitSet()
     var bitmapIndex = 0
-    for (ch in FONT_CHARS) {
-        val image = drawImage(width, height) {
+    val dimensions = drawImage(128, 128) /* should be big enough for all chars */ { image ->
+        this.font = font
+        val width = fontMetrics.stringWidth(FONT_CHARS.first.toString())
+        val height = fontMetrics.height
+        for (ch in FONT_CHARS) {
+            val s = ch.toString()
+            check(fontMetrics.stringWidth(s) == width) { "char ${ch.code} has wrong width" }
+            color = Color.BLACK
+            fillRect(0, 0, width, height)
             color = Color.WHITE
-            this.font = font
-            drawString(ch.toString(), 0, fontMetrics.ascent)
-        }
-        for (y in 0..<height) {
-            for (x in 0..<width) {
-                bitmap[bitmapIndex++] = (image.getRGB(x, y) and 0xFF_FF_FF) != 0 // remove alpha
+            drawString(s, 0, fontMetrics.ascent)
+            for (y in 0..<height) {
+                for (x in 0..<width) {
+                    bitmap[bitmapIndex++] = (image.getRGB(x, y) and 0xFF_FF_FF) != 0 // remove alpha
+                }
             }
         }
+        Dimensions(width, height)
     }
     bitmap[bitmapIndex] = true // needed so that toByteArray below gets all bytes
-    return Overlays(FONT_CHARS.count(), Dimensions(width, height), bitmap.toByteArray())
+    return Overlays(FONT_CHARS.count(), dimensions, bitmap.toByteArray())
 }
 
 public fun <G : Graphics> drawFont(font: Overlays, graphics: (dimensions: Dimensions) -> G): G {

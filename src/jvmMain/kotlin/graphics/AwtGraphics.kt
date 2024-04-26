@@ -13,15 +13,14 @@ import java.io.File
 import javax.imageio.ImageIO
 import ch.softappeal.konapi.graphics.Graphics as KGraphics
 
-public fun drawImage(width: Int, height: Int, draw: Graphics.() -> Unit): BufferedImage {
+public fun <R> drawImage(width: Int, height: Int, draw: Graphics.(image: BufferedImage) -> R): R {
     val image = BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY)
     val graphics = image.createGraphics()
-    tryFinally({
-        graphics.draw()
+    return tryFinally({
+        graphics.draw(image)
     }) {
         graphics.dispose()
     }
-    return image
 }
 
 public class AwtGraphics(private val zoom: Int, display: Display) : KGraphics(display) {
@@ -65,7 +64,10 @@ public class AwtGraphics(private val zoom: Int, display: Display) : KGraphics(di
     }
 
     public fun writePng(path: String) {
-        ImageIO.write(drawImage(width * zoom, height * zoom) { draw() }, "png", File(path))
+        drawImage(width * zoom, height * zoom) { image ->
+            draw()
+            ImageIO.write(image, "png", File(path))
+        }
     }
 }
 
