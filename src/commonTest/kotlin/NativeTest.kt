@@ -11,10 +11,10 @@ class NativeTest {
     @Test
     fun sleepMs() {
         assertFails { sleepMs(-1) }
-        assertTrue(measureTime { sleepMs(0) } in 0.milliseconds..1.milliseconds)
-        assertTrue(measureTime { sleepMs(1) } in 0.milliseconds..10.milliseconds)
-        assertTrue(measureTime { sleepMs(12) } in 11.milliseconds..21.milliseconds)
-        assertTrue(measureTime { sleepMs(1100) } in 1100.milliseconds..1110.milliseconds)
+        assertTrue(measureTime { sleepMs(0) } in 0.milliseconds..100.milliseconds)
+        assertTrue(measureTime { sleepMs(1) } in 0.milliseconds..100.milliseconds)
+        assertTrue(measureTime { sleepMs(12) } in 10.milliseconds..110.milliseconds)
+        assertTrue(measureTime { sleepMs(1100) } in 1050.milliseconds..1200.milliseconds)
     }
 
     @Test

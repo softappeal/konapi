@@ -78,7 +78,7 @@ public fun Overlay(size: Int, dimension: Dimension, dump: String): Overlay {
         repeat(dimension.height) {
             val line = lines.next()
             require(lineWidth == line.length) { "wrong line width at index $index (${line.length} instead of $lineWidth)" }
-            for (w in 0..<lineWidth step 2) {
+            for (w in 0..<lineWidth step DUMP_PIXEL_WIDTH) {
                 when (val p = line.subSequence(w, w + DUMP_PIXEL_WIDTH)) {
                     DUMP_PIXEL_OFF -> {} // empty
                     DUMP_PIXEL_ON -> bitmap.set(bit)

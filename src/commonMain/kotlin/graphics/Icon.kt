@@ -22,4 +22,5 @@ public class FontIcon(overlay: Overlay, index: Int, public val codePoint: Int) :
 
 public fun Icons.FontIcon(index: Int, codePoint: Int): FontIcon = FontIcon(overlay, index, codePoint)
 
+/** Must be used for bootstrapping icon overlays. */
 public val DummyOverlay: Overlay = Overlay(Int.MAX_VALUE, Dimension(1, 1), byteArrayOf())

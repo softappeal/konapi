@@ -1,5 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import java.util.regex.Pattern
 import kotlin.io.path.Path
@@ -35,11 +36,10 @@ kotlin {
             Path(cinteropPath).forEachDirectoryEntry(glob = "*.def") { create(it.nameWithoutExtension) }
         }
     }
-    targets.all {
-        compilations.all {
-            explicitApi()
-            kotlinOptions.allWarningsAsErrors = true
-        }
+    explicitApi()
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        allWarningsAsErrors = true
     }
     sourceSets {
         commonTest {

@@ -9,16 +9,11 @@ repositories {
 kotlin {
     linuxArm64 {
         binaries {
-            executable(listOf(RELEASE)) {
+            executable(listOf(RELEASE)) { // creates "./build/bin/linuxArm64/releaseExecutable/sample.kexe"
                 entryPoint = "sample.main"
                 @Suppress("SpellCheckingInspection")
-                linkerOpts += "-Lsrc/nativeInterop/cinterop/libs"
+                linkerOpts += "-Lsrc/nativeInterop/cinterop/libs" // specifies dir for linking with needed libs
             }
-        }
-    }
-    targets.all {
-        compilations.all {
-            kotlinOptions.allWarningsAsErrors = true
         }
     }
     sourceSets {
