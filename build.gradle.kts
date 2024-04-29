@@ -106,6 +106,7 @@ tasks.register("markers") {
             .exclude("/.gradle/")
             .exclude("/.kotlin/")
             .exclude("**/build/")
+            .exclude("/test-files/")
             .exclude("src/nativeInterop/cinterop/headers/")
             .exclude("src/nativeInterop/cinterop/libs/")
         fun search(marker: String, help: String, abort: Boolean = false) {

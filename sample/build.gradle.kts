@@ -19,7 +19,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("ch.softappeal.konapi:konapi:1.0.0")
+                implementation("ch.softappeal.konapi:konapi:2.0.0")
             }
         }
     }
