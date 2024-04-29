@@ -13,12 +13,15 @@ const val GPIO_DISPLAY_RST = 6
 
 fun spiDeviceBus0CS0() = SpiDevice(0, 0)
 fun spiDeviceBus0CS1() = SpiDevice(0, 1)
-const val GPIO_SPI0_MISO = 9
-const val GPIO_SPI0_MOSI = 10
-const val GPIO_SPI0_CE0 = 8
-const val GPIO_SPI0_CE1 = 7
+const val GPIO_SPI0_MISO_CONNECTED_TO_MOSI = 9
+const val GPIO_SPI0_MOSI_CONNECTED_TO_MISO = 10
+const val GPIO_SPI0_SCLK = 11
+const val GPIO_SPI0_CE0_COLOR_DISPLAY = 8
+const val GPIO_SPI0_CE1_BW_DISPLAY = 7
 
 fun i2cBus1() = I2cBus(1)
+const val GPIO_I2C_SDA = 2
+const val GPIO_I2C_CLK = 3
 const val I2C_ADDRESS_BME280 = 0x76
 const val I2C_ADDRESS_LCD1602 = 0x27
 const val I2C_ADDRESS_PAJ7620U2 = 0x73

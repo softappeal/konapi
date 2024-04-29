@@ -10,7 +10,6 @@ abstract class SpiTest {
     @Test
     fun test() {
         spiDeviceBus0CS0().use { spi ->
-            println("precondition for this test: pin $GPIO_SPI0_MISO must be connected to pin $GPIO_SPI0_MOSI")
             println("blockSize: ${spi.blockSize}")
             println(spi.config)
             val config = SpiDevice.Config(10_000_000, 8, SPI_MODE_3 or SPI_MODE_4WIRE or SPI_MODE_MSB_FIRST)
