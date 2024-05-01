@@ -17,7 +17,7 @@ repositories {
     mavenCentral()
 }
 
-val cinteropPath = "src/nativeInterop/cinterop"
+val cinteropPath = "$projectDir/src/nativeInterop/cinterop"
 
 tasks.register<Jar>("javadocJar") {
     archiveClassifier = "javadoc"

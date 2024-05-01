@@ -1,10 +1,8 @@
 set -e
 
-./gradlew clean build
+./gradlew :clean :build
 
-scp ./test-files/*                                              guru@raspberrypi-1:test-files
-scp ./build/bin/linuxArm64/debugTest/test.kexe                  guru@raspberrypi-1:.
+scp ./test-files/*                             guru@raspberrypi-1:test-files
+scp ./build/bin/linuxArm64/debugTest/test.kexe guru@raspberrypi-1:.
 
-scp ./sample/build/bin/linuxArm64/releaseExecutable/sample.kexe guru@raspberrypi-1:.
-
-ssh                                                             guru@raspberrypi-1 ./test.kexe
+ssh                                            guru@raspberrypi-1 ./test.kexe

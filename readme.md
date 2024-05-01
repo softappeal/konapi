@@ -1,6 +1,6 @@
 ### Kotlin Native for Raspberry Pi
 
-- [usage](./sample)
+- [sample app](./sample)
 
 - [creating fonts and icons](./src/jvmTest/kotlin/graphics/tools/CreateOverlayTest.kt)
 

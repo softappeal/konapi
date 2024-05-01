@@ -11,8 +11,7 @@ kotlin {
         binaries {
             executable(listOf(RELEASE)) { // creates "./build/bin/linuxArm64/releaseExecutable/sample.kexe"
                 entryPoint = "sample.main"
-                @Suppress("SpellCheckingInspection")
-                linkerOpts += "-Lsrc/nativeInterop/cinterop/libs" // specifies dir for linking with needed libs
+                linkerOpts += "-L$rootDir/src/nativeInterop/cinterop/libs" // specifies dir for linking with needed libs
             }
         }
     }
@@ -20,6 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation("ch.softappeal.konapi:konapi:2.0.0")
+                // implementation(rootProject)
             }
         }
     }
