@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     alias(libs.plugins.multiplatform)
 }
@@ -14,6 +16,10 @@ kotlin {
                 linkerOpts += "-L$rootDir/src/nativeInterop/cinterop/libs" // specifies dir for linking with needed libs
             }
         }
+    }
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        allWarningsAsErrors = true
     }
     sourceSets {
         commonMain {

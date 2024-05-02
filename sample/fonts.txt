@@ -1,4 +1,0 @@
-Hd44780.6x10.font
-HelloWorld.6x16.font
-PixelOperator.8x9.font
-Pxl.9x21.font

@@ -31,7 +31,7 @@ public class AwtGraphics internal constructor(private val zoom: Int, display: Di
     override val buffer: UByteArray = UByteArray(width * height * 3)
     private fun index(x: Int, y: Int) = (x + y * width) * 3
 
-    override fun setColorImpl() {} // empty
+    override fun setColorImpl() {}
 
     override fun setPixelImpl(x: Int, y: Int) {
         val b = index(x, y)
