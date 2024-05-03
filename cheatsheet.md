@@ -1,24 +1,43 @@
-```shell
-sudo apt update
-sudo apt full-upgrade
-sudo reboot
-```
+## Cheatsheet
+
+### Connect
 
 ```shell
 ssh guru@raspberrypi-1
 ```
 
-autostart
+### Update
 
 ```
-sudo nano /etc/rc.local
-
-#!/bin/sh -e
-sudo /home/guru/myapp.kexe &
-exit 0
+sudo apt update
+sudo apt full-upgrade
+sudo reboot
 ```
 
-camera
+### Autostart
+
+```
+sudo systemctl enable sample
+systemctl status sample
+```
+
+```
+sudo nano /etc/systemd/system/sample.service
+```
+
+```
+[Unit]
+Description=sample
+
+[Service]
+WorkingDirectory=/home/guru
+ExecStart=/home/guru/sample.kexe
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Camera
 
 ```
 rpicam-vid -t 0 --inline --listen -o tcp://0.0.0.0:8090
