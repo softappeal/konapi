@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package sample
 
 import ch.softappeal.konapi.Gpio
@@ -18,6 +16,10 @@ import ch.softappeal.konapi.graphics.WHITE
 import ch.softappeal.konapi.graphics.YELLOW
 import ch.softappeal.konapi.use
 import kotlin.time.Duration.Companion.INFINITE
+import kotlin.time.TimeSource
+
+val timeSource = TimeSource.Monotonic
+val booted = timeSource.markNow()
 
 private fun colorDisplay(gpio: Gpio, action: (graphics: Graphics) -> Unit) {
     colorDisplay().use { device ->
@@ -64,11 +66,14 @@ fun main() {
         val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
         val bme280 = Bme280(bus.device(I2C_ADDRESS_BME280))
         Gpio().use { gpio ->
-            // bwDisplay(gpio) { graphics ->
-            colorDisplay(gpio) { graphics ->
+            fun action(graphics: Graphics) {
                 val views = listOf(HelpView(graphics), FontView(graphics), IconView(graphics), Bme280View(graphics, bme280))
                 processGestures(views, graphics, gpio, paj7620U2)
             }
+
+            val selectColorDisplay = gpio.input(GPIO_SELECT_COLOR_DISPLAY, Gpio.Bias.PullUp).get()
+            println("selectColorDisplay: $selectColorDisplay")
+            if (selectColorDisplay) colorDisplay(gpio) { action(it) } else bwDisplay(gpio) { action(it) }
         }
     }
 }

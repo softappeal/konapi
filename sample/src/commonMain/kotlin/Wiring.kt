@@ -5,6 +5,7 @@ package sample
 import ch.softappeal.konapi.I2cBus
 import ch.softappeal.konapi.SpiDevice
 
+const val GPIO_SELECT_COLOR_DISPLAY = 23
 const val GPIO_PAJ7620U2_INT = 25
 
 const val GPIO_DISPLAY_DC = 5
