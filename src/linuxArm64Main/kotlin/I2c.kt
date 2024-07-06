@@ -26,16 +26,18 @@ import platform.posix.open
 /*
     https://www.kernel.org/doc/html/v5.5/i2c/smbus-protocol.html
 
-    precondition: enable I2C in raspi-config
+    precondition:
+        sudo apt-get install i2c-tools
+        enable I2C in raspi-config
 
     i2cdetect -V
         i2cdetect version 4.3
     curl -o src/nativeInterop/cinterop/headers/i2c/smbus.h https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/include/i2c/smbus.h\?h=v4.3
-    scp guru@raspberrypi:/usr/include/linux/i2c-dev.h src/nativeInterop/cinterop/headers/linux
+    scp me@pi5:/usr/include/linux/i2c-dev.h src/nativeInterop/cinterop/headers/linux
 
     ldd /usr/sbin/i2cdetect
         libi2c.so.0 => /lib/aarch64-linux-gnu/libi2c.so.0 (0x00007fff45ac0000)
-    scp guru@raspberrypi:/lib/aarch64-linux-gnu/libi2c.so.0 src/nativeInterop/cinterop/libs/libi2c.so
+    scp me@pi5:/lib/aarch64-linux-gnu/libi2c.so.0 src/nativeInterop/cinterop/libs/libi2c.so
  */
 
 public actual fun I2cBus(bus: Int): I2cBus {

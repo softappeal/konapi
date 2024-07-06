@@ -3,7 +3,7 @@
 ### Connect
 
 ```shell
-ssh guru@raspberrypi-1
+ssh me@pi5
 ```
 
 ### Update
@@ -13,6 +13,11 @@ sudo apt update
 sudo apt full-upgrade
 sudo reboot
 ```
+
+### Enable SSH public key authentication
+
+- Add public key to file `~/.ssh/authorized_keys` of Raspberry Pi.
+- Add private key file to directory `~/.ssh` of client.
 
 ### Autostart
 
@@ -30,8 +35,8 @@ sudo nano /etc/systemd/system/sample.service
 Description=sample
 
 [Service]
-WorkingDirectory=/home/guru
-ExecStart=/home/guru/sample.kexe
+WorkingDirectory=/home/me
+ExecStart=/home/me/sample.kexe
 
 [Install]
 WantedBy=multi-user.target
@@ -41,7 +46,7 @@ WantedBy=multi-user.target
 
 ```
 rpicam-vid -t 0 --inline --listen -o tcp://0.0.0.0:8090
-vlc tcp/h264://raspberrypi-1:8090
+vlc tcp/h264://pi5:8090
 
 rpicam-vid -t 0 --inline -o udp://0.0.0.0:8090
 vlc udp://@:<port> :demux=h264
