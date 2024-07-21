@@ -3,7 +3,7 @@
 ### Connect
 
 ```shell
-ssh me@pi5
+ssh me@pi0
 ```
 
 ### Update
@@ -46,7 +46,7 @@ WantedBy=multi-user.target
 
 ```
 rpicam-vid -t 0 --inline --listen -o tcp://0.0.0.0:8090
-vlc tcp/h264://pi5:8090
+vlc tcp/h264://pi0:8090
 
 rpicam-vid -t 0 --inline -o udp://0.0.0.0:8090
 vlc udp://@:<port> :demux=h264

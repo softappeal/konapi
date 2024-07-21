@@ -23,26 +23,23 @@ import ch.softappeal.konapi.native.gpio.gpiod_line_request_input_flags
 import ch.softappeal.konapi.native.gpio.gpiod_line_request_output_flags
 import ch.softappeal.konapi.native.gpio.gpiod_line_request_rising_edge_events_flags
 import ch.softappeal.konapi.native.gpio.gpiod_line_set_value
-import ch.softappeal.konapi.native.gpio.gpiod_version_string
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toByte
-import kotlinx.cinterop.toKString
 import kotlin.time.Duration
 
-/**
- * gpiodetect -v
- *   gpiodetect (libgpiod) v1.6.3
- * curl -o src/nativeInterop/cinterop/headers/gpiod.h https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h\?h=v1.6.3
- *
- * ldd /usr/bin/gpiodetect
- *   libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2 (0x00007fff8a300000)
- * scp me@pi5:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cinterop/libs/libgpiod.so
+/*
+    gpiodetect -v
+        gpiodetect (libgpiod) v1.6.3
+    curl -o src/nativeInterop/cinterop/headers/gpiod.h 'https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h?h=v1.6.3'
+
+    ldd /usr/bin/gpiodetect
+        libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2
+    scp me@pi0:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cinterop/libs/libgpiod.so
  */
-private const val EXPECTED_LIB_VERSION = "1.6.3"
 
 private const val CONSUMER = "konapi"
 
@@ -59,8 +56,6 @@ private fun flags(active: Gpio.Active, bias: Gpio.Bias = Gpio.Bias.Disable) = wh
     }.toInt()
 
 public actual fun Gpio(label: String): Gpio {
-    val actualLibVersion = gpiod_version_string()!!.toKString()
-    check(EXPECTED_LIB_VERSION == actualLibVersion) { "lib version is '$actualLibVersion' but should be '$EXPECTED_LIB_VERSION'" }
     val chip = gpiod_chip_open_by_label(label) ?: error("no chip with label '$label'")
     fun getLine(line: Int) = gpiod_chip_get_line(chip, line.convert()) ?: error("can't get line $line")
     return object : Gpio {

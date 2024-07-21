@@ -40,7 +40,7 @@ private const val BLOCK_SIZE_FILE = "/sys/module/spidev/parameters/bufsiz"
 
     precondition: enable SPI in raspi-config
 
-    scp me@pi5:/usr/include/linux/spi/\* src/nativeInterop/cinterop/headers/linux/spi
+    scp me@pi0:/usr/include/linux/spi/\* src/nativeInterop/cinterop/headers/linux/spi
  */
 
 public actual fun SpiDevice(bus: Int, chipSelect: Int): SpiDevice {
