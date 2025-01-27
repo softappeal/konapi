@@ -1,6 +1,5 @@
 @file:Suppress("SpellCheckingInspection")
 
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import java.util.regex.Pattern
 import kotlin.io.path.Path
@@ -37,7 +36,6 @@ kotlin {
         }
     }
     explicitApi()
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         allWarningsAsErrors = true
     }
@@ -62,10 +60,6 @@ tasks.named("linkDebugTestLinuxArm64", type = KotlinNativeLink::class) {
 
 tasks.named("build") {
     dependsOn("linkDebugTestLinuxArm64")
-}
-
-tasks.named("compileTestKotlinLinuxArm64") {
-    dependsOn("signLinuxArm64Publication")
 }
 
 group = "ch.softappeal.konapi"

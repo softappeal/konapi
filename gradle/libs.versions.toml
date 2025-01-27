@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.0.21" # https://github.com/JetBrains/kotlin
+kotlin = "2.1.10" # https://github.com/JetBrains/kotlin
 
 [plugins]
 
