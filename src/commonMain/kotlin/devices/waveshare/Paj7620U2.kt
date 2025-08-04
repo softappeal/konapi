@@ -16,7 +16,7 @@ public class Paj7620U2(private val device: I2cDevice) {
         fun checkPartId() = check(device.read(0x00U).toInt() == 32) { "device isn't a Paj7620U2" }
         try {
             checkPartId()
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
             checkPartId() // seems to fail often on first try
         }
         with(device) {
@@ -107,7 +107,7 @@ public class Paj7620U2(private val device: I2cDevice) {
             write(0x41U, 0xFFU)
             write(0x42U, 0x01U)
         }
-        gesture() // seems to be necessary so that interrupts work
+        gesture() // seems necessary so that interrupts work
     }
 
     public enum class Gesture(internal val value: Int) {
@@ -124,6 +124,6 @@ public class Paj7620U2(private val device: I2cDevice) {
 
     public fun gesture(): Gesture? {
         val gesture = (device.read(0x44U).toInt() shl 8) + device.read(0x43U).toInt()
-        return Paj7620U2.Gesture.entries.firstOrNull { it.value == gesture }
+        return Gesture.entries.firstOrNull { it.value == gesture }
     }
 }

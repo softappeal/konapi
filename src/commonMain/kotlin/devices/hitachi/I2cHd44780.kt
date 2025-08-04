@@ -12,7 +12,7 @@ import ch.softappeal.konapi.sleepMs
     The https://www.sparkfun.com/datasheets/LCD/HD44780.pdf is connected
     to an 8-bit I/O expander for I2C-bus (like https://www.nxp.com/docs/en/data-sheet/PCF8574_PCF8574A.pdf).
     Only the bus lines DB4 to DB7 are connected, DB0 to DB3 are unconnected.
-    Therefore, the HD44780 must be in 4-bit interface mode, and it's not possible read data (busy flag, counters).
+    Therefore, the HD44780 must be in 4-bit interface mode, and it's not possible to read data (busy flag, counters).
     The control pins are connected as below:
  */
 private const val RS_DATA: UByte = 0x01U        // register select: data register

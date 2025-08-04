@@ -8,8 +8,7 @@ import kotlin.io.path.nameWithoutExtension
 
 plugins {
     alias(libs.plugins.multiplatform)
-    `maven-publish`
-    signing
+    alias(libs.plugins.publish)
 }
 
 repositories {
@@ -18,16 +17,8 @@ repositories {
 
 val cinteropPath = "$projectDir/src/nativeInterop/cinterop"
 
-tasks.register<Jar>("javadocJar") {
-    archiveClassifier = "javadoc"
-}
-
 kotlin {
-    jvm {
-        mavenPublication {
-            artifact(tasks["javadocJar"])
-        }
-    }
+    jvm()
     linuxArm64 {
         compilations["main"].cinterops {
             // https://kotlinlang.org/docs/native-c-interop.html
@@ -37,7 +28,8 @@ kotlin {
     }
     explicitApi()
     compilerOptions {
-        allWarningsAsErrors = true
+        allWarningsAsErrors.set(true)
+        extraWarnings.set(true)
     }
     sourceSets {
         commonTest {
@@ -62,31 +54,19 @@ tasks.named("build") {
     dependsOn("linkDebugTestLinuxArm64")
 }
 
-group = "ch.softappeal.konapi"
-
-publishing {
-    publications.withType<MavenPublication>().onEach { publication ->
-        publication.pom {
-            name = project.name
-            description = "Kotlin Native for Raspberry Pi"
-            url = "https://github.com/softappeal/konapi"
-            licenses { license { name = "BSD-3-Clause" } }
-            scm { url = "https://github.com/softappeal/konapi" }
-            organization { name = "softappeal GmbH Switzerland" }
-            developers { developer { name = "Angelo Salvade" } }
-        }
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    group = "ch.softappeal.konapi"
+    pom {
+        name.set(project.name)
+        description.set("Kotlin Native for Raspberry Pi")
+        url.set("https://github.com/softappeal/konapi")
+        licenses { license { name.set("BSD-3-Clause") } }
+        scm { url.set("https://github.com/softappeal/konapi") }
+        organization { name.set("softappeal GmbH Switzerland") }
+        developers { developer { name.set("Angelo Salvade") } }
     }
-    repositories {
-        maven {
-            name = "ossrh"
-            credentials(PasswordCredentials::class)
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-        }
-    }
-}
-
-signing {
-    sign(publishing.publications)
 }
 
 tasks.register("markers") {

@@ -16,7 +16,8 @@ kotlin {
         }
     }
     compilerOptions {
-        allWarningsAsErrors = true
+        allWarningsAsErrors.set(true)
+        extraWarnings.set(true)
     }
     sourceSets {
         commonMain {

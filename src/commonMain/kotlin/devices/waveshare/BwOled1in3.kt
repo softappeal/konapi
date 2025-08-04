@@ -28,14 +28,14 @@ public fun bwOled1in3(
         command(0xAEU) // turn off oled panel
         command(0x02U) // set low column address
         command(0x10U) // set high column address
-        command(0x40U) // set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
+        command(0x40U) // set start line address Set Mapping RAM Display Start Line (0x00~0x3F)
         command(0x81U) // set contrast control register
         command(0xA0U) // Set SEG/Column Mapping
         command(0xC0U) // Set COM/Row Scan Direction
         command(0xA6U) // set normal display
         command(0xA8U) // set multiplex ratio(1 to 64)
         command(0x3FU) // 1/64 duty
-        command(0xD3U) // set display offset    Shift Mapping RAM Counter (0x00~0x3F)
+        command(0xD3U) // set display offset Shift Mapping RAM Counter (0x00~0x3F)
         command(0x00U) // not offset
         command(0xd5U) // set display clock divide ratio/oscillator frequency
         command(0x80U) // set divide ratio, Set Clock as 100 Frames/Sec

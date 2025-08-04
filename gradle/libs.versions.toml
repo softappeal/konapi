@@ -1,7 +1,9 @@
 [versions]
 
-kotlin = "2.1.20" # https://github.com/JetBrains/kotlin
+kotlin  = "2.2.0"  # https://github.com/JetBrains/kotlin
+publish = "0.34.0" # https://github.com/vanniktech/gradle-maven-publish-plugin
 
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
