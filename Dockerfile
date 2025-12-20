@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/eclipse-temurin/tags
-FROM eclipse-temurin:21.0.7_6-jdk-noble
+FROM eclipse-temurin:25.0.1_8-jdk-noble
 
 COPY  . /project
 WORKDIR /project
