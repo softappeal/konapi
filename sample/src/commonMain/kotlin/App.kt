@@ -14,8 +14,8 @@ import ch.softappeal.konapi.graphics.MAGENTA
 import ch.softappeal.konapi.graphics.RED
 import ch.softappeal.konapi.graphics.WHITE
 import ch.softappeal.konapi.graphics.YELLOW
+import ch.softappeal.konapi.sleepMs
 import ch.softappeal.konapi.use
-import kotlin.time.Duration.Companion.INFINITE
 import kotlin.time.TimeSource
 
 val timeSource = TimeSource.Monotonic
@@ -44,20 +44,23 @@ private fun processGestures(views: List<View>, graphics: Graphics, gpio: Gpio, p
         view().draw()
     }
     draw()
-    gpio.listen(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp, INFINITE, Gpio.Edge.Falling) { _, _ ->
-        val gesture = paj7620U2.gesture()
-        println("gesture: $gesture")
-        when (gesture) {
-            Gesture.AntiClockwise -> if (--viewIndex < 0) viewIndex = views.size - 1
-            Gesture.Clockwise -> if (++viewIndex >= views.size) viewIndex = 0
-            Gesture.Up -> if (--colorIndex < 0) colorIndex = colors.size - 1
-            Gesture.Down -> if (++colorIndex >= colors.size) colorIndex = 0
-            Gesture.Left -> view().prevPage()
-            Gesture.Right -> view().nextPage()
-            else -> {}
+    val input = gpio.input(GPIO_PAJ7620U2_INT, Gpio.Bias.PullUp)
+    while (true) {
+        sleepMs(100)
+        if (!input.get()) {
+            val gesture = paj7620U2.gesture()
+            println("gesture: $gesture")
+            when (gesture) {
+                Gesture.AntiClockwise -> if (--viewIndex < 0) viewIndex = views.size - 1
+                Gesture.Clockwise -> if (++viewIndex >= views.size) viewIndex = 0
+                Gesture.Up -> if (--colorIndex < 0) colorIndex = colors.size - 1
+                Gesture.Down -> if (++colorIndex >= colors.size) colorIndex = 0
+                Gesture.Left -> view().prevPage()
+                Gesture.Right -> view().nextPage()
+                else -> {}
+            }
+            draw()
         }
-        draw()
-        true
     }
 }
 
@@ -65,15 +68,14 @@ fun main() {
     i2cBus1().use { bus ->
         val paj7620U2 = Paj7620U2(bus.device(I2C_ADDRESS_PAJ7620U2))
         val bme280 = Bme280(bus.device(I2C_ADDRESS_BME280))
-        Gpio().use { gpio ->
-            fun action(graphics: Graphics) {
-                val views = listOf(HelpView(graphics), FontView(graphics), IconView(graphics), Bme280View(graphics, bme280))
-                processGestures(views, graphics, gpio, paj7620U2)
-            }
-
-            val selectColorDisplay = gpio.input(GPIO_SELECT_COLOR_DISPLAY, Gpio.Bias.PullUp).get()
-            println("selectColorDisplay: $selectColorDisplay")
-            if (selectColorDisplay) colorDisplay(gpio) { action(it) } else bwDisplay(gpio) { action(it) }
+        val gpio = Gpio(GPIO_PATH)
+        fun action(graphics: Graphics) {
+            val views = listOf(HelpView(graphics), FontView(graphics), IconView(graphics), Bme280View(graphics, bme280))
+            processGestures(views, graphics, gpio, paj7620U2)
         }
+
+        val selectColorDisplay = gpio.input(GPIO_SELECT_COLOR_DISPLAY, Gpio.Bias.PullUp).get()
+        println("selectColorDisplay: $selectColorDisplay")
+        if (selectColorDisplay) colorDisplay(gpio) { action(it) } else bwDisplay(gpio) { action(it) }
     }
 }

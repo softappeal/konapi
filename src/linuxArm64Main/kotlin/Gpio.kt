@@ -3,132 +3,112 @@
 
 package ch.softappeal.konapi
 
-import ch.softappeal.konapi.native.gpio.GPIOD_LINE_EVENT_FALLING_EDGE
-import ch.softappeal.konapi.native.gpio.GPIOD_LINE_EVENT_RISING_EDGE
-import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW
-import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
-import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
-import ch.softappeal.konapi.native.gpio.GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_BIAS_DISABLED
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_BIAS_PULL_DOWN
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_BIAS_PULL_UP
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_DIRECTION_INPUT
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_DIRECTION_OUTPUT
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_VALUE_ACTIVE
+import ch.softappeal.konapi.native.gpio.GPIOD_LINE_VALUE_INACTIVE
 import ch.softappeal.konapi.native.gpio.gpiod_chip_close
-import ch.softappeal.konapi.native.gpio.gpiod_chip_get_line
-import ch.softappeal.konapi.native.gpio.gpiod_chip_open_by_label
-import ch.softappeal.konapi.native.gpio.gpiod_line_event
-import ch.softappeal.konapi.native.gpio.gpiod_line_event_read
-import ch.softappeal.konapi.native.gpio.gpiod_line_event_wait
-import ch.softappeal.konapi.native.gpio.gpiod_line_get_value
-import ch.softappeal.konapi.native.gpio.gpiod_line_release
-import ch.softappeal.konapi.native.gpio.gpiod_line_request_both_edges_events_flags
-import ch.softappeal.konapi.native.gpio.gpiod_line_request_falling_edge_events_flags
-import ch.softappeal.konapi.native.gpio.gpiod_line_request_input_flags
-import ch.softappeal.konapi.native.gpio.gpiod_line_request_output_flags
-import ch.softappeal.konapi.native.gpio.gpiod_line_request_rising_edge_events_flags
-import ch.softappeal.konapi.native.gpio.gpiod_line_set_value
+import ch.softappeal.konapi.native.gpio.gpiod_chip_open
+import ch.softappeal.konapi.native.gpio.gpiod_chip_request_lines
+import ch.softappeal.konapi.native.gpio.gpiod_line_config_add_line_settings
+import ch.softappeal.konapi.native.gpio.gpiod_line_config_free
+import ch.softappeal.konapi.native.gpio.gpiod_line_config_new
+import ch.softappeal.konapi.native.gpio.gpiod_line_direction
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_get_value
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_release
+import ch.softappeal.konapi.native.gpio.gpiod_line_request_set_value
+import ch.softappeal.konapi.native.gpio.gpiod_line_settings_free
+import ch.softappeal.konapi.native.gpio.gpiod_line_settings_new
+import ch.softappeal.konapi.native.gpio.gpiod_line_settings_set_active_low
+import ch.softappeal.konapi.native.gpio.gpiod_line_settings_set_bias
+import ch.softappeal.konapi.native.gpio.gpiod_line_settings_set_direction
+import ch.softappeal.konapi.native.gpio.gpiod_line_settings_set_output_value
+import ch.softappeal.konapi.native.gpio.gpiod_line_value
+import cnames.structs.gpiod_line_request
+import cnames.structs.gpiod_line_settings
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.alloc
+import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.convert
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.toByte
-import kotlin.time.Duration
+import kotlinx.cinterop.usePinned
 
 /*
     gpiodetect -v
-        gpiodetect (libgpiod) v1.6.3
-    curl -o src/nativeInterop/cinterop/headers/gpiod.h 'https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h?h=v1.6.3'
+        gpiodetect (libgpiod) v2.2.1
+    curl -o src/nativeInterop/cinterop/headers/gpiod.h 'https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h?h=v2.2.1'
 
     ldd /usr/bin/gpiodetect
-        libgpiod.so.2 => /lib/aarch64-linux-gnu/libgpiod.so.2
-    scp me@pi0:/lib/aarch64-linux-gnu/libgpiod.so.2 src/nativeInterop/cinterop/libs/libgpiod.so
+        libgpiod.so.3 => /lib/aarch64-linux-gnu/libgpiod.so.3
+    scp me@pi0:/lib/aarch64-linux-gnu/libgpiod.so.3 src/nativeInterop/cinterop/libs/libgpiod.so
+
+    https://libgpiod.readthedocs.io/en/stable/index.html
+    https://github.com/brgl/libgpiod/tree/v2.2.x/examples
  */
 
-private const val CONSUMER = "konapi"
+// The issue where the code compiles but IntelliJ shows a red error is a common symptom in Kotlin Multiplatform projects when using cinterop with opaque structs.
 
-private fun Boolean.ordinal() = toByte().toInt()
+private fun lineValue(value: Boolean) = if (value) GPIOD_LINE_VALUE_ACTIVE else GPIOD_LINE_VALUE_INACTIVE
 
-private fun flags(active: Gpio.Active, bias: Gpio.Bias = Gpio.Bias.Disable) = when (active) {
-    Gpio.Active.Low -> GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW.toInt()
-    Gpio.Active.High -> 0
-} +
-    when (bias) {
-        Gpio.Bias.Disable -> GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE
-        Gpio.Bias.PullDown -> GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN
-        Gpio.Bias.PullUp -> GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
-    }.toInt()
+private fun lineValue(value: gpiod_line_value) = when (value) {
+    GPIOD_LINE_VALUE_INACTIVE -> false
+    GPIOD_LINE_VALUE_ACTIVE -> true
+    else -> error("illegal gpiod_line_value $value")
+}
 
-public actual fun Gpio(label: String): Gpio {
-    val chip = gpiod_chip_open_by_label(label) ?: error("no chip with label '$label'")
-    fun getLine(line: Int) = gpiod_chip_get_line(chip, line.convert()) ?: error("can't get line $line")
+private fun lineBias(bias: Gpio.Bias) = when (bias) {
+    Gpio.Bias.Disable -> GPIOD_LINE_BIAS_DISABLED
+    Gpio.Bias.PullDown -> GPIOD_LINE_BIAS_PULL_DOWN
+    Gpio.Bias.PullUp -> GPIOD_LINE_BIAS_PULL_UP
+}
+
+public actual fun Gpio(path: String): Gpio {
+    val chip = gpiod_chip_open(path) ?: error("no chip with path '$path'")
+
+    fun requestLine(
+        line: Int, direction: gpiod_line_direction, active: Gpio.Active, config: (settings: CPointer<gpiod_line_settings>) -> Unit,
+    ): CPointer<gpiod_line_request> {
+        val settings = gpiod_line_settings_new()!!
+        check(0 == gpiod_line_settings_set_direction(settings, direction)) { "gpiod_line_settings_set_direction" }
+        gpiod_line_settings_set_active_low(settings, active == Gpio.Active.Low)
+        config(settings)
+
+        val lineConfig = gpiod_line_config_new()
+        uintArrayOf(line.convert()).usePinned { pinned ->
+            check(0 == gpiod_line_config_add_line_settings(lineConfig, pinned.addressOf(0), 1.convert(), settings)) {
+                "gpiod_line_config_add_line_settings"
+            }
+        }
+        gpiod_line_settings_free(settings)
+
+        val request = gpiod_chip_request_lines(chip, null, lineConfig)!!
+        gpiod_line_config_free(lineConfig)
+        return request
+    }
+
     return object : Gpio {
         override fun output(line: Int, initValue: Boolean, active: Gpio.Active): Gpio.Output {
-            val linePtr = getLine(line)
-            check(gpiod_line_request_output_flags(linePtr, CONSUMER, flags(active), initValue.ordinal()) == 0) {
-                "can't request output for line $line"
+            val request = requestLine(line, GPIOD_LINE_DIRECTION_OUTPUT, active) { settings ->
+                check(0 == gpiod_line_settings_set_output_value(settings, lineValue(initValue))) { "requestLine" }
             }
             return object : Gpio.Output {
-                override fun set(value: Boolean) {
-                    check(gpiod_line_set_value(linePtr, value.ordinal()) == 0) { "can't set value for line $line" }
-                }
+                override fun set(value: Boolean) =
+                    check(0 == gpiod_line_request_set_value(request, line.convert(), lineValue(value))) { "line_request_set_value" }
 
-                override fun close() = gpiod_line_release(linePtr)
+                override fun close() = gpiod_line_request_release(request)
             }
         }
 
         override fun input(line: Int, bias: Gpio.Bias, active: Gpio.Active): Gpio.Input {
-            val linePtr = getLine(line)
-            check(gpiod_line_request_input_flags(linePtr, CONSUMER, flags(active, bias)) == 0) {
-                "can't request input for line $line"
+            val request = requestLine(line, GPIOD_LINE_DIRECTION_INPUT, active) { settings ->
+                check(0 == gpiod_line_settings_set_bias(settings, lineBias(bias))) { "gpiod_line_settings_set_bias" }
             }
             return object : Gpio.Input {
-                override fun get() = when (gpiod_line_get_value(linePtr)) {
-                    0 -> false
-                    1 -> true
-                    else -> error("can't get value for line $line")
-                }
-
-                override fun close() = gpiod_line_release(linePtr)
+                override fun get() = lineValue(gpiod_line_request_get_value(request, line.convert()))
+                override fun close() = gpiod_line_request_release(request)
             }
-        }
-
-        override fun listen(
-            line: Int, bias: Gpio.Bias, timeout: Duration, edge: Gpio.Edge, active: Gpio.Active, notification: GpioNotification,
-        ): Boolean {
-            require(timeout.isPositive()) { "timeout=$timeout must be positive" }
-            val linePtr = getLine(line)
-            val flags = flags(active, bias)
-            check(when (edge) {
-                Gpio.Edge.Rising -> gpiod_line_request_rising_edge_events_flags(linePtr, CONSUMER, flags)
-                Gpio.Edge.Falling -> gpiod_line_request_falling_edge_events_flags(linePtr, CONSUMER, flags)
-                Gpio.Edge.Both -> gpiod_line_request_both_edges_events_flags(linePtr, CONSUMER, flags)
-            } == 0) { "can't request events for line $line" }
-            tryFinally({
-                memScoped {
-                    val event = alloc<gpiod_line_event>()
-                    val ts = event.ts
-                    val inWholeNanoseconds = timeout.inWholeNanoseconds
-                    val timeoutSeconds = inWholeNanoseconds / 1_000_000_000
-                    val timeoutNanoseconds = inWholeNanoseconds % 1_000_000_000
-                    while (true) {
-                        ts.tv_sec = timeoutSeconds
-                        ts.tv_nsec = timeoutNanoseconds
-                        when (gpiod_line_event_wait(linePtr, ts.ptr)) {
-                            0 -> return@listen false // timeout
-                            1 -> { // there is an event
-                                check(gpiod_line_event_read(linePtr, event.ptr) == 0) { "can't read event for line $line" }
-                                val risingEdge = when (event.event_type.toUInt()) {
-                                    GPIOD_LINE_EVENT_RISING_EDGE -> true
-                                    GPIOD_LINE_EVENT_FALLING_EDGE -> false
-                                    else -> error("unexpected event on line $line")
-                                }
-                                if (!notification(risingEdge, ts.tv_sec * 1_000_000_000 + ts.tv_nsec)) break
-                            }
-                            else -> error("can't wait for event on line $line")
-                        }
-                    }
-                }
-            }) {
-                gpiod_line_release(linePtr)
-            }
-            return true
         }
 
         override fun close() {

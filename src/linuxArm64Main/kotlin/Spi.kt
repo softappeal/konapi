@@ -36,7 +36,7 @@ import kotlin.math.min
 private const val BLOCK_SIZE_FILE = "/sys/module/spidev/parameters/bufsiz"
 
 /*
-    https://www.kernel.org/doc/html/v5.5/spi/spidev.html
+    https://www.kernel.org/doc/html/v6.12/spi/spidev.html
 
     precondition: enable SPI in raspi-config
 

@@ -2,6 +2,8 @@
 
 package ch.softappeal.konapi
 
+const val GPIO_PATH = "/dev/gpiochip0"
+
 const val GPIO_IN_UNCONNECTED = 27
 const val GPIO_IN_CONNECTED_TO_OUT = 22
 const val GPIO_OUT_CONNECTED_TO_IN = 17

@@ -24,15 +24,15 @@ import platform.posix.ioctl
 import platform.posix.open
 
 /*
-    https://www.kernel.org/doc/html/v5.5/i2c/smbus-protocol.html
+    https://www.kernel.org/doc/html/v6.12/i2c/smbus-protocol.html
 
     precondition:
         sudo apt-get install i2c-tools
         enable I2C in raspi-config
 
     i2cdetect -V
-        i2cdetect version 4.3
-    curl -o src/nativeInterop/cinterop/headers/i2c/smbus.h 'https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/include/i2c/smbus.h?h=v4.3'
+        i2cdetect version 4.4
+    curl -o src/nativeInterop/cinterop/headers/i2c/smbus.h 'https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/include/i2c/smbus.h?h=v4.4'
     scp me@pi0:/usr/include/linux/i2c-dev.h src/nativeInterop/cinterop/headers/linux
 
     ldd /usr/sbin/i2cdetect

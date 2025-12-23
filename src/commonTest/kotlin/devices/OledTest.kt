@@ -2,6 +2,7 @@ package ch.softappeal.konapi.devices
 
 import ch.softappeal.konapi.GPIO_DISPLAY_DC
 import ch.softappeal.konapi.GPIO_DISPLAY_RST
+import ch.softappeal.konapi.GPIO_PATH
 import ch.softappeal.konapi.Gpio
 import ch.softappeal.konapi.bwDisplay
 import ch.softappeal.konapi.colorDisplay
@@ -23,7 +24,7 @@ abstract class OledTest {
     @Test
     fun color16Oled1in5() {
         colorDisplay().use { device ->
-            Gpio().use { gpio ->
+            Gpio(GPIO_PATH).use { gpio ->
                 color16Oled1in5(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device).test()
             }
         }
@@ -32,7 +33,7 @@ abstract class OledTest {
     @Test
     fun bwOled1in3() {
         bwDisplay().use { device ->
-            Gpio().use { gpio ->
+            Gpio(GPIO_PATH).use { gpio ->
                 bwOled1in3(gpio, GPIO_DISPLAY_DC, GPIO_DISPLAY_RST, device).test()
             }
         }

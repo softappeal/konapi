@@ -1,5 +1,5 @@
 package ch.softappeal.konapi
 
-public actual fun Gpio(label: String): Gpio {
+public actual fun Gpio(path: String): Gpio {
     TODO("implement")
 }
