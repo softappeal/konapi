@@ -90,6 +90,26 @@ class CleanupTest {
     }
 
     @Test
+    fun withTryErrorNoFinallyException() {
+        var tryCalled = false
+        val tryError = Error()
+        var finallyCalled = false
+        assertSame(
+            tryError,
+            assertFails {
+                tryFinally({
+                    tryCalled = true
+                    throw tryError
+                }) {
+                    finallyCalled = true
+                }
+            }
+        )
+        assertTrue(tryCalled)
+        assertFalse(finallyCalled)
+    }
+
+    @Test
     fun closeable() {
         val closeable = object : Closeable {
             var used = false
