@@ -1,5 +1,4 @@
 @file:OptIn(ExperimentalForeignApi::class)
-@file:Suppress("SpellCheckingInspection")
 
 package ch.softappeal.konapi
 

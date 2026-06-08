@@ -1,6 +1,6 @@
 [versions]
 
-kotlin  = "2.3.10" # https://github.com/JetBrains/kotlin
+kotlin  = "2.4.0"  # https://github.com/JetBrains/kotlin
 publish = "0.36.0" # https://github.com/vanniktech/gradle-maven-publish-plugin
 
 [plugins]

@@ -28,8 +28,9 @@ kotlin {
     }
     explicitApi()
     compilerOptions {
-        allWarningsAsErrors.set(true)
         extraWarnings.set(true)
+        freeCompilerArgs.add("-Xname-based-destructuring=complete")
+        allWarningsAsErrors.set(true)
     }
     sourceSets {
         commonTest {
