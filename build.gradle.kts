@@ -1,72 +1,49 @@
-@file:Suppress("SpellCheckingInspection")
-
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.util.regex.Pattern
-import kotlin.io.path.Path
-import kotlin.io.path.forEachDirectoryEntry
-import kotlin.io.path.nameWithoutExtension
 
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.publish)
 }
 
-repositories {
-    mavenCentral()
-}
-
-val cinteropPath = "$projectDir/src/nativeInterop/cinterop"
-
-kotlin {
-    jvm()
-    linuxArm64 {
-        compilations["main"].cinterops {
-            // https://kotlinlang.org/docs/native-c-interop.html
-            // https://kotlinlang.org/docs/native-app-with-c-and-libcurl.html
-            Path(cinteropPath).forEachDirectoryEntry(glob = "*.def") { create(it.nameWithoutExtension) }
-        }
-    }
-    explicitApi()
-    compilerOptions {
-        extraWarnings.set(true)
-        freeCompilerArgs.add("-Xname-based-destructuring=complete")
-        allWarningsAsErrors.set(true)
-    }
+fun KotlinMultiplatformExtension.configureSourceSets() {
     sourceSets {
+        commonMain {
+            kotlin.srcDir("src")
+        }
         commonTest {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+            kotlin.srcDir("test")
         }
         jvmMain {
-            dependencies {
-                implementation(kotlin("reflect"))
-            }
+            kotlin.srcDir("src@jvm")
+        }
+        jvmTest {
+            kotlin.srcDir("test@jvm")
+        }
+        linuxArm64Main {
+            kotlin.srcDir("src@linuxArm64")
+        }
+        linuxArm64Test {
+            kotlin.srcDir("test@linuxArm64")
         }
     }
 }
 
-// see https://youtrack.jetbrains.com/issue/KT-43996
-tasks.named("linkDebugTestLinuxArm64", type = KotlinNativeLink::class) {
-    binary.linkerOpts("-L$cinteropPath/libs")
-}
-
-tasks.named("build") {
-    dependsOn("linkDebugTestLinuxArm64")
-}
-
-mavenPublishing {
-    publishToMavenCentral()
-    signAllPublications()
-    group = "ch.softappeal.konapi"
-    pom {
-        name.set(project.name)
-        description.set("Kotlin Native for Raspberry Pi")
-        url.set("https://github.com/softappeal/konapi")
-        licenses { license { name.set("BSD-3-Clause") } }
-        scm { url.set("https://github.com/softappeal/konapi") }
-        organization { name.set("softappeal GmbH Switzerland") }
-        developers { developer { name.set("Angelo Salvade") } }
+allprojects {
+    apply(plugin = "org.jetbrains.kotlin.multiplatform")
+    apply(plugin = "com.vanniktech.maven.publish")
+    repositories {
+        mavenCentral()
+    }
+    kotlin {
+        jvm()
+        linuxArm64()
+        compilerOptions {
+            extraWarnings.set(true)
+            freeCompilerArgs.add("-Xname-based-destructuring=complete")
+            allWarningsAsErrors.set(true)
+        }
+        configureSourceSets()
     }
 }
 
@@ -81,9 +58,9 @@ tasks.register("markers") {
             .exclude("/.gradle/")
             .exclude("/.kotlin/")
             .exclude("**/build/")
-            .exclude("/test-files/")
-            .exclude("src/nativeInterop/cinterop/headers/")
-            .exclude("src/nativeInterop/cinterop/libs/")
+            .exclude("/konapi/test-files/")
+            .exclude("/konapi/cinterop/headers/")
+            .exclude("/konapi/cinterop/libs/")
         fun search(marker: String, help: String, abort: Boolean = false) {
             divider('=')
             println("= $marker - $help")

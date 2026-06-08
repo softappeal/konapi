@@ -1,4 +1,4 @@
 headers = gpiod.h
 package = ch.softappeal.konapi.native.gpio
-compilerOpts = -Isrc/nativeInterop/cinterop/headers
+compilerOpts = -Icinterop/headers
 linkerOpts = -lgpiod --allow-shlib-undefined

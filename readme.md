@@ -2,7 +2,7 @@
 
 - [sample app](./sample)
 
-- [creating fonts and icons](./src/jvmTest/kotlin/graphics/tools/CreateOverlayTest.kt)
+- [creating fonts and icons](./konapi/test@jvm/graphics/tools/CreateOverlayTest.kt)
 
 - Open Source ([BSD-3-Clause license](license.txt))
 

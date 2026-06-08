@@ -37,17 +37,15 @@ import kotlinx.cinterop.usePinned
 /*
     gpiodetect -v
         gpiodetect (libgpiod) v2.2.1
-    curl -o src/nativeInterop/cinterop/headers/gpiod.h 'https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h?h=v2.2.1'
+    curl -o konapi/cinterop/headers/gpiod.h 'https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/plain/include/gpiod.h?h=v2.2.1'
 
     ldd /usr/bin/gpiodetect
         libgpiod.so.3 => /lib/aarch64-linux-gnu/libgpiod.so.3
-    scp me@pi0:/lib/aarch64-linux-gnu/libgpiod.so.3 src/nativeInterop/cinterop/libs/libgpiod.so
+    scp me@pi0:/lib/aarch64-linux-gnu/libgpiod.so.3 konapi/cinterop/libs/libgpiod.so
 
     https://libgpiod.readthedocs.io/en/stable/index.html
     https://github.com/brgl/libgpiod/tree/v2.2.x/examples
  */
-
-// The issue where the code compiles but IntelliJ shows a red error is a common symptom in Kotlin Multiplatform projects when using cinterop with opaque structs.
 
 private fun lineValue(value: Boolean) = if (value) GPIOD_LINE_VALUE_ACTIVE else GPIOD_LINE_VALUE_INACTIVE
 

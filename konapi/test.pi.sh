@@ -1,6 +1,6 @@
 set -e
 
-./gradlew :clean :build
+../gradlew clean :konapi:build
 
 scp test-files/*                             me@pi0:test-files
 scp build/bin/linuxArm64/debugTest/test.kexe me@pi0:.
