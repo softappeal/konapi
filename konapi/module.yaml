@@ -1,0 +1,9 @@
+apply:
+  - ../shared.module-template.yaml
+
+product:
+  type: lib
+  platforms: [ jvm, linuxArm64 ]
+
+dependencies@jvm:
+  - $kotlin.reflect

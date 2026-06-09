@@ -1,0 +1,13 @@
+apply:
+  - ../shared.module-template.yaml
+
+product:
+  type: linux/app
+  platforms: [ linuxArm64 ]
+
+dependencies:
+  - ../konapi
+
+settings:
+  native:
+    entryPoint: sample.main
