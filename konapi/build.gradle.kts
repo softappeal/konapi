@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import kotlin.io.path.Path
 import kotlin.io.path.forEachDirectoryEntry
@@ -28,6 +29,8 @@ kotlin {
             }
         }
     }
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
 }
 
 // see https://youtrack.jetbrains.com/issue/KT-43996

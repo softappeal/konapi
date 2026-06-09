@@ -1,0 +1,408 @@
+// Klib ABI Dump
+// Targets: [linuxArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <ch.softappeal.konapi:konapi>
+abstract interface <#A: ch.softappeal.konapi.graphics/Graphics> ch.softappeal.konapi.devices.waveshare/Oled : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi.devices.waveshare/Oled|null[0]
+    abstract val graphics // ch.softappeal.konapi.devices.waveshare/Oled.graphics|{}graphics[0]
+        abstract fun <get-graphics>(): #A // ch.softappeal.konapi.devices.waveshare/Oled.graphics.<get-graphics>|<get-graphics>(){}[0]
+}
+
+abstract interface ch.softappeal.konapi.devices.waveshare/OledWriter { // ch.softappeal.konapi.devices.waveshare/OledWriter|null[0]
+    abstract fun command(kotlin/UByte) // ch.softappeal.konapi.devices.waveshare/OledWriter.command|command(kotlin.UByte){}[0]
+    abstract fun data(kotlin/UByte) // ch.softappeal.konapi.devices.waveshare/OledWriter.data|data(kotlin.UByte){}[0]
+    abstract fun data(kotlin/UByteArray) // ch.softappeal.konapi.devices.waveshare/OledWriter.data|data(kotlin.UByteArray){}[0]
+}
+
+abstract interface ch.softappeal.konapi/Closeable { // ch.softappeal.konapi/Closeable|null[0]
+    abstract fun close() // ch.softappeal.konapi/Closeable.close|close(){}[0]
+}
+
+abstract interface ch.softappeal.konapi/Gpio : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi/Gpio|null[0]
+    abstract fun input(kotlin/Int, ch.softappeal.konapi/Gpio.Bias, ch.softappeal.konapi/Gpio.Active = ...): ch.softappeal.konapi/Gpio.Input // ch.softappeal.konapi/Gpio.input|input(kotlin.Int;ch.softappeal.konapi.Gpio.Bias;ch.softappeal.konapi.Gpio.Active){}[0]
+    abstract fun output(kotlin/Int, kotlin/Boolean, ch.softappeal.konapi/Gpio.Active = ...): ch.softappeal.konapi/Gpio.Output // ch.softappeal.konapi/Gpio.output|output(kotlin.Int;kotlin.Boolean;ch.softappeal.konapi.Gpio.Active){}[0]
+
+    final enum class Active : kotlin/Enum<ch.softappeal.konapi/Gpio.Active> { // ch.softappeal.konapi/Gpio.Active|null[0]
+        enum entry High // ch.softappeal.konapi/Gpio.Active.High|null[0]
+        enum entry Low // ch.softappeal.konapi/Gpio.Active.Low|null[0]
+
+        final val entries // ch.softappeal.konapi/Gpio.Active.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<ch.softappeal.konapi/Gpio.Active> // ch.softappeal.konapi/Gpio.Active.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): ch.softappeal.konapi/Gpio.Active // ch.softappeal.konapi/Gpio.Active.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<ch.softappeal.konapi/Gpio.Active> // ch.softappeal.konapi/Gpio.Active.values|values#static(){}[0]
+    }
+
+    final enum class Bias : kotlin/Enum<ch.softappeal.konapi/Gpio.Bias> { // ch.softappeal.konapi/Gpio.Bias|null[0]
+        enum entry Disable // ch.softappeal.konapi/Gpio.Bias.Disable|null[0]
+        enum entry PullDown // ch.softappeal.konapi/Gpio.Bias.PullDown|null[0]
+        enum entry PullUp // ch.softappeal.konapi/Gpio.Bias.PullUp|null[0]
+
+        final val entries // ch.softappeal.konapi/Gpio.Bias.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<ch.softappeal.konapi/Gpio.Bias> // ch.softappeal.konapi/Gpio.Bias.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): ch.softappeal.konapi/Gpio.Bias // ch.softappeal.konapi/Gpio.Bias.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<ch.softappeal.konapi/Gpio.Bias> // ch.softappeal.konapi/Gpio.Bias.values|values#static(){}[0]
+    }
+
+    abstract interface Input : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi/Gpio.Input|null[0]
+        abstract fun get(): kotlin/Boolean // ch.softappeal.konapi/Gpio.Input.get|get(){}[0]
+    }
+
+    abstract interface Output : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi/Gpio.Output|null[0]
+        abstract fun set(kotlin/Boolean) // ch.softappeal.konapi/Gpio.Output.set|set(kotlin.Boolean){}[0]
+    }
+}
+
+abstract interface ch.softappeal.konapi/I2cBus : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi/I2cBus|null[0]
+    abstract fun device(kotlin/Int): ch.softappeal.konapi/I2cDevice // ch.softappeal.konapi/I2cBus.device|device(kotlin.Int){}[0]
+}
+
+abstract interface ch.softappeal.konapi/I2cDevice { // ch.softappeal.konapi/I2cDevice|null[0]
+    abstract fun read(): kotlin/UByte // ch.softappeal.konapi/I2cDevice.read|read(){}[0]
+    abstract fun read(kotlin/UByte): kotlin/UByte // ch.softappeal.konapi/I2cDevice.read|read(kotlin.UByte){}[0]
+    abstract fun read(kotlin/UByte, kotlin/Int): kotlin/UByteArray // ch.softappeal.konapi/I2cDevice.read|read(kotlin.UByte;kotlin.Int){}[0]
+    abstract fun write(kotlin/UByte) // ch.softappeal.konapi/I2cDevice.write|write(kotlin.UByte){}[0]
+    abstract fun write(kotlin/UByte, kotlin/UByte) // ch.softappeal.konapi/I2cDevice.write|write(kotlin.UByte;kotlin.UByte){}[0]
+    abstract fun write(kotlin/UByte, kotlin/UByteArray) // ch.softappeal.konapi/I2cDevice.write|write(kotlin.UByte;kotlin.UByteArray){}[0]
+}
+
+abstract interface ch.softappeal.konapi/SpiDevice : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi/SpiDevice|null[0]
+    abstract val blockSize // ch.softappeal.konapi/SpiDevice.blockSize|{}blockSize[0]
+        abstract fun <get-blockSize>(): kotlin/Int // ch.softappeal.konapi/SpiDevice.blockSize.<get-blockSize>|<get-blockSize>(){}[0]
+
+    abstract var config // ch.softappeal.konapi/SpiDevice.config|{}config[0]
+        abstract fun <get-config>(): ch.softappeal.konapi/SpiDevice.Config // ch.softappeal.konapi/SpiDevice.config.<get-config>|<get-config>(){}[0]
+        abstract fun <set-config>(ch.softappeal.konapi/SpiDevice.Config) // ch.softappeal.konapi/SpiDevice.config.<set-config>|<set-config>(ch.softappeal.konapi.SpiDevice.Config){}[0]
+
+    abstract fun transfer(kotlin/UByteArray) // ch.softappeal.konapi/SpiDevice.transfer|transfer(kotlin.UByteArray){}[0]
+    abstract fun write(kotlin/UByteArray) // ch.softappeal.konapi/SpiDevice.write|write(kotlin.UByteArray){}[0]
+
+    final class Config { // ch.softappeal.konapi/SpiDevice.Config|null[0]
+        constructor <init>(kotlin/Int? = ..., kotlin/Int? = ..., kotlin/UByte? = ...) // ch.softappeal.konapi/SpiDevice.Config.<init>|<init>(kotlin.Int?;kotlin.Int?;kotlin.UByte?){}[0]
+
+        final val bitsPerWord // ch.softappeal.konapi/SpiDevice.Config.bitsPerWord|{}bitsPerWord[0]
+            final fun <get-bitsPerWord>(): kotlin/Int? // ch.softappeal.konapi/SpiDevice.Config.bitsPerWord.<get-bitsPerWord>|<get-bitsPerWord>(){}[0]
+        final val mode // ch.softappeal.konapi/SpiDevice.Config.mode|{}mode[0]
+            final fun <get-mode>(): kotlin/UByte? // ch.softappeal.konapi/SpiDevice.Config.mode.<get-mode>|<get-mode>(){}[0]
+        final val speedHz // ch.softappeal.konapi/SpiDevice.Config.speedHz|{}speedHz[0]
+            final fun <get-speedHz>(): kotlin/Int? // ch.softappeal.konapi/SpiDevice.Config.speedHz.<get-speedHz>|<get-speedHz>(){}[0]
+
+        final fun component1(): kotlin/Int? // ch.softappeal.konapi/SpiDevice.Config.component1|component1(){}[0]
+        final fun component2(): kotlin/Int? // ch.softappeal.konapi/SpiDevice.Config.component2|component2(){}[0]
+        final fun component3(): kotlin/UByte? // ch.softappeal.konapi/SpiDevice.Config.component3|component3(){}[0]
+        final fun copy(kotlin/Int? = ..., kotlin/Int? = ..., kotlin/UByte? = ...): ch.softappeal.konapi/SpiDevice.Config // ch.softappeal.konapi/SpiDevice.Config.copy|copy(kotlin.Int?;kotlin.Int?;kotlin.UByte?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // ch.softappeal.konapi/SpiDevice.Config.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // ch.softappeal.konapi/SpiDevice.Config.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // ch.softappeal.konapi/SpiDevice.Config.toString|toString(){}[0]
+    }
+}
+
+abstract class ch.softappeal.konapi.graphics/Display : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Display|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Display.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    abstract fun update(kotlin/UByteArray) // ch.softappeal.konapi.graphics/Display.update|update(kotlin.UByteArray){}[0]
+}
+
+abstract class ch.softappeal.konapi.graphics/Graphics : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Graphics|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Display) // ch.softappeal.konapi.graphics/Graphics.<init>|<init>(ch.softappeal.konapi.graphics.Display){}[0]
+
+    abstract val buffer // ch.softappeal.konapi.graphics/Graphics.buffer|{}buffer[0]
+        abstract fun <get-buffer>(): kotlin/UByteArray // ch.softappeal.konapi.graphics/Graphics.buffer.<get-buffer>|<get-buffer>(){}[0]
+
+    final var color // ch.softappeal.konapi.graphics/Graphics.color|{}color[0]
+        final fun <get-color>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/Graphics.color.<get-color>|<get-color>(){}[0]
+        final fun <set-color>(ch.softappeal.konapi.graphics/Color) // ch.softappeal.konapi.graphics/Graphics.color.<set-color>|<set-color>(ch.softappeal.konapi.graphics.Color){}[0]
+    final var font // ch.softappeal.konapi.graphics/Graphics.font|{}font[0]
+        final fun <get-font>(): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/Graphics.font.<get-font>|<get-font>(){}[0]
+        final fun <set-font>(ch.softappeal.konapi.graphics/Overlay) // ch.softappeal.konapi.graphics/Graphics.font.<set-font>|<set-font>(ch.softappeal.konapi.graphics.Overlay){}[0]
+
+    abstract fun setColorImpl() // ch.softappeal.konapi.graphics/Graphics.setColorImpl|setColorImpl(){}[0]
+    abstract fun setPixelImpl(kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Graphics.setPixelImpl|setPixelImpl(kotlin.Int;kotlin.Int){}[0]
+    final fun set(ch.softappeal.konapi.graphics/Color): ch.softappeal.konapi.graphics/Graphics // ch.softappeal.konapi.graphics/Graphics.set|set(ch.softappeal.konapi.graphics.Color){}[0]
+    final fun set(ch.softappeal.konapi.graphics/Overlay): ch.softappeal.konapi.graphics/Graphics // ch.softappeal.konapi.graphics/Graphics.set|set(ch.softappeal.konapi.graphics.Overlay){}[0]
+    final fun setPixel(kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Graphics.setPixel|setPixel(kotlin.Int;kotlin.Int){}[0]
+    final fun update() // ch.softappeal.konapi.graphics/Graphics.update|update(){}[0]
+}
+
+abstract class ch.softappeal.konapi.graphics/Icons : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Icons|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Overlay) // ch.softappeal.konapi.graphics/Icons.<init>|<init>(ch.softappeal.konapi.graphics.Overlay){}[0]
+
+    final val overlay // ch.softappeal.konapi.graphics/Icons.overlay|{}overlay[0]
+        final fun <get-overlay>(): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/Icons.overlay.<get-overlay>|<get-overlay>(){}[0]
+}
+
+final class ch.softappeal.konapi.devices.bosch/Bme280 { // ch.softappeal.konapi.devices.bosch/Bme280|null[0]
+    constructor <init>(ch.softappeal.konapi/I2cDevice) // ch.softappeal.konapi.devices.bosch/Bme280.<init>|<init>(ch.softappeal.konapi.I2cDevice){}[0]
+
+    final fun measurement(): ch.softappeal.konapi.devices.bosch/Bme280.Measurement // ch.softappeal.konapi.devices.bosch/Bme280.measurement|measurement(){}[0]
+
+    final class Measurement { // ch.softappeal.konapi.devices.bosch/Bme280.Measurement|null[0]
+        constructor <init>(kotlin/Double, kotlin/Double, kotlin/Double) // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.<init>|<init>(kotlin.Double;kotlin.Double;kotlin.Double){}[0]
+
+        final val humidityInPercent // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.humidityInPercent|{}humidityInPercent[0]
+            final fun <get-humidityInPercent>(): kotlin/Double // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.humidityInPercent.<get-humidityInPercent>|<get-humidityInPercent>(){}[0]
+        final val pressureInPascal // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.pressureInPascal|{}pressureInPascal[0]
+            final fun <get-pressureInPascal>(): kotlin/Double // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.pressureInPascal.<get-pressureInPascal>|<get-pressureInPascal>(){}[0]
+        final val temperaturInCelsius // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.temperaturInCelsius|{}temperaturInCelsius[0]
+            final fun <get-temperaturInCelsius>(): kotlin/Double // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.temperaturInCelsius.<get-temperaturInCelsius>|<get-temperaturInCelsius>(){}[0]
+
+        final fun component1(): kotlin/Double // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.component1|component1(){}[0]
+        final fun component2(): kotlin/Double // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.component2|component2(){}[0]
+        final fun component3(): kotlin/Double // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.component3|component3(){}[0]
+        final fun copy(kotlin/Double = ..., kotlin/Double = ..., kotlin/Double = ...): ch.softappeal.konapi.devices.bosch/Bme280.Measurement // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.copy|copy(kotlin.Double;kotlin.Double;kotlin.Double){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // ch.softappeal.konapi.devices.bosch/Bme280.Measurement.toString|toString(){}[0]
+    }
+}
+
+final class ch.softappeal.konapi.devices.hitachi/I2cHd44780 : ch.softappeal.konapi/Closeable { // ch.softappeal.konapi.devices.hitachi/I2cHd44780|null[0]
+    constructor <init>(ch.softappeal.konapi/I2cDevice, ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.<init>|<init>(ch.softappeal.konapi.I2cDevice;ch.softappeal.konapi.devices.hitachi.I2cHd44780.Config){}[0]
+
+    final val config // ch.softappeal.konapi.devices.hitachi/I2cHd44780.config|{}config[0]
+        final fun <get-config>(): ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config // ch.softappeal.konapi.devices.hitachi/I2cHd44780.config.<get-config>|<get-config>(){}[0]
+
+    final fun clear() // ch.softappeal.konapi.devices.hitachi/I2cHd44780.clear|clear(){}[0]
+    final fun close() // ch.softappeal.konapi.devices.hitachi/I2cHd44780.close|close(){}[0]
+    final fun displayString(kotlin/String) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.displayString|displayString(kotlin.String){}[0]
+    final fun setBacklight(kotlin/Boolean) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.setBacklight|setBacklight(kotlin.Boolean){}[0]
+    final fun setBlink(kotlin/Boolean) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.setBlink|setBlink(kotlin.Boolean){}[0]
+    final fun setCursorPosition(kotlin/Int, kotlin/Int) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.setCursorPosition|setCursorPosition(kotlin.Int;kotlin.Int){}[0]
+    final fun showCursor(kotlin/Boolean) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.showCursor|showCursor(kotlin.Boolean){}[0]
+    final fun showDisplay(kotlin/Boolean) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.showDisplay|showDisplay(kotlin.Boolean){}[0]
+
+    final enum class Font : kotlin/Enum<ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font> { // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font|null[0]
+        enum entry Dots5x10 // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font.Dots5x10|null[0]
+        enum entry Dots5x8 // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font.Dots5x8|null[0]
+
+        final val entries // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font> // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font> // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font.values|values#static(){}[0]
+    }
+
+    final class Config { // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config|null[0]
+        constructor <init>(kotlin/Int, kotlin/Int, ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font) // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.<init>|<init>(kotlin.Int;kotlin.Int;ch.softappeal.konapi.devices.hitachi.I2cHd44780.Font){}[0]
+
+        final val columns // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.columns|{}columns[0]
+            final fun <get-columns>(): kotlin/Int // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.columns.<get-columns>|<get-columns>(){}[0]
+        final val font // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.font|{}font[0]
+            final fun <get-font>(): ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.font.<get-font>|<get-font>(){}[0]
+        final val lines // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.lines|{}lines[0]
+            final fun <get-lines>(): kotlin/Int // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.lines.<get-lines>|<get-lines>(){}[0]
+
+        final fun component1(): kotlin/Int // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.component1|component1(){}[0]
+        final fun component2(): kotlin/Int // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.component2|component2(){}[0]
+        final fun component3(): ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.component3|component3(){}[0]
+        final fun copy(kotlin/Int = ..., kotlin/Int = ..., ch.softappeal.konapi.devices.hitachi/I2cHd44780.Font = ...): ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.copy|copy(kotlin.Int;kotlin.Int;ch.softappeal.konapi.devices.hitachi.I2cHd44780.Font){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // ch.softappeal.konapi.devices.hitachi/I2cHd44780.Config.toString|toString(){}[0]
+    }
+}
+
+final class ch.softappeal.konapi.devices.waveshare/Paj7620U2 { // ch.softappeal.konapi.devices.waveshare/Paj7620U2|null[0]
+    constructor <init>(ch.softappeal.konapi/I2cDevice) // ch.softappeal.konapi.devices.waveshare/Paj7620U2.<init>|<init>(ch.softappeal.konapi.I2cDevice){}[0]
+
+    final fun gesture(): ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture? // ch.softappeal.konapi.devices.waveshare/Paj7620U2.gesture|gesture(){}[0]
+
+    final enum class Gesture : kotlin/Enum<ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture> { // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture|null[0]
+        enum entry AntiClockwise // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.AntiClockwise|null[0]
+        enum entry Backward // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Backward|null[0]
+        enum entry Clockwise // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Clockwise|null[0]
+        enum entry Down // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Down|null[0]
+        enum entry Forward // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Forward|null[0]
+        enum entry Left // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Left|null[0]
+        enum entry Right // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Right|null[0]
+        enum entry Up // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Up|null[0]
+        enum entry Wave // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.Wave|null[0]
+
+        final val entries // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture> // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture> // ch.softappeal.konapi.devices.waveshare/Paj7620U2.Gesture.values|values#static(){}[0]
+    }
+}
+
+final class ch.softappeal.konapi.graphics/BwGraphics : ch.softappeal.konapi.graphics/Graphics { // ch.softappeal.konapi.graphics/BwGraphics|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Display) // ch.softappeal.konapi.graphics/BwGraphics.<init>|<init>(ch.softappeal.konapi.graphics.Display){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/Color { // ch.softappeal.konapi.graphics/Color|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Color.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+
+    final val blue // ch.softappeal.konapi.graphics/Color.blue|{}blue[0]
+        final fun <get-blue>(): kotlin/Int // ch.softappeal.konapi.graphics/Color.blue.<get-blue>|<get-blue>(){}[0]
+    final val green // ch.softappeal.konapi.graphics/Color.green|{}green[0]
+        final fun <get-green>(): kotlin/Int // ch.softappeal.konapi.graphics/Color.green.<get-green>|<get-green>(){}[0]
+    final val red // ch.softappeal.konapi.graphics/Color.red|{}red[0]
+        final fun <get-red>(): kotlin/Int // ch.softappeal.konapi.graphics/Color.red.<get-red>|<get-red>(){}[0]
+
+    final fun component1(): kotlin/Int // ch.softappeal.konapi.graphics/Color.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // ch.softappeal.konapi.graphics/Color.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // ch.softappeal.konapi.graphics/Color.component3|component3(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/Color.copy|copy(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // ch.softappeal.konapi.graphics/Color.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // ch.softappeal.konapi.graphics/Color.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // ch.softappeal.konapi.graphics/Color.toString|toString(){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/Color16Graphics : ch.softappeal.konapi.graphics/Graphics { // ch.softappeal.konapi.graphics/Color16Graphics|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Display) // ch.softappeal.konapi.graphics/Color16Graphics.<init>|<init>(ch.softappeal.konapi.graphics.Display){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/FontIcon : ch.softappeal.konapi.graphics/Icon { // ch.softappeal.konapi.graphics/FontIcon|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Overlay, kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/FontIcon.<init>|<init>(ch.softappeal.konapi.graphics.Overlay;kotlin.Int;kotlin.Int){}[0]
+
+    final val codePoint // ch.softappeal.konapi.graphics/FontIcon.codePoint|{}codePoint[0]
+        final fun <get-codePoint>(): kotlin/Int // ch.softappeal.konapi.graphics/FontIcon.codePoint.<get-codePoint>|<get-codePoint>(){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/Point { // ch.softappeal.konapi.graphics/Point|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Point.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    final val x // ch.softappeal.konapi.graphics/Point.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // ch.softappeal.konapi.graphics/Point.x.<get-x>|<get-x>(){}[0]
+    final val y // ch.softappeal.konapi.graphics/Point.y|{}y[0]
+        final fun <get-y>(): kotlin/Int // ch.softappeal.konapi.graphics/Point.y.<get-y>|<get-y>(){}[0]
+
+    final fun component1(): kotlin/Int // ch.softappeal.konapi.graphics/Point.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // ch.softappeal.konapi.graphics/Point.component2|component2(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ...): ch.softappeal.konapi.graphics/Point // ch.softappeal.konapi.graphics/Point.copy|copy(kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // ch.softappeal.konapi.graphics/Point.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // ch.softappeal.konapi.graphics/Point.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // ch.softappeal.konapi.graphics/Point.toString|toString(){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/RawImage : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/RawImage|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/ByteArray) // ch.softappeal.konapi.graphics/RawImage.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.ByteArray){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/Rect : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Rect|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Point, ch.softappeal.konapi.graphics/Dimension) // ch.softappeal.konapi.graphics/Rect.<init>|<init>(ch.softappeal.konapi.graphics.Point;ch.softappeal.konapi.graphics.Dimension){}[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Rect.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+
+    final val topLeft // ch.softappeal.konapi.graphics/Rect.topLeft|{}topLeft[0]
+        final fun <get-topLeft>(): ch.softappeal.konapi.graphics/Point // ch.softappeal.konapi.graphics/Rect.topLeft.<get-topLeft>|<get-topLeft>(){}[0]
+    final val xTopLeft // ch.softappeal.konapi.graphics/Rect.xTopLeft|{}xTopLeft[0]
+        final fun <get-xTopLeft>(): kotlin/Int // ch.softappeal.konapi.graphics/Rect.xTopLeft.<get-xTopLeft>|<get-xTopLeft>(){}[0]
+    final val yTopLeft // ch.softappeal.konapi.graphics/Rect.yTopLeft|{}yTopLeft[0]
+        final fun <get-yTopLeft>(): kotlin/Int // ch.softappeal.konapi.graphics/Rect.yTopLeft.<get-yTopLeft>|<get-yTopLeft>(){}[0]
+}
+
+final class ch.softappeal.konapi.graphics/StringGraphics : ch.softappeal.konapi.graphics/Graphics { // ch.softappeal.konapi.graphics/StringGraphics|null[0]
+    final fun getString(): kotlin/String // ch.softappeal.konapi.graphics/StringGraphics.getString|getString(){}[0]
+}
+
+open class ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Dimension|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Dimension) // ch.softappeal.konapi.graphics/Dimension.<init>|<init>(ch.softappeal.konapi.graphics.Dimension){}[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Dimension.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    final val height // ch.softappeal.konapi.graphics/Dimension.height|{}height[0]
+        final fun <get-height>(): kotlin/Int // ch.softappeal.konapi.graphics/Dimension.height.<get-height>|<get-height>(){}[0]
+    final val width // ch.softappeal.konapi.graphics/Dimension.width|{}width[0]
+        final fun <get-width>(): kotlin/Int // ch.softappeal.konapi.graphics/Dimension.width.<get-width>|<get-width>(){}[0]
+}
+
+open class ch.softappeal.konapi.graphics/Icon : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Icon|null[0]
+    constructor <init>(ch.softappeal.konapi.graphics/Overlay, kotlin/Int) // ch.softappeal.konapi.graphics/Icon.<init>|<init>(ch.softappeal.konapi.graphics.Overlay;kotlin.Int){}[0]
+
+    final val index // ch.softappeal.konapi.graphics/Icon.index|{}index[0]
+        final fun <get-index>(): kotlin/Int // ch.softappeal.konapi.graphics/Icon.index.<get-index>|<get-index>(){}[0]
+    final val overlay // ch.softappeal.konapi.graphics/Icon.overlay|{}overlay[0]
+        final fun <get-overlay>(): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/Icon.overlay.<get-overlay>|<get-overlay>(){}[0]
+}
+
+open class ch.softappeal.konapi.graphics/Overlay : ch.softappeal.konapi.graphics/Dimension { // ch.softappeal.konapi.graphics/Overlay|null[0]
+    final val size // ch.softappeal.konapi.graphics/Overlay.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // ch.softappeal.konapi.graphics/Overlay.size.<get-size>|<get-size>(){}[0]
+
+    final fun draw(ch.softappeal.konapi.graphics/Graphics, kotlin/Int, kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/Overlay.draw|draw(ch.softappeal.konapi.graphics.Graphics;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+}
+
+final const val ch.softappeal.konapi.graphics/DUMP_PIXEL_OFF // ch.softappeal.konapi.graphics/DUMP_PIXEL_OFF|{}DUMP_PIXEL_OFF[0]
+    final fun <get-DUMP_PIXEL_OFF>(): kotlin/String // ch.softappeal.konapi.graphics/DUMP_PIXEL_OFF.<get-DUMP_PIXEL_OFF>|<get-DUMP_PIXEL_OFF>(){}[0]
+final const val ch.softappeal.konapi.graphics/DUMP_PIXEL_ON // ch.softappeal.konapi.graphics/DUMP_PIXEL_ON|{}DUMP_PIXEL_ON[0]
+    final fun <get-DUMP_PIXEL_ON>(): kotlin/String // ch.softappeal.konapi.graphics/DUMP_PIXEL_ON.<get-DUMP_PIXEL_ON>|<get-DUMP_PIXEL_ON>(){}[0]
+final const val ch.softappeal.konapi.graphics/DUMP_PIXEL_WIDTH // ch.softappeal.konapi.graphics/DUMP_PIXEL_WIDTH|{}DUMP_PIXEL_WIDTH[0]
+    final fun <get-DUMP_PIXEL_WIDTH>(): kotlin/Int // ch.softappeal.konapi.graphics/DUMP_PIXEL_WIDTH.<get-DUMP_PIXEL_WIDTH>|<get-DUMP_PIXEL_WIDTH>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_0 // ch.softappeal.konapi/SPI_MODE_0|{}SPI_MODE_0[0]
+    final fun <get-SPI_MODE_0>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_0.<get-SPI_MODE_0>|<get-SPI_MODE_0>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_1 // ch.softappeal.konapi/SPI_MODE_1|{}SPI_MODE_1[0]
+    final fun <get-SPI_MODE_1>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_1.<get-SPI_MODE_1>|<get-SPI_MODE_1>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_2 // ch.softappeal.konapi/SPI_MODE_2|{}SPI_MODE_2[0]
+    final fun <get-SPI_MODE_2>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_2.<get-SPI_MODE_2>|<get-SPI_MODE_2>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_3 // ch.softappeal.konapi/SPI_MODE_3|{}SPI_MODE_3[0]
+    final fun <get-SPI_MODE_3>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_3.<get-SPI_MODE_3>|<get-SPI_MODE_3>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_3WIRE // ch.softappeal.konapi/SPI_MODE_3WIRE|{}SPI_MODE_3WIRE[0]
+    final fun <get-SPI_MODE_3WIRE>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_3WIRE.<get-SPI_MODE_3WIRE>|<get-SPI_MODE_3WIRE>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_4WIRE // ch.softappeal.konapi/SPI_MODE_4WIRE|{}SPI_MODE_4WIRE[0]
+    final fun <get-SPI_MODE_4WIRE>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_4WIRE.<get-SPI_MODE_4WIRE>|<get-SPI_MODE_4WIRE>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_LSB_FIRST // ch.softappeal.konapi/SPI_MODE_LSB_FIRST|{}SPI_MODE_LSB_FIRST[0]
+    final fun <get-SPI_MODE_LSB_FIRST>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_LSB_FIRST.<get-SPI_MODE_LSB_FIRST>|<get-SPI_MODE_LSB_FIRST>(){}[0]
+final const val ch.softappeal.konapi/SPI_MODE_MSB_FIRST // ch.softappeal.konapi/SPI_MODE_MSB_FIRST|{}SPI_MODE_MSB_FIRST[0]
+    final fun <get-SPI_MODE_MSB_FIRST>(): kotlin/UByte // ch.softappeal.konapi/SPI_MODE_MSB_FIRST.<get-SPI_MODE_MSB_FIRST>|<get-SPI_MODE_MSB_FIRST>(){}[0]
+
+final val ch.softappeal.konapi.graphics/BLACK // ch.softappeal.konapi.graphics/BLACK|{}BLACK[0]
+    final fun <get-BLACK>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/BLACK.<get-BLACK>|<get-BLACK>(){}[0]
+final val ch.softappeal.konapi.graphics/BLUE // ch.softappeal.konapi.graphics/BLUE|{}BLUE[0]
+    final fun <get-BLUE>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/BLUE.<get-BLUE>|<get-BLUE>(){}[0]
+final val ch.softappeal.konapi.graphics/CYAN // ch.softappeal.konapi.graphics/CYAN|{}CYAN[0]
+    final fun <get-CYAN>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/CYAN.<get-CYAN>|<get-CYAN>(){}[0]
+final val ch.softappeal.konapi.graphics/DummyOverlay // ch.softappeal.konapi.graphics/DummyOverlay|{}DummyOverlay[0]
+    final fun <get-DummyOverlay>(): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/DummyOverlay.<get-DummyOverlay>|<get-DummyOverlay>(){}[0]
+final val ch.softappeal.konapi.graphics/FONT_CHARS // ch.softappeal.konapi.graphics/FONT_CHARS|{}FONT_CHARS[0]
+    final fun <get-FONT_CHARS>(): kotlin.ranges/CharRange // ch.softappeal.konapi.graphics/FONT_CHARS.<get-FONT_CHARS>|<get-FONT_CHARS>(){}[0]
+final val ch.softappeal.konapi.graphics/GREEN // ch.softappeal.konapi.graphics/GREEN|{}GREEN[0]
+    final fun <get-GREEN>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/GREEN.<get-GREEN>|<get-GREEN>(){}[0]
+final val ch.softappeal.konapi.graphics/MAGENTA // ch.softappeal.konapi.graphics/MAGENTA|{}MAGENTA[0]
+    final fun <get-MAGENTA>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/MAGENTA.<get-MAGENTA>|<get-MAGENTA>(){}[0]
+final val ch.softappeal.konapi.graphics/PRIMARY_COLOR_RANGE // ch.softappeal.konapi.graphics/PRIMARY_COLOR_RANGE|{}PRIMARY_COLOR_RANGE[0]
+    final fun <get-PRIMARY_COLOR_RANGE>(): kotlin.ranges/IntRange // ch.softappeal.konapi.graphics/PRIMARY_COLOR_RANGE.<get-PRIMARY_COLOR_RANGE>|<get-PRIMARY_COLOR_RANGE>(){}[0]
+final val ch.softappeal.konapi.graphics/RED // ch.softappeal.konapi.graphics/RED|{}RED[0]
+    final fun <get-RED>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/RED.<get-RED>|<get-RED>(){}[0]
+final val ch.softappeal.konapi.graphics/WHITE // ch.softappeal.konapi.graphics/WHITE|{}WHITE[0]
+    final fun <get-WHITE>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/WHITE.<get-WHITE>|<get-WHITE>(){}[0]
+final val ch.softappeal.konapi.graphics/YELLOW // ch.softappeal.konapi.graphics/YELLOW|{}YELLOW[0]
+    final fun <get-YELLOW>(): ch.softappeal.konapi.graphics/Color // ch.softappeal.konapi.graphics/YELLOW.<get-YELLOW>|<get-YELLOW>(){}[0]
+
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(ch.softappeal.konapi.graphics/Point, ch.softappeal.konapi.graphics/Icon) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Point;ch.softappeal.konapi.graphics.Icon){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(ch.softappeal.konapi.graphics/Point, ch.softappeal.konapi.graphics/RawImage) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Point;ch.softappeal.konapi.graphics.RawImage){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(ch.softappeal.konapi.graphics/Point, kotlin/Char) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Point;kotlin.Char){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(ch.softappeal.konapi.graphics/Point, kotlin/String) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Point;kotlin.String){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(kotlin/Int, kotlin/Int, ch.softappeal.konapi.graphics/Icon) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(kotlin.Int;kotlin.Int;ch.softappeal.konapi.graphics.Icon){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(kotlin/Int, kotlin/Int, ch.softappeal.konapi.graphics/RawImage) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(kotlin.Int;kotlin.Int;ch.softappeal.konapi.graphics.RawImage){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(kotlin/Int, kotlin/Int, kotlin/Char) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(kotlin.Int;kotlin.Int;kotlin.Char){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/draw(kotlin/Int, kotlin/Int, kotlin/String) // ch.softappeal.konapi.graphics/draw|draw@ch.softappeal.konapi.graphics.Graphics(kotlin.Int;kotlin.Int;kotlin.String){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/fillRect() // ch.softappeal.konapi.graphics/fillRect|fillRect@ch.softappeal.konapi.graphics.Graphics(){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/fillRect(ch.softappeal.konapi.graphics/Point, ch.softappeal.konapi.graphics/Dimension) // ch.softappeal.konapi.graphics/fillRect|fillRect@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Point;ch.softappeal.konapi.graphics.Dimension){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/fillRect(ch.softappeal.konapi.graphics/Rect) // ch.softappeal.konapi.graphics/fillRect|fillRect@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Rect){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/fillRect(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int) // ch.softappeal.konapi.graphics/fillRect|fillRect@ch.softappeal.konapi.graphics.Graphics(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+final fun (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/setPixel(ch.softappeal.konapi.graphics/Point) // ch.softappeal.konapi.graphics/setPixel|setPixel@ch.softappeal.konapi.graphics.Graphics(ch.softappeal.konapi.graphics.Point){}[0]
+final fun (ch.softappeal.konapi.graphics/Icons).ch.softappeal.konapi.graphics/FontIcon(kotlin/Int, kotlin/Int): ch.softappeal.konapi.graphics/FontIcon // ch.softappeal.konapi.graphics/FontIcon|FontIcon@ch.softappeal.konapi.graphics.Icons(kotlin.Int;kotlin.Int){}[0]
+final fun (ch.softappeal.konapi.graphics/Icons).ch.softappeal.konapi.graphics/Icon(kotlin/Int): ch.softappeal.konapi.graphics/Icon // ch.softappeal.konapi.graphics/Icon|Icon@ch.softappeal.konapi.graphics.Icons(kotlin.Int){}[0]
+final fun (ch.softappeal.konapi.graphics/Overlay).ch.softappeal.konapi.graphics/dump(): kotlin/String // ch.softappeal.konapi.graphics/dump|dump@ch.softappeal.konapi.graphics.Overlay(){}[0]
+final fun (ch.softappeal.konapi.graphics/Overlay).ch.softappeal.konapi.graphics/toBytes(): kotlin/ByteArray // ch.softappeal.konapi.graphics/toBytes|toBytes@ch.softappeal.konapi.graphics.Overlay(){}[0]
+final fun (kotlin/ByteArray).ch.softappeal.konapi.graphics/toOverlay(): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/toOverlay|toOverlay@kotlin.ByteArray(){}[0]
+final fun <#A: ch.softappeal.konapi.graphics/Graphics> ch.softappeal.konapi.devices.waveshare/Oled(ch.softappeal.konapi/Gpio, kotlin/Int, kotlin/Int, ch.softappeal.konapi/SpiDevice, kotlin/Int, kotlin/Function1<ch.softappeal.konapi.devices.waveshare/OledWriter, kotlin/Unit>, kotlin/Function1<ch.softappeal.konapi.devices.waveshare/OledWriter, #A>): ch.softappeal.konapi.devices.waveshare/Oled<#A> // ch.softappeal.konapi.devices.waveshare/Oled|Oled(ch.softappeal.konapi.Gpio;kotlin.Int;kotlin.Int;ch.softappeal.konapi.SpiDevice;kotlin.Int;kotlin.Function1<ch.softappeal.konapi.devices.waveshare.OledWriter,kotlin.Unit>;kotlin.Function1<ch.softappeal.konapi.devices.waveshare.OledWriter,0:0>){0§<ch.softappeal.konapi.graphics.Graphics>}[0]
+final fun ch.softappeal.konapi.devices.hitachi/i2cLcd1602(ch.softappeal.konapi/I2cDevice): ch.softappeal.konapi.devices.hitachi/I2cHd44780 // ch.softappeal.konapi.devices.hitachi/i2cLcd1602|i2cLcd1602(ch.softappeal.konapi.I2cDevice){}[0]
+final fun ch.softappeal.konapi.devices.waveshare/bwOled1in3(ch.softappeal.konapi/Gpio, kotlin/Int, kotlin/Int, ch.softappeal.konapi/SpiDevice, kotlin/Int = ...): ch.softappeal.konapi.devices.waveshare/Oled<ch.softappeal.konapi.graphics/BwGraphics> // ch.softappeal.konapi.devices.waveshare/bwOled1in3|bwOled1in3(ch.softappeal.konapi.Gpio;kotlin.Int;kotlin.Int;ch.softappeal.konapi.SpiDevice;kotlin.Int){}[0]
+final fun ch.softappeal.konapi.devices.waveshare/color16Oled1in5(ch.softappeal.konapi/Gpio, kotlin/Int, kotlin/Int, ch.softappeal.konapi/SpiDevice, kotlin/Int = ...): ch.softappeal.konapi.devices.waveshare/Oled<ch.softappeal.konapi.graphics/Color16Graphics> // ch.softappeal.konapi.devices.waveshare/color16Oled1in5|color16Oled1in5(ch.softappeal.konapi.Gpio;kotlin.Int;kotlin.Int;ch.softappeal.konapi.SpiDevice;kotlin.Int){}[0]
+final fun ch.softappeal.konapi.graphics/Overlay(kotlin/Int, ch.softappeal.konapi.graphics/Dimension, kotlin/String): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/Overlay|Overlay(kotlin.Int;ch.softappeal.konapi.graphics.Dimension;kotlin.String){}[0]
+final fun ch.softappeal.konapi.graphics/StringGraphics(kotlin/Int, kotlin/Int): ch.softappeal.konapi.graphics/StringGraphics // ch.softappeal.konapi.graphics/StringGraphics|StringGraphics(kotlin.Int;kotlin.Int){}[0]
+final fun ch.softappeal.konapi.graphics/readOverlayFile(kotlin/String): ch.softappeal.konapi.graphics/Overlay // ch.softappeal.konapi.graphics/readOverlayFile|readOverlayFile(kotlin.String){}[0]
+final fun ch.softappeal.konapi/Gpio(kotlin/String): ch.softappeal.konapi/Gpio // ch.softappeal.konapi/Gpio|Gpio(kotlin.String){}[0]
+final fun ch.softappeal.konapi/I2cBus(kotlin/Int): ch.softappeal.konapi/I2cBus // ch.softappeal.konapi/I2cBus|I2cBus(kotlin.Int){}[0]
+final fun ch.softappeal.konapi/SpiDevice(kotlin/Int, kotlin/Int): ch.softappeal.konapi/SpiDevice // ch.softappeal.konapi/SpiDevice|SpiDevice(kotlin.Int;kotlin.Int){}[0]
+final fun ch.softappeal.konapi/readFile(kotlin/String): kotlin/ByteArray // ch.softappeal.konapi/readFile|readFile(kotlin.String){}[0]
+final fun ch.softappeal.konapi/sleepMs(kotlin/Int) // ch.softappeal.konapi/sleepMs|sleepMs(kotlin.Int){}[0]
+final inline fun <#A: ch.softappeal.konapi/Closeable, #B: kotlin/Any?> (#A).ch.softappeal.konapi/use(kotlin/Function1<#A, #B>): #B // ch.softappeal.konapi/use|use@0:0(kotlin.Function1<0:0,0:1>){0§<ch.softappeal.konapi.Closeable>;1§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (ch.softappeal.konapi.graphics/Graphics).ch.softappeal.konapi.graphics/retainColor(kotlin/Function1<ch.softappeal.konapi.graphics/Graphics, #A>): #A // ch.softappeal.konapi.graphics/retainColor|retainColor@ch.softappeal.konapi.graphics.Graphics(kotlin.Function1<ch.softappeal.konapi.graphics.Graphics,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> ch.softappeal.konapi/tryCatch(kotlin/Function0<#A>, kotlin/Function0<kotlin/Unit>): #A // ch.softappeal.konapi/tryCatch|tryCatch(kotlin.Function0<0:0>;kotlin.Function0<kotlin.Unit>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> ch.softappeal.konapi/tryFinally(kotlin/Function0<#A>, kotlin/Function0<kotlin/Unit>): #A // ch.softappeal.konapi/tryFinally|tryFinally(kotlin.Function0<0:0>;kotlin.Function0<kotlin.Unit>){0§<kotlin.Any?>}[0]

@@ -1,8 +1,10 @@
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.util.regex.Pattern
 
 plugins {
     alias(libs.plugins.multiplatform)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.publish)
 }
 
@@ -31,6 +33,7 @@ fun KotlinMultiplatformExtension.configureSourceSets() {
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.multiplatform")
+    apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     repositories {
         mavenCentral()
@@ -45,6 +48,20 @@ allprojects {
         }
         configureSourceSets()
     }
+    dokka {
+        dokkaPublications.html {
+            failOnWarning.set(true)
+        }
+        dokkaSourceSets {
+            configureEach {
+                documentedVisibilities(VisibilityModifier.Public, VisibilityModifier.Protected)
+            }
+        }
+    }
+}
+
+dependencies {
+    dokka(project(":konapi"))
 }
 
 tasks.register("markers") {
